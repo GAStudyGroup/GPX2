@@ -1,3 +1,7 @@
+# Crossover GPX implementado para o problema do TSP
+
+#TODO List
+
 [X] Mapear os Tours
 [X] Adicionar os Ghosts
 [X] Unir os grafos

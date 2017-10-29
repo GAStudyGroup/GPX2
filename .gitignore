@@ -1,0 +1,6 @@
+
+sources/*.o
+bin/
+/bin
+bin
+*.txt
