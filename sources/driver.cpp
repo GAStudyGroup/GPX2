@@ -155,7 +155,6 @@ int main()
 void run(vector<City>& c1, vector<City>& c2)
 {
     Tour t1(c1), t2(c2);
-    GPX2 cross;
 
     cout << "red ";
     for (City c : t1.getTour()) {
@@ -169,7 +168,7 @@ void run(vector<City>& c1, vector<City>& c2)
     }
     cout << endl;
 
-    Tour offspring = cross.crossover(t1, t2);
+    Tour offspring = GPX2::crossover(t1, t2);
 
     cout << "offspring ";
     for (City c : offspring.getTour()) {

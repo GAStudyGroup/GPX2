@@ -1,37 +1,35 @@
 #include "GPX2.hpp"
 
-Tour GPX2::crossover(Tour red, Tour blue)
+Tour GPX2::crossover(Tour redT, Tour blueT)
 {
-    partitionMap allPartitions;
-    cityMap unitedGraph;
-
+    GPX2 obj;
     // Step 1
-    cityMap redMap = tourToMap(red);
-    cityMap blueMap = tourToMap(blue);
+    obj.red = obj.tourToMap(redT);
+    obj.blue = obj.tourToMap(blueT);
 
     // Step 2
-    createGhosts(redMap, blueMap);
+    obj.createGhosts();
 
     // Step 3
-    joinGraphs(redMap, blueMap, unitedGraph);
+    obj.joinGraphs();
 
     // Step 4
-    cutCommonEdges(unitedGraph);
+    obj.cutCommonEdges();
 
     // Step 5
-    findAllPartitions(unitedGraph, allPartitions);
-    cleanInsideAccess(unitedGraph, allPartitions);
+    obj.findAllPartitions();
+    obj.cleanInsideAccess();
 
     // Step 6
-    checkAllPartitions(redMap, blueMap, unitedGraph, allPartitions);
+    obj.checkAllPartitions();
 
     // Step 7
-    vector<int> partitionsChoosen = choose(redMap, blueMap, allPartitions);
+    obj.choose();
 
     // Step 8
-    int offspringChoosen = buildOffspring(partitionsChoosen, allPartitions, redMap, blueMap);
+    obj.buildOffspring();
 
-    if(offspringChoosen==RED){
+    if(obj.offspringChoosen==RED){
         cout<<"RED choosen"<<endl;
     }else{
         cout<<"BLUE choosen"<<endl;
@@ -39,23 +37,25 @@ Tour GPX2::crossover(Tour red, Tour blue)
 
     Tour t;
 
-    if (offspringChoosen == RED) {
-        removeGhosts(redMap);
+    if (obj.offspringChoosen == RED) {
+        obj.removeGhosts(obj.red);
+        obj.printMap(obj.red);
         // Step 9
-        t = mapToTour(redMap);
+        t = obj.mapToTour(obj.red);
     } else {
-        removeGhosts(blueMap);
+        obj.removeGhosts(obj.blue);
+        obj.printMap(obj.blue);
         // Step 9
-        t = mapToTour(blueMap);
+        t = obj.mapToTour(obj.blue);
     }
 
     // Deletar as coisas
-    deleteMap(redMap);
-    deleteMap(blueMap);
-    deleteMap(unitedGraph);
+    deleteMap(obj.red);
+    deleteMap(obj.blue);
+    deleteMap(obj.unitedGraph);
 
-    partitionsChoosen.clear();
-    allPartitions.clear();
+    obj.partitionsChoosen.clear();
+    obj.allPartitions.clear();
 
     return t;
 }
@@ -104,7 +104,7 @@ GPX2::cityMap GPX2::tourToMap(Tour& t)
 
 // STEP 2 - Criar e inserir ghosts
 
-void GPX2::createGhosts(cityMap& red, cityMap& blue)
+void GPX2::createGhosts()
 {
     set<string> isGhost;
     // The SET containner does not allow repeated values inside yourself
@@ -166,8 +166,7 @@ void GPX2::insertGhost(string& id, cityMap& tour, CityNode* ghost)
 
 // STEP 3 - Criar GU
 
-void GPX2::joinGraphs(
-    cityMap& red, cityMap& blue, cityMap& unitedGraph)
+void GPX2::joinGraphs()
 { // executa a união dos dois grafos, gerando Gu
 
     vector<string> cityList, cityList2;
@@ -197,7 +196,7 @@ void GPX2::joinGraphs(
 
 // STEP 4 - Criar GU' (cortar arestas iguais)
 
-void GPX2::cutCommonEdges(cityMap& unitedGraph)
+void GPX2::cutCommonEdges() 
 { // executa o processo de "cortar" as arestas iguais
     // entre os pais, a partir do grafo da união,
     // gerando o Gu'
@@ -239,7 +238,7 @@ void GPX2::cutCommonEdges(cityMap& unitedGraph)
 
 // STEP 5 - Partições
 
-vector<string> GPX2::findPartition(const string nodeOne, cityMap unitedGraph)
+vector<string> GPX2::findPartition(const string nodeOne)
 { // a partir do valor passado
     // irá executar uma busca em
     // Gu' para encontrar as
@@ -288,13 +287,13 @@ vector<string> GPX2::findPartition(const string nodeOne, cityMap unitedGraph)
     return (partition); // retornar vetor com IDs da partição
 }
 
-void GPX2::findAllPartitions(cityMap unitedGraph, partitionMap& allPartitions)
+void GPX2::findAllPartitions()
 { // irá percorrer todo o grafo
     // encotrando as partições
     // presentes nele
     int id{ 1 };
     vector<vector<string>> partitions;
-    vector<string> cities;
+    vector<string> cities; 
 
     //pegar a lista de todas as cidades
     for (auto node : unitedGraph) {
@@ -303,7 +302,7 @@ void GPX2::findAllPartitions(cityMap unitedGraph, partitionMap& allPartitions)
 
     while (!cities.empty()) { // enquanto a lista de cidades ainda existir
 
-        partitions.push_back(findPartition(cities.front(), unitedGraph)); // insere o retorno da função na lista de partições
+        partitions.push_back(findPartition(cities.front())); // insere o retorno da função na lista de partições
 
         for (string i : partitions.back()) {
             cities.erase(remove(cities.begin(), cities.end(), i), cities.end());
@@ -324,7 +323,7 @@ void GPX2::findAllPartitions(cityMap unitedGraph, partitionMap& allPartitions)
     }
 }
 
-void GPX2::cleanInsideAccess(cityMap unitedGraph, partitionMap& allPartitions)
+void GPX2::cleanInsideAccess()
 {
     for (auto& p : allPartitions) {
         vector<string> tmp;
@@ -341,18 +340,18 @@ void GPX2::cleanInsideAccess(cityMap unitedGraph, partitionMap& allPartitions)
 
 // STEP 6 - Checar recombinantes
 
-void GPX2::checkAllPartitions(cityMap red, cityMap blue, cityMap& unitedGraph, partitionMap& allPartitions)
+void GPX2::checkAllPartitions()
 {
     //verifica todas as partições
     for (auto p : allPartitions) {
         //se não for uma partição recombinante ele deleta da lista de partições
-        if (!checkPartition(red, blue, unitedGraph, p.second)) {
+        if (!checkPartition(p.second)) {
             allPartitions.erase(p.first);
         }
     }
 }
 
-bool GPX2::checkPartition(cityMap red, cityMap blue, cityMap& unitedGraph, Partition& partition)
+bool GPX2::checkPartition(Partition& partition)
 {
     unsigned size = partition.getAccessNodes().size();
     vector<string> redNodes, blueNodes;
@@ -405,9 +404,8 @@ bool GPX2::checkPartition(cityMap red, cityMap blue, cityMap& unitedGraph, Parti
 
 // STEP 7 - Escolher partições para o filho
 
-vector<int> GPX2::choose(cityMap red, cityMap blue, partitionMap allPartitions)
+void GPX2::choose()
 {
-    vector<int> partitionsChoosen;
     for (auto p : allPartitions) {
         int index{ 0 };
         double totalRed{ 0.0 }, totalBlue{ 0.0 };
@@ -423,21 +421,20 @@ vector<int> GPX2::choose(cityMap red, cityMap blue, partitionMap allPartitions)
             partitionsChoosen.push_back(BLUE);
         }
     }
-    return partitionsChoosen;
 }
 
 // -----------------------------------------------------------------------------
 
 // STEP 8 - Gerar o mapa do filho
 
-int GPX2::buildOffspring(vector<int>& partitionsChoose, partitionMap& allPartitions, cityMap& red, cityMap& blue)
+void GPX2::buildOffspring()
 {
     cityMap offspring = red; // red é o pivo.
     int index{ 0 };
 
-    for (auto& allP : allPartitions) {
+    for (auto& allP : allPartitions) { 
 
-        if (partitionsChoose[index] == BLUE) { // se o Blue for melhor que o Red naquela partição
+        if (partitionsChoosen[index] == BLUE) { // se o Blue for melhor que o Red naquela partição
             for (string s : allP.second.getNodes()) {
                 delete red.at(s);
                 red.erase(s);
@@ -458,7 +455,7 @@ int GPX2::buildOffspring(vector<int>& partitionsChoose, partitionMap& allPartiti
         }
         index++;
     }
-    return ((totalDistance(red)< totalDistance(red)) ? (RED) : (BLUE));
+    offspringChoosen = ((totalDistance(red)< totalDistance(blue)) ? (RED) : (BLUE));
 }
 
 void GPX2::removeGhosts(cityMap& graph)

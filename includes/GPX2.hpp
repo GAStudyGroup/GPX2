@@ -25,9 +25,9 @@ using std::set;
 
 class GPX2 {
 
-    typedef map<string, CityNode*> cityMap;
+    using cityMap = map<string, CityNode*>;
     //mudar para ponteiro depois
-    typedef map<int, Partition> partitionMap;
+    using partitionMap = map<int, Partition>;
 
     enum searchResult { CONNECTED_TO_PARTITION,
         CONNECTED_TO_SELF,
@@ -38,7 +38,7 @@ class GPX2 {
 
 public:
     // Método principal do funcionamento do crossover, recebe dois pais e retorna um Tour filho
-    Tour crossover(Tour, Tour);
+    Tour static crossover(Tour, Tour);
 
 private:
     // Step 1 - Mapear o Tour passado, irá retornar um grafo com as conexões mapeadas
@@ -46,29 +46,29 @@ private:
 
     // Step 2 - Irá criar os nós GHOSTS e inseri-los nos grafos dos pais
     // executar essa ação antes das outras irá "cortar" gasto computacional repetitivo
-    void createGhosts(cityMap&, cityMap&);
+    void createGhosts();
     void insertGhost(string&, cityMap&, CityNode*);
 
     // Step 3 - Irá gerar o GU (Gráfico da União) dos grafos dos pais
-    void joinGraphs(cityMap&, cityMap&, cityMap&);
+    void joinGraphs();
 
     // Step 4 - Irá gerar o GU', o grafo da união dos pais com os cortes executados
-    void cutCommonEdges(cityMap&);
+    void cutCommonEdges();
 
     // Step 5 - Irá encontrar as partições componentes do GU'
-    vector<string> findPartition(const string, cityMap);
-    void findAllPartitions(cityMap, partitionMap&);
-    void cleanInsideAccess(cityMap, partitionMap&);
+    vector<string> findPartition(const string);
+    void findAllPartitions();
+    void cleanInsideAccess();
 
     // Step 6 - Irá checar se as partições encontradas são recombinantes
-    bool checkPartition(cityMap, cityMap, cityMap&, Partition&);
-    void checkAllPartitions(cityMap, cityMap, cityMap&, partitionMap&);
+    void checkAllPartitions();
+    bool checkPartition(Partition&);
 
     // Step 7 - Escolher partições para o filho
-    vector<int> choose(cityMap, cityMap, partitionMap);
+    void choose();
 
     // Step 8 - Irá gerar o mapa do filho e depois remover os ghosts
-    int buildOffspring(vector<int>&, partitionMap&, cityMap&, cityMap&);
+    void buildOffspring();
     void removeGhosts(cityMap&);
 
     // Step 9 - Irá linearizar o mapa do filho para formato Tour
@@ -76,7 +76,7 @@ private:
 
     // Utilities
     vector<string> cityToString(vector<City>);
-    void deleteMap(cityMap&);
+    void static deleteMap(cityMap&);
     int DFS_outside(string, cityMap, partitionMap);
     int DFS_inside(string, string, cityMap, Partition, vector<string>&);
     double distance(double, double, double, double);
@@ -85,6 +85,18 @@ private:
     void printMap(cityMap&);
     double totalDistance(cityMap&);
     int whichPartition(const string, partitionMap);
+
+    /* 
+    VARS
+    */
+    partitionMap allPartitions;
+    cityMap unitedGraph;
+
+    // Step 1
+    cityMap red;
+    cityMap blue;
+    vector<int> partitionsChoosen;
+    int offspringChoosen;
 };
 
 #endif

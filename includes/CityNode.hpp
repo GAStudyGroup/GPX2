@@ -21,7 +21,7 @@ class CityNode {
 public:
     //deixando o typedef assim então
     //int seria o ID, usando o id no map, podemos ir direto para o objeto
-    typedef pair<string, double> node;
+    using node = pair<string, double>;
 
     CityNode(string, double, double);
 
