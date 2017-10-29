@@ -25,9 +25,9 @@ using std::set;
 
 class GPX2 {
 
-    typedef map<string, CityNode*> cityMap;
+    using cityMap = map<string, CityNode*>;
     //mudar para ponteiro depois
-    typedef map<int, Partition> partitionMap;
+    using partitionMap = map<int, Partition>;
 
     enum searchResult { CONNECTED_TO_PARTITION,
         CONNECTED_TO_SELF,
@@ -85,7 +85,6 @@ private:
     void printMap(cityMap&);
     double totalDistance(cityMap&);
     int whichPartition(const string, partitionMap);
-
 
     /* 
     VARS
