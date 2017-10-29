@@ -29,11 +29,25 @@ Tour GPX2::crossover(Tour red, Tour blue)
     vector<int> partitionsChoosen = choose(redMap, blueMap, allPartitions);
 
     // Step 8
-    buildOffspring(partitionsChoosen, allPartitions, redMap, blueMap);
-    removeGhosts(redMap);
+    int offspringChoosen = buildOffspring(partitionsChoosen, allPartitions, redMap, blueMap);
 
-    // Step 9
-    Tour t = mapToTour(redMap);
+    if(offspringChoosen==RED){
+        cout<<"RED choosen"<<endl;
+    }else{
+        cout<<"BLUE choosen"<<endl;
+    }
+
+    Tour t;
+
+    if (offspringChoosen == RED) {
+        removeGhosts(redMap);
+        // Step 9
+        t = mapToTour(redMap);
+    } else {
+        removeGhosts(blueMap);
+        // Step 9
+        t = mapToTour(blueMap);
+    }
 
     // Deletar as coisas
     deleteMap(redMap);
@@ -416,7 +430,7 @@ vector<int> GPX2::choose(cityMap red, cityMap blue, partitionMap allPartitions)
 
 // STEP 8 - Gerar o mapa do filho
 
-void GPX2::buildOffspring(vector<int>& partitionsChoose, partitionMap& allPartitions, cityMap& red, cityMap& blue)
+int GPX2::buildOffspring(vector<int>& partitionsChoose, partitionMap& allPartitions, cityMap& red, cityMap& blue)
 {
     cityMap offspring = red; // red é o pivo.
     int index{ 0 };
@@ -432,9 +446,19 @@ void GPX2::buildOffspring(vector<int>& partitionsChoose, partitionMap& allPartit
                 newNode->setEdges(blue.at(s)->getEdges());
                 red.insert(make_pair(s, newNode));
             }
+        }else{
+            for (string s : allP.second.getNodes()) {
+                delete blue.at(s);
+                blue.erase(s);
+
+                CityNode* newNode = new CityNode(red.at(s)->getId(), red.at(s)->getX(), red.at(s)->getY());
+                newNode->setEdges(red.at(s)->getEdges());
+                blue.insert(make_pair(s, newNode));
+            }
         }
         index++;
     }
+    return ((totalDistance(red)< totalDistance(red)) ? (RED) : (BLUE));
 }
 
 void GPX2::removeGhosts(cityMap& graph)
@@ -705,9 +729,9 @@ double GPX2::parcialDistance(string entry, string exit, cityMap father, Partitio
     return totalDistance;
 }
 
-void GPX2::printMap(cityMap& m)
+void GPX2::printMap(cityMap& graph)
 {
-    for (map<string, CityNode*>::iterator it = m.begin(); it != m.end(); it++) {
+    /* for (map<string, CityNode*>::iterator it = m.begin(); it != m.end(); it++) {
         cout << " " << it->first << " | " << m[it->first]->getId() << endl;
         cout << "Acess: " << it->second->getAccess() << endl;
         cout << "==================================" << endl;
@@ -719,7 +743,79 @@ void GPX2::printMap(cityMap& m)
         }
         cout << "----------------------------------" << endl;
         cout << endl;
+    } */
+
+    deque<string> nextToVisit;
+    vector<string> isAlreadyVisited;
+    bool notAlreadyVisited{ false };
+    bool notToVisit{ false };
+
+    CityNode* city = graph.begin()->second; // Reduzir chamadas (CityNode dentro do map)
+
+    isAlreadyVisited.push_back(graph.begin()->first);
+    cout<<graph.begin()->first<<" ";
+    nextToVisit.push_back(city->getEdges()[0].first);
+    cout<<city->getEdges()[0].first<<" ";
+
+    while (!nextToVisit.empty()) {
+
+        isAlreadyVisited.push_back(nextToVisit.front());
+        city = graph[nextToVisit.front()];
+        nextToVisit.pop_front();
+
+        for (CityNode::node n : city->getEdges()) {
+
+            notAlreadyVisited = find(isAlreadyVisited.begin(), isAlreadyVisited.end(), n.first) == isAlreadyVisited.end();
+            notToVisit = find(nextToVisit.begin(), nextToVisit.end(), n.first) == nextToVisit.end();
+
+            if (notAlreadyVisited && notToVisit) {
+                nextToVisit.push_back(n.first);
+                cout<<n.first<<" ";
+            }
+        }
     }
+    cout<<endl;
+}
+
+double GPX2::totalDistance(cityMap& graph)
+{
+    deque<string> nextToVisit;
+    vector<string> isAlreadyVisited;
+    double totalDistance{ 0.0 };
+    bool notAlreadyVisited{ false };
+    bool notToVisit{ false };
+
+    CityNode* city = graph.begin()->second,*last=nullptr; // Reduzir chamadas (CityNode dentro do map)
+
+    isAlreadyVisited.push_back(graph.begin()->first);
+
+    nextToVisit.push_back(city->getEdges()[0].first);
+    totalDistance += city->getEdges()[0].second;
+
+    while (!nextToVisit.empty()) {
+
+        isAlreadyVisited.push_back(nextToVisit.front());
+        city = graph[nextToVisit.front()];
+        nextToVisit.pop_front();
+
+        for (CityNode::node n : city->getEdges()) {
+
+            notAlreadyVisited = find(isAlreadyVisited.begin(), isAlreadyVisited.end(), n.first) == isAlreadyVisited.end();
+            notToVisit = find(nextToVisit.begin(), nextToVisit.end(), n.first) == nextToVisit.end();
+
+            if (notAlreadyVisited && notToVisit) {
+                nextToVisit.push_back(n.first);
+                totalDistance += n.second;
+            }
+        }
+        last = city;
+    }
+    for(CityNode::node n : last->getEdges()){
+        if(n.first.compare(isAlreadyVisited.front())==0){
+            totalDistance+=n.second;
+        }
+    }
+    return totalDistance;
 }
 
 int GPX2::whichPartition(const string id, partitionMap allPartitions)

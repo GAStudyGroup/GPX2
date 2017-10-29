@@ -68,7 +68,7 @@ private:
     vector<int> choose(cityMap, cityMap, partitionMap);
 
     // Step 8 - Irá gerar o mapa do filho e depois remover os ghosts
-    void buildOffspring(vector<int>&, partitionMap&, cityMap&, cityMap&);
+    int buildOffspring(vector<int>&, partitionMap&, cityMap&, cityMap&);
     void removeGhosts(cityMap&);
 
     // Step 9 - Irá linearizar o mapa do filho para formato Tour
@@ -83,6 +83,7 @@ private:
     void eraseSubVector(vector<string>&, vector<string>&);
     double parcialDistance(string, string, cityMap, Partition);
     void printMap(cityMap&);
+    double totalDistance(cityMap&);
     int whichPartition(const string, partitionMap);
 };
 

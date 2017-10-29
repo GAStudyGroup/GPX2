@@ -94,7 +94,7 @@ int main()
         cities.push_back(City(1, 0.0, 0.0));
         cities.push_back(City(2, 0.0, -1.0));
         cities.push_back(City(4, 1.0, -1.0)); 
-        cities.push_back(City(6, 2.0, 1.0));
+        cities.push_back(City(6, 2.0, -1.0));
         cities.push_back(City(7, 3.0, 0.0));  
         cities.push_back(City(9, 4.0, 0.0));
         cities.push_back(City(12, 5.0, -1.0));
@@ -106,7 +106,7 @@ int main()
     
         cities2.push_back(City(1, 0.0, 0.0));
         cities2.push_back(City(4, 1.0, -1.0)); 
-        cities2.push_back(City(6, 2.0, 1.0));
+        cities2.push_back(City(6, 2.0, -1.0));
         cities2.push_back(City(8, 3.0, -1.0)); 
         cities2.push_back(City(10, 4.0, -1.0));  
         cities2.push_back(City(12, 5.0, -1.0));
