@@ -5,7 +5,7 @@
 #	Makefile configs
 #
 
-CC := g++ -std=gnu++14
+CC := g++ -std=gnu++17
 CFLAGS := -fsanitize=leak -Wall
 
 INC_FOLDER := -I includes
@@ -24,7 +24,7 @@ build:
 	$(CC) $(SOURCES) $(INC_FOLDER) -o $(EXE_OUT)
 
 run:
-	@./$(EXE_OUT)
+	@./$(EXE_OUT) > log.txt
 
 clean:
 	rm bin/*

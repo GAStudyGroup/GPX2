@@ -1,9 +1,7 @@
 
 sources/*.o
 bin/
-/bin
-bin
+
 *.txt
 
 .vscode/
-/.vscode

@@ -373,7 +373,6 @@ bool GPX2::checkPartition(Partition& partition)
                     access.second = partition.getAccessNodes()[j];
                     foundConnected = true;
                     eraseSubVector(redNodes, nodesVisited);
-
                     break;
                 }
             }
@@ -679,7 +678,7 @@ double GPX2::distance(double x1, double y1, double x2, double y2)
 void GPX2::eraseSubVector(vector<string>& vec, vector<string>& subvec)
 {
     for (unsigned i = 0; i < subvec.size(); i++) {
-        for (unsigned j = 0; vec.size(); j++) {
+        for (unsigned j = 0; j < vec.size(); j++) {
             if (subvec[i].compare(vec[j]) == 0) {
                 vec.erase(vec.begin() + j);
                 break;
