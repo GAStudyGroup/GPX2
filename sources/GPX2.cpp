@@ -52,12 +52,6 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     // Step 8
     obj.buildOffspring();
 
-    if(obj.offspringChoosen==Parent::RED){
-        cout<<"RED choosen"<<endl;
-    }else{
-        cout<<"BLUE choosen"<<endl;
-    }
-
     Tour t;
 
     if (obj.offspringChoosen == Parent::RED) {
@@ -373,7 +367,6 @@ bool GPX2::checkPartition(Partition *partition)
     redNodes = blueNodes = partition->getNodes();
     if (!(size % 2 == 0)) {
         //não é uma partição recombinante pois não possui uma entrada para cada saida.
-        /* cout<<"saiu aqui 0"<<endl; */
         return (false);
     } else {
         vector<string> nodesInPartition = partition->getNodes();
@@ -387,68 +380,27 @@ bool GPX2::checkPartition(Partition *partition)
                 if (DFS_inside(access.first, partition->getAccessNodes()[j], red, partition, nodesVisited) == SearchResult::IS_CONNECTED) {
                     access.second = partition->getAccessNodes()[j];
                     foundConnected = true;
-                    /* cout<<"red nodes visited ";
-                    for(string s : nodesVisited){
-                        cout<<s<<" ";
-                    }
-                    cout<<endl; */
                     eraseSubVector(redNodes, nodesVisited);
-                    /* cout<<"red nodes after erase ";
-                    for(string s : redNodes){
-                        cout<<s<<" ";
-                    }
-                    cout<<endl; */
                     break;
                 }
             }
             if (!foundConnected) {
-                /* cout<<"saiu aqui 1"<<endl; */
                 return (false);
             }
             //verifica no blue se os mesmos pontos de entrada e saida funcionam
             {
                 vector<string> nodesVisited;
                 if (DFS_inside(access.first, access.second, blue, partition, nodesVisited) == SearchResult::IS_CONNECTED) {
-                    /* cout<<"blue nodes visited ";
-                    for(string s : nodesVisited){
-                        cout<<s<<" ";
-                    }
-                    cout<<endl; */
                     eraseSubVector(blueNodes, nodesVisited);
-                    /* cout<<"blue nodes after erase ";
-                    for(string s : blueNodes){
-                        cout<<s<<" ";
-                    }
-                    cout<<endl; */
                 } else {
-                    //a entrada e saida encontrada no red não funciona no blue também
-                    /* cout<<"saiu aqui 2"<<endl; */
                     return (false);
                 }
             }
         }
         //depois de encontrar todas as entradas e saidas, é necessário verificar se todos os nós da partição foram percorridos pelos dois pais
-        /* cout<<"partition "<<partition->getId()<<endl;
-        for(string s : partition->getNodes()){
-            cout<<s<<" ";
-        }
-        cout<<endl;
-        cout<<"red ";
-        for(string s : redNodes){
-            cout<<s<<" ";
-        }
-        cout<<endl;
-        cout<<"blue ";
-        for(string s : blueNodes){
-            cout<<s<<" ";
-        }
-        cout<<endl; */
         if (redNodes.empty() && blueNodes.empty()) {
-            
-        /* cout<<"saiu aqui 3"<<endl; */
         return (true);
         } else {
-            /* cout<<"saiu aqui 4"<<endl; */
             return (false);
         }
     }
@@ -461,24 +413,15 @@ bool GPX2::checkPartition(Partition *partition)
 void GPX2::choose()
 {
     for (auto p : allPartitions) {
-        int index{ 0 };
         double totalRed{ 0.0 }, totalBlue{ 0.0 };
         vector<string> accessVec = p.second->getAccessNodes();
         for (unsigned i = 0; i < accessVec.size() / 2; i++) {
-            totalRed = parcialDistance(accessVec.at(index), accessVec.at(i + 1), red, p.second);
-            totalBlue = parcialDistance(accessVec.at(index), accessVec.at(i + 1), blue, p.second);
-            index++;
+            totalRed = parcialDistance(accessVec.at(2 * i), accessVec.at((2*i) + 1), red, p.second);
+            totalBlue = parcialDistance(accessVec.at(2 * i), accessVec.at((2*i) + 1), blue, p.second);
         }
-        cout<<"partition p "<<p.first<<" red "<<totalRed<<" blue "<<totalBlue<<endl;
-        for(string s : p.second->getNodes()){
-            cout<<s<<" ";
-        }
-        cout<<endl;
         if (totalRed < totalBlue) {
-            cout<<"red choosen"<<endl;
             partitionsChoosen.push_back(Parent::RED);
         } else {
-            cout<<"blue choosen"<<endl;
             partitionsChoosen.push_back(Parent::BLUE);
         }
     }
@@ -493,12 +436,7 @@ void GPX2::buildOffspring()
     CityMap offspring = red; // red é o pivo.
     int index{ 0 };
 
-    for (auto& allP : allPartitions) { 
-        if(partitionsChoosen[index]==Parent::BLUE){
-            cout<<"partition choosen : BLUE"<<endl;
-        }else{
-            cout<<"partition choosen : RED"<<endl;
-        }
+    for (auto& allP : allPartitions) {
         if (partitionsChoosen[index] == Parent::BLUE) { // se o Blue for melhor que o Red naquela partição
             for (string s : allP.second->getNodes()) {
                 delete red.at(s);
@@ -520,11 +458,6 @@ void GPX2::buildOffspring()
         }
         index++;
     }
-    cout<<"red "<<endl;
-    printMap(red);
-    cout<<"blue "<<endl;
-    printMap(blue);
-    cout<<"total red "<< totalDistance(red)<<" total blue "<< totalDistance(blue)<<endl;
     offspringChoosen = ((totalDistance(red)< totalDistance(blue)) ? (Parent::RED) : (Parent::BLUE));
 }
 

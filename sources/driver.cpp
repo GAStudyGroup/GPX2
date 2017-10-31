@@ -118,7 +118,7 @@ int main()
         cities2.push_back(City(2, 0.0, -1.0));
 
         run(cities, cities2);
-    } */
+    }
 
     {
         cout<<"\nTour Noda Feliz\n" << endl;
@@ -149,25 +149,6 @@ int main()
         run(cities, cities2);
     }
 
-    /* {
-        cout<<"\nTour One Partition\n" << endl;
-        vector<City> cities, cities2;
-
-        cities.push_back(City(1, 2.0, 0.0));
-        cities.push_back(City(2, 2.0, 2.0));
-        cities.push_back(City(3, 1.0, 1.0));
-        cities.push_back(City(4, 0.0, 2.0));
-        cities.push_back(City(5, 0.0, 0.0));
-    
-        cities2.push_back(City(1, 2.0, 0.0));
-        cities2.push_back(City(2, 2.0, 2.0));
-        cities2.push_back(City(4, 0.0, 2.0));
-        cities2.push_back(City(3, 1.0, 1.0));
-        cities2.push_back(City(5, 0.0, 0.0));
-
-        run(cities, cities2);
-    }
-
     {
         cout<<"\nTour One Partition\n" << endl;
         vector<City> cities, cities2;
@@ -185,7 +166,7 @@ int main()
         cities2.push_back(City(5, 0.0, 0.0));
 
         run(cities, cities2);
-    }
+    } */
 
     {
         cout<<"\nTour unfeasable\n" << endl;
@@ -227,7 +208,7 @@ int main()
         cities2.push_back(City(2, 0.0, 0.0));
 
         run(cities, cities2);
-    } */
+    }
 
     
     cout << "THE END" << endl;
