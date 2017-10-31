@@ -29,7 +29,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     // Step 8
     obj.buildOffspring();
 
-    if(obj.offspringChoosen==RED){
+    if(obj.offspringChoosen==Parent::RED){
         cout<<"RED choosen"<<endl;
     }else{
         cout<<"BLUE choosen"<<endl;
@@ -37,7 +37,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
 
     Tour t;
 
-    if (obj.offspringChoosen == RED) {
+    if (obj.offspringChoosen == Parent::RED) {
         obj.removeGhosts(obj.red);
         obj.printMap(obj.red);
         // Step 9
@@ -64,7 +64,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
 
 // STEP 1 - MAPEAR O TOUR
 
-GPX2::cityMap GPX2::tourToMap(Tour& t)
+GPX2::CityMap GPX2::tourToMap(Tour& t)
 { // Mapear o tour para um grafo com ligações entre os nós
 
     if (t.getTour().empty()) {
@@ -137,7 +137,7 @@ void GPX2::createGhosts()
     }
 }
 
-void GPX2::insertGhost(string& id, cityMap& tour, CityNode* ghost)
+void GPX2::insertGhost(string& id, CityMap& tour, CityNode* ghost)
 {
     CityNode::node edgeFirst = tour[id]->getEdges()[0]; // edge que será mandado para o ghost
     tour[id]->deleteEdge(0); // delete edge
@@ -200,7 +200,7 @@ void GPX2::cutCommonEdges()
 { // executa o processo de "cortar" as arestas iguais
     // entre os pais, a partir do grafo da união,
     // gerando o Gu'
-    for (cityMap::iterator it = unitedGraph.begin();
+    for (CityMap::iterator it = unitedGraph.begin();
          it != unitedGraph.end(); it++) { // percorre todas as entradas do Gu
 
         vector<CityNode::node>& vec = it->second->getEdges(); // Carrega o vetor com as arestas contidas
@@ -328,7 +328,7 @@ void GPX2::cleanInsideAccess()
     for (auto& p : allPartitions) {
         vector<string> tmp;
         for (string id : p.second->getAccessNodes()) {
-            if (DFS_outside(id, unitedGraph, allPartitions) == CONNECTED_TO_PARTITION) {
+            if (DFS_outside(id, unitedGraph, allPartitions) == SearchResult::CONNECTED_TO_PARTITION) {
                 tmp.push_back(id);
             }
         }
@@ -370,7 +370,7 @@ bool GPX2::checkPartition(Partition *partition)
             bool foundConnected{ false };
             for (unsigned j = 1; j < size; j++) {
                 vector<string> nodesVisited;
-                if (DFS_inside(access.first, partition->getAccessNodes()[j], red, partition, nodesVisited) == IS_CONNECTED) {
+                if (DFS_inside(access.first, partition->getAccessNodes()[j], red, partition, nodesVisited) == SearchResult::IS_CONNECTED) {
                     access.second = partition->getAccessNodes()[j];
                     foundConnected = true;
                     eraseSubVector(redNodes, nodesVisited);
@@ -383,7 +383,7 @@ bool GPX2::checkPartition(Partition *partition)
             //verifica no blue se os mesmos pontos de entrada e saida funcionam
             {
                 vector<string> nodesVisited;
-                if (DFS_inside(access.first, access.second, blue, partition, nodesVisited) == IS_CONNECTED) {
+                if (DFS_inside(access.first, access.second, blue, partition, nodesVisited) == SearchResult::IS_CONNECTED) {
                     eraseSubVector(blueNodes, nodesVisited);
                 } else {
                     //a entrada e saida encontrada no red não funciona no blue também
@@ -416,9 +416,9 @@ void GPX2::choose()
             index++;
         }
         if (totalRed < totalBlue) {
-            partitionsChoosen.push_back(RED);
+            partitionsChoosen.push_back(Parent::RED);
         } else {
-            partitionsChoosen.push_back(BLUE);
+            partitionsChoosen.push_back(Parent::BLUE);
         }
     }
 }
@@ -429,12 +429,12 @@ void GPX2::choose()
 
 void GPX2::buildOffspring()
 {
-    cityMap offspring = red; // red é o pivo.
+    CityMap offspring = red; // red é o pivo.
     int index{ 0 };
 
     for (auto& allP : allPartitions) { 
 
-        if (partitionsChoosen[index] == BLUE) { // se o Blue for melhor que o Red naquela partição
+        if (partitionsChoosen[index] == Parent::BLUE) { // se o Blue for melhor que o Red naquela partição
             for (string s : allP.second->getNodes()) {
                 delete red.at(s);
                 red.erase(s);
@@ -455,10 +455,10 @@ void GPX2::buildOffspring()
         }
         index++;
     }
-    offspringChoosen = ((totalDistance(red)< totalDistance(blue)) ? (RED) : (BLUE));
+    offspringChoosen = ((totalDistance(red)< totalDistance(blue)) ? (Parent::RED) : (Parent::BLUE));
 }
 
-void GPX2::removeGhosts(cityMap& graph)
+void GPX2::removeGhosts(CityMap& graph)
 {
     for (auto node : graph) {
         string token{ "-" };
@@ -521,7 +521,7 @@ void GPX2::removeGhosts(cityMap& graph)
 
 // STEP 9 - Linearizar o mapa do filho
 
-Tour GPX2::mapToTour(cityMap& mapOffspring)
+Tour GPX2::mapToTour(CityMap& mapOffspring)
 {
     Tour offspring;
     deque<string> nextToVisit;
@@ -577,7 +577,7 @@ vector<string> GPX2::cityToString(vector<City> cityList)
     return tmp;
 }
 
-void GPX2::deleteCityMap(cityMap& m)
+void GPX2::deleteCityMap(CityMap& m)
 { // deletar o mapa completamente,
     // desalocando os ponteiros tb
 
@@ -588,7 +588,7 @@ void GPX2::deleteCityMap(cityMap& m)
     m.clear();
 }
 
-void GPX2::deletePartitionMap(partitionMap& m)
+void GPX2::deletePartitionMap(PartitionMap& m)
 { // deletar o mapa completamente,
     // desalocando os ponteiros tb
 
@@ -599,7 +599,7 @@ void GPX2::deletePartitionMap(partitionMap& m)
     m.clear();
 }
 
-int GPX2::DFS_outside(string id, cityMap unitedGraph, partitionMap allPartitions)
+GPX2::SearchResult GPX2::DFS_outside(string id, CityMap unitedGraph, PartitionMap allPartitions)
 {
     string now;
     int idPartition = whichPartition(id, allPartitions);
@@ -639,14 +639,14 @@ int GPX2::DFS_outside(string id, cityMap unitedGraph, partitionMap allPartitions
         //se conectar em si mesmo, seta o nó de entrada e o ultimo onde chegou como não access
         unitedGraph[id]->setAccess(false);
         unitedGraph[alreadyVisited.back()]->setAccess(false);
-        return CONNECTED_TO_SELF;
+        return SearchResult::CONNECTED_TO_SELF;
     } else {
         //partitions[idPartition].getConnectedTo().push_back(partitionConnected);
-        return CONNECTED_TO_PARTITION;
+        return SearchResult::CONNECTED_TO_PARTITION;
     }
 }
 
-int GPX2::DFS_inside(string entry, string exit, cityMap father, Partition *partitionPtr, vector<string>& returnVector)
+GPX2::SearchResult GPX2::DFS_inside(string entry, string exit, CityMap father, Partition *partitionPtr, vector<string>& returnVector)
 {
     //fazer uma busca em profundidade dentro da partição
     string now;
@@ -679,7 +679,7 @@ int GPX2::DFS_inside(string entry, string exit, cityMap father, Partition *parti
     }
 
     returnVector = alreadyVisited;
-    return (alreadyVisited.back() == exit ? IS_CONNECTED : IS_NOT_CONNECTED);
+    return (alreadyVisited.back() == exit ? SearchResult::IS_CONNECTED : SearchResult::IS_NOT_CONNECTED);
 }
 
 double GPX2::distance(double x1, double y1, double x2, double y2)
@@ -699,7 +699,7 @@ void GPX2::eraseSubVector(vector<string>& vec, vector<string>& subvec)
     }
 }
 
-double GPX2::parcialDistance(string entry, string exit, cityMap father, Partition *partitionPtr)
+double GPX2::parcialDistance(string entry, string exit, CityMap father, Partition *partitionPtr)
 {
     //fazer uma busca em profundidade dentro da partição
     string now;
@@ -737,7 +737,7 @@ double GPX2::parcialDistance(string entry, string exit, cityMap father, Partitio
     return totalDistance;
 }
 
-void GPX2::printMap(cityMap& graph)
+void GPX2::printMap(CityMap& graph)
 {
     /* for (map<string, CityNode*>::iterator it = m.begin(); it != m.end(); it++) {
         cout << " " << it->first << " | " << m[it->first]->getId() << endl;
@@ -785,7 +785,7 @@ void GPX2::printMap(cityMap& graph)
     cout<<endl;
 }
 
-double GPX2::totalDistance(cityMap& graph)
+double GPX2::totalDistance(CityMap& graph)
 {
     deque<string> nextToVisit;
     vector<string> isAlreadyVisited;
@@ -826,7 +826,7 @@ double GPX2::totalDistance(cityMap& graph)
     return totalDistance;
 }
 
-int GPX2::whichPartition(const string id, partitionMap allPartitions)
+int GPX2::whichPartition(const string id, PartitionMap allPartitions)
 { // Procura em qual partição está a cidade procurada, retorna o ID da partição
     for (auto& p : allPartitions) {
         if (find(p.second->getNodes().begin(), p.second->getNodes().end(), id) != p.second->getNodes().end()) {

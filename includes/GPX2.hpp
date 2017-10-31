@@ -25,15 +25,15 @@ using std::set;
 
 class GPX2 {
 
-    using cityMap = map<string, CityNode*>;
+    using CityMap = map<string, CityNode*>;
     //mudar para ponteiro depois
-    using partitionMap = map<int, Partition*>;
+    using PartitionMap = map<int, Partition*>;
 
-    enum searchResult { CONNECTED_TO_PARTITION,
+    enum class SearchResult { CONNECTED_TO_PARTITION,
         CONNECTED_TO_SELF,
         IS_CONNECTED,
         IS_NOT_CONNECTED };
-    enum parent { RED,
+    enum class Parent { RED,
         BLUE };
 
 public:
@@ -42,12 +42,12 @@ public:
 
 private:
     // Step 1 - Mapear o Tour passado, irá retornar um grafo com as conexões mapeadas
-    cityMap tourToMap(Tour&);
+    CityMap tourToMap(Tour&);
 
     // Step 2 - Irá criar os nós GHOSTS e inseri-los nos grafos dos pais
     // executar essa ação antes das outras irá "cortar" gasto computacional repetitivo
     void createGhosts();
-    void insertGhost(string&, cityMap&, CityNode*);
+    void insertGhost(string&, CityMap&, CityNode*);
 
     // Step 3 - Irá gerar o GU (Gráfico da União) dos grafos dos pais
     void joinGraphs();
@@ -69,35 +69,35 @@ private:
 
     // Step 8 - Irá gerar o mapa do filho e depois remover os ghosts
     void buildOffspring();
-    void removeGhosts(cityMap&);
+    void removeGhosts(CityMap&);
 
     // Step 9 - Irá linearizar o mapa do filho para formato Tour
-    Tour mapToTour(cityMap&);
+    Tour mapToTour(CityMap&);
 
     // Utilities
     vector<string> cityToString(vector<City>);
-    void static deleteCityMap(cityMap&);
-    void static deletePartitionMap(partitionMap&);
-    int DFS_outside(string, cityMap, partitionMap);
-    int DFS_inside(string, string, cityMap, Partition*, vector<string>&);
+    void static deleteCityMap(CityMap&);
+    void static deletePartitionMap(PartitionMap&);
+    SearchResult DFS_outside(string, CityMap, PartitionMap);
+    SearchResult DFS_inside(string, string, CityMap, Partition*, vector<string>&);
     double distance(double, double, double, double);
     void eraseSubVector(vector<string>&, vector<string>&);
-    double parcialDistance(string, string, cityMap, Partition*);
-    void printMap(cityMap&);
-    double totalDistance(cityMap&);
-    int whichPartition(const string, partitionMap);
+    double parcialDistance(string, string, CityMap, Partition*);
+    void printMap(CityMap&);
+    double totalDistance(CityMap&);
+    int whichPartition(const string, PartitionMap);
 
     /* 
     VARS
     */
-    partitionMap allPartitions;
-    cityMap unitedGraph;
+    PartitionMap allPartitions;
+    CityMap unitedGraph;
 
     // Step 1
-    cityMap red;
-    cityMap blue;
-    vector<int> partitionsChoosen;
-    int offspringChoosen;
+    CityMap red;
+    CityMap blue;
+    vector<Parent> partitionsChoosen;
+    Parent offspringChoosen;
 };
 
 #endif
