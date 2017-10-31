@@ -25,8 +25,9 @@ using std::set;
 
 class GPX2 {
 
+    const string ghostToken = "-";
+
     using CityMap = map<string, CityNode*>;
-    //mudar para ponteiro depois
     using PartitionMap = map<int, Partition*>;
 
     enum class SearchResult { CONNECTED_TO_PARTITION,
@@ -91,6 +92,7 @@ private:
     VARS
     */
     PartitionMap allPartitions;
+    PartitionMap unfeasiblePartitions;
     CityMap unitedGraph;
 
     // Step 1

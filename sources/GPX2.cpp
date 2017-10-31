@@ -55,6 +55,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     deleteCityMap(obj.unitedGraph);
 
     deletePartitionMap(obj.allPartitions);
+    deletePartitionMap(obj.unfeasiblePartitions);
 
     obj.partitionsChoosen.clear();
     obj.allPartitions.clear();
@@ -114,7 +115,7 @@ void GPX2::createGhosts()
     for (auto& city : red) {
 
         string idKey = city.first;
-        if (idKey.find("-") == string::npos) { // the node is not a ghost
+        if (idKey.find(ghostToken) == string::npos) { // the node is not a ghost
 
             for (unsigned i = 0; i < 2; i++) {
                 isGhost.insert(city.second->getEdges()[i].first);
@@ -122,7 +123,7 @@ void GPX2::createGhosts()
             }
 
             if (isGhost.size() == 4) { // node with degree 4
-                string ghostID = idKey + "-";
+                string ghostID = idKey + ghostToken;
                 double x = city.second->getX(), y = city.second->getY();
 
                 CityNode* ghostNode = new CityNode(ghostID, x, y);
@@ -346,8 +347,7 @@ void GPX2::checkAllPartitions()
     for (auto p : allPartitions) {
         //se não for uma partição recombinante ele deleta da lista de partições
         if (!checkPartition(p.second)) {
-            delete allPartitions[p.first];
-            allPartitions[p.first] = nullptr;
+            unfeasiblePartitions.insert(make_pair(p.first,p.second));
             allPartitions.erase(p.first);
         }
     }
@@ -461,12 +461,11 @@ void GPX2::buildOffspring()
 void GPX2::removeGhosts(CityMap& graph)
 {
     for (auto node : graph) {
-        string token{ "-" };
-        unsigned index = node.first.find(token);
+        unsigned index = node.first.find(ghostToken);
         if (index != (unsigned)string::npos) {
             //pegar o id do nó sem o token de ghost
             string id = node.first;
-            id.erase(index, token.size());
+            id.erase(index, ghostToken.size());
 
             //pegar os dois nós que estão ligados ao nó normal e ao ghost
 
