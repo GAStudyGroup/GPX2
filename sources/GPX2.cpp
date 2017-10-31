@@ -459,10 +459,10 @@ void GPX2::buildOffspring()
 }
 
 void GPX2::removeGhosts(CityMap& graph)
-{
-    for (auto node : graph) {
-        unsigned index = node.first.find(ghostToken);
-        if (index != (unsigned)string::npos) {
+{ 
+    for (auto node : graph) { 
+        size_t index = node.first.find(ghostToken);
+        if (index != string::npos) {
             //pegar o id do nó sem o token de ghost
             string id = node.first;
             id.erase(index, ghostToken.size());

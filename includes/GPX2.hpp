@@ -22,6 +22,7 @@ using std::make_pair;
 using std::find;
 using std::deque;
 using std::set;
+using std::size_t;
 
 class GPX2 {
 
