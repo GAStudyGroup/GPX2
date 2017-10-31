@@ -14,7 +14,7 @@ vector<City>& Tour::getTour(){
 
 double Tour::getFitness(){  // Irá retornar a fitness do Tour específico
     double sum{0.0};
-    for(int i=0;i<(tour).size();i++){
+    for(unsigned i=0;i<(tour).size();i++){
         if((i+1) == (tour).size()){
             sum+=distance(i,0);
         }else{

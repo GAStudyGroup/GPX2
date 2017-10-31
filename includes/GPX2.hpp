@@ -27,7 +27,7 @@ class GPX2 {
 
     using cityMap = map<string, CityNode*>;
     //mudar para ponteiro depois
-    using partitionMap = map<int, Partition>;
+    using partitionMap = map<int, Partition*>;
 
     enum searchResult { CONNECTED_TO_PARTITION,
         CONNECTED_TO_SELF,
@@ -62,7 +62,7 @@ private:
 
     // Step 6 - Irá checar se as partições encontradas são recombinantes
     void checkAllPartitions();
-    bool checkPartition(Partition&);
+    bool checkPartition(Partition*);
 
     // Step 7 - Escolher partições para o filho
     void choose();
@@ -76,12 +76,13 @@ private:
 
     // Utilities
     vector<string> cityToString(vector<City>);
-    void static deleteMap(cityMap&);
+    void static deleteCityMap(cityMap&);
+    void static deletePartitionMap(partitionMap&);
     int DFS_outside(string, cityMap, partitionMap);
-    int DFS_inside(string, string, cityMap, Partition, vector<string>&);
+    int DFS_inside(string, string, cityMap, Partition*, vector<string>&);
     double distance(double, double, double, double);
     void eraseSubVector(vector<string>&, vector<string>&);
-    double parcialDistance(string, string, cityMap, Partition);
+    double parcialDistance(string, string, cityMap, Partition*);
     void printMap(cityMap&);
     double totalDistance(cityMap&);
     int whichPartition(const string, partitionMap);

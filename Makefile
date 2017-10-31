@@ -6,7 +6,7 @@
 #
 
 CC := g++ -std=gnu++17
-CFLAGS := -fsanitize=leak -Wall
+CFLAGS := -fsanitize=leak -fsanitize=address -Wall
 
 INC_FOLDER := -I includes
 SRC_FOLDER := sources
@@ -21,10 +21,10 @@ all: build run
 build:
 	@mkdir -p bin
 	@clear
-	$(CC) $(SOURCES) $(INC_FOLDER) -o $(EXE_OUT)
+	$(CC) $(SOURCES) $(INC_FOLDER) -o $(EXE_OUT) $(CFLAGS)
 
 run:
-	@./$(EXE_OUT) > log.txt
+	@./$(EXE_OUT)
 
 clean:
 	rm bin/*

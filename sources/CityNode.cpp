@@ -28,7 +28,7 @@ void CityNode::addEdge(node e)
     edges.push_back(e);
 }
 
-void CityNode::deleteEdge(int i)
+void CityNode::deleteEdge(unsigned i)
 {
     if (i <= edges.size()) {
         edges.erase(edges.begin() + i);

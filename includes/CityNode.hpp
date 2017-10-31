@@ -38,7 +38,7 @@ public:
     void setAccess(bool);
 
     void addEdge(node);
-    void deleteEdge(int);
+    void deleteEdge(unsigned);
     bool operator==(const CityNode&) const;
 
 private:

@@ -50,9 +50,11 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     }
 
     // Deletar as coisas
-    deleteMap(obj.red);
-    deleteMap(obj.blue);
-    deleteMap(obj.unitedGraph);
+    deleteCityMap(obj.red);
+    deleteCityMap(obj.blue);
+    deleteCityMap(obj.unitedGraph);
+
+    deletePartitionMap(obj.allPartitions);
 
     obj.partitionsChoosen.clear();
     obj.allPartitions.clear();
@@ -78,7 +80,7 @@ GPX2::cityMap GPX2::tourToMap(Tour& t)
 
     aux.insert(make_pair(first->getId(), first)); // gera o mapa e insere o primeiro dentro dele
 
-    for (int i = 1; i < t.getTour().size(); i++) { // percorre o vetor a partir do segundo elemento, o primeiro já foi transformado
+    for (unsigned i = 1; i < t.getTour().size(); i++) { // percorre o vetor a partir do segundo elemento, o primeiro já foi transformado
         CityNode* cn = new CityNode(to_string(cities.at(i).getId()), cities.at(i).getX(), cities.at(i).getY()); // gera um node com o segundo elemento
 
         aux.insert(make_pair(cn->getId(), cn)); // insere o node dentro do mapa
@@ -148,8 +150,6 @@ void GPX2::insertGhost(string& id, cityMap& tour, CityNode* ghost)
         if (edge.first.compare(id) == 0) { // verifica se é a ligação
 
             // adiciona a ligação ao ghost e deleta do "REAL"
-            double distTmp = edge.second;
-
             tour[edgeFirst.first]->deleteEdge(i);
             tour[edgeFirst.first]->addEdge(CityNode::node(ghost->getId(), edgeFirst.second));
         }
@@ -206,14 +206,14 @@ void GPX2::cutCommonEdges()
         vector<CityNode::node>& vec = it->second->getEdges(); // Carrega o vetor com as arestas contidas
         // naquela entrada do mapa
 
-        for (int i = 0; i < vec.size(); i++) { // percorre o vetor de arestas
+        for (unsigned i = 0; i < vec.size(); i++) { // percorre o vetor de arestas
 
             int commonEdges{ 0 }; // contagem de vértices iguais, caso contenha dois
             // iguais será executado um "corte"
 
             int last{ -1 }; // posição da primeira instância do no repetido
 
-            for (int j = 0; j < vec.size(); j++) { // percorre o vetor de arestas
+            for (unsigned j = 0; j < vec.size(); j++) { // percorre o vetor de arestas
 
                 if (vec.at(i).first == vec.at(j).first) { // verifica igualdade
                     commonEdges++;
@@ -317,7 +317,7 @@ void GPX2::findAllPartitions()
                     accessNodes.push_back(id);
                 }
             }
-            allPartitions.insert(make_pair(id, Partition(id, vi, accessNodes)));
+            allPartitions.insert(make_pair(id,new Partition(id, vi, accessNodes)));
             id++;
         }
     }
@@ -327,12 +327,12 @@ void GPX2::cleanInsideAccess()
 {
     for (auto& p : allPartitions) {
         vector<string> tmp;
-        for (string id : p.second.getAccessNodes()) {
+        for (string id : p.second->getAccessNodes()) {
             if (DFS_outside(id, unitedGraph, allPartitions) == CONNECTED_TO_PARTITION) {
                 tmp.push_back(id);
             }
         }
-        p.second.setAccessNodes(tmp);
+        p.second->setAccessNodes(tmp);
     }
 }
 
@@ -346,31 +346,32 @@ void GPX2::checkAllPartitions()
     for (auto p : allPartitions) {
         //se não for uma partição recombinante ele deleta da lista de partições
         if (!checkPartition(p.second)) {
+            delete allPartitions[p.first];
+            allPartitions[p.first] = nullptr;
             allPartitions.erase(p.first);
         }
     }
 }
 
-bool GPX2::checkPartition(Partition& partition)
+bool GPX2::checkPartition(Partition *partition)
 {
-    unsigned size = partition.getAccessNodes().size();
+    unsigned size = partition->getAccessNodes().size();
     vector<string> redNodes, blueNodes;
-    redNodes = blueNodes = partition.getNodes();
+    redNodes = blueNodes = partition->getNodes();
     if (!(size % 2 == 0)) {
         //não é uma partição recombinante pois não possui uma entrada para cada saida.
         return (false);
     } else {
-        vector<string> nodesInPartition = partition.getNodes();
-        bool foundExit{ false };
+        vector<string> nodesInPartition = partition->getNodes();
         pair<string, string> access;
         for (unsigned i = 0; i < size / 2; i++) {
             //encontrando entrada e saida no red e verifica se elas existem
-            access.first = partition.getAccessNodes()[0];
+            access.first = partition->getAccessNodes()[0];
             bool foundConnected{ false };
             for (unsigned j = 1; j < size; j++) {
                 vector<string> nodesVisited;
-                if (DFS_inside(access.first, partition.getAccessNodes()[j], red, partition, nodesVisited) == IS_CONNECTED) {
-                    access.second = partition.getAccessNodes()[j];
+                if (DFS_inside(access.first, partition->getAccessNodes()[j], red, partition, nodesVisited) == IS_CONNECTED) {
+                    access.second = partition->getAccessNodes()[j];
                     foundConnected = true;
                     eraseSubVector(redNodes, nodesVisited);
                     break;
@@ -408,7 +409,7 @@ void GPX2::choose()
     for (auto p : allPartitions) {
         int index{ 0 };
         double totalRed{ 0.0 }, totalBlue{ 0.0 };
-        vector<string> accessVec = p.second.getAccessNodes();
+        vector<string> accessVec = p.second->getAccessNodes();
         for (unsigned i = 0; i < accessVec.size() / 2; i++) {
             totalRed = parcialDistance(accessVec.at(index), accessVec.at(i + 1), red, p.second);
             totalBlue = parcialDistance(accessVec.at(index), accessVec.at(i + 1), blue, p.second);
@@ -434,7 +435,7 @@ void GPX2::buildOffspring()
     for (auto& allP : allPartitions) { 
 
         if (partitionsChoosen[index] == BLUE) { // se o Blue for melhor que o Red naquela partição
-            for (string s : allP.second.getNodes()) {
+            for (string s : allP.second->getNodes()) {
                 delete red.at(s);
                 red.erase(s);
 
@@ -443,7 +444,7 @@ void GPX2::buildOffspring()
                 red.insert(make_pair(s, newNode));
             }
         }else{
-            for (string s : allP.second.getNodes()) {
+            for (string s : allP.second->getNodes()) {
                 delete blue.at(s);
                 blue.erase(s);
 
@@ -461,8 +462,8 @@ void GPX2::removeGhosts(cityMap& graph)
 {
     for (auto node : graph) {
         string token{ "-" };
-        int index = node.first.find(token);
-        if (index != string::npos) {
+        unsigned index = node.first.find(token);
+        if (index != (unsigned)string::npos) {
             //pegar o id do nó sem o token de ghost
             string id = node.first;
             id.erase(index, token.size());
@@ -576,7 +577,18 @@ vector<string> GPX2::cityToString(vector<City> cityList)
     return tmp;
 }
 
-void GPX2::deleteMap(cityMap& m)
+void GPX2::deleteCityMap(cityMap& m)
+{ // deletar o mapa completamente,
+    // desalocando os ponteiros tb
+
+    for (auto& it : m) {
+        delete it.second;
+        it.second = nullptr;
+    }
+    m.clear();
+}
+
+void GPX2::deletePartitionMap(partitionMap& m)
 { // deletar o mapa completamente,
     // desalocando os ponteiros tb
 
@@ -591,7 +603,7 @@ int GPX2::DFS_outside(string id, cityMap unitedGraph, partitionMap allPartitions
 {
     string now;
     int idPartition = whichPartition(id, allPartitions);
-    vector<string> partition = allPartitions[idPartition].getNodes();
+    vector<string> partition = allPartitions[idPartition]->getNodes();
     vector<string> alreadyVisited;
     deque<string> nextToVisit;
     int partitionConnected{ -1 };
@@ -634,13 +646,13 @@ int GPX2::DFS_outside(string id, cityMap unitedGraph, partitionMap allPartitions
     }
 }
 
-int GPX2::DFS_inside(string entry, string exit, cityMap father, Partition partitionObj, vector<string>& returnVector)
+int GPX2::DFS_inside(string entry, string exit, cityMap father, Partition *partitionPtr, vector<string>& returnVector)
 {
     //fazer uma busca em profundidade dentro da partição
     string now;
     vector<string> alreadyVisited;
     deque<string> nextToVisit;
-    vector<string> partition = partitionObj.getNodes();
+    vector<string> partition = partitionPtr->getNodes();
     bool notAlreadyVisited{ false };
     bool notToVisit{ false };
     bool isInPartition{ false };
@@ -663,7 +675,7 @@ int GPX2::DFS_inside(string entry, string exit, cityMap father, Partition partit
             if (notAlreadyVisited && notToVisit && isInPartition) {
                 nextToVisit.push_back(cn.first);
             }
-        }
+        } 
     }
 
     returnVector = alreadyVisited;
@@ -687,13 +699,13 @@ void GPX2::eraseSubVector(vector<string>& vec, vector<string>& subvec)
     }
 }
 
-double GPX2::parcialDistance(string entry, string exit, cityMap father, Partition partitionObj)
+double GPX2::parcialDistance(string entry, string exit, cityMap father, Partition *partitionPtr)
 {
     //fazer uma busca em profundidade dentro da partição
     string now;
     vector<string> alreadyVisited;
     deque<string> nextToVisit;
-    vector<string> partition = partitionObj.getNodes();
+    vector<string> partition = partitionPtr->getNodes();
     bool notAlreadyVisited{ false };
     bool notToVisit{ false };
     bool isInPartition{ false };
@@ -817,7 +829,7 @@ double GPX2::totalDistance(cityMap& graph)
 int GPX2::whichPartition(const string id, partitionMap allPartitions)
 { // Procura em qual partição está a cidade procurada, retorna o ID da partição
     for (auto& p : allPartitions) {
-        if (find(p.second.getNodes().begin(), p.second.getNodes().end(), id) != p.second.getNodes().end()) {
+        if (find(p.second->getNodes().begin(), p.second->getNodes().end(), id) != p.second->getNodes().end()) {
             return (p.first);
         }
     }
