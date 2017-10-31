@@ -23,6 +23,7 @@ using std::find;
 using std::deque;
 using std::set;
 using std::size_t;
+using std::remove;
 
 class GPX2 {
 
@@ -81,7 +82,7 @@ private:
     void deleteAll();
     void static deleteCityMap(CityMap&);
     void static deletePartitionMap(PartitionMap&);
-    SearchResult DFS_outside(string, CityMap, PartitionMap);
+    SearchResult DFS_outside(string, PartitionMap,bool = false);
     SearchResult DFS_inside(string, string, CityMap, Partition*, vector<string>&);
     double distance(double, double, double, double);
     void eraseSubVector(vector<string>&, vector<string>&);
@@ -89,6 +90,11 @@ private:
     void printMap(CityMap&);
     double totalDistance(CityMap&);
     int whichPartition(const string, PartitionMap);
+
+    /* 
+    NEW FUNCTIONS
+    */
+    void unfeasiblePartitionsConnected();
 
     /* 
     VARS
