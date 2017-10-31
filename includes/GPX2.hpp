@@ -78,6 +78,7 @@ private:
 
     // Utilities
     vector<string> cityToString(vector<City>);
+    void deleteAll();
     void static deleteCityMap(CityMap&);
     void static deletePartitionMap(PartitionMap&);
     SearchResult DFS_outside(string, CityMap, PartitionMap);

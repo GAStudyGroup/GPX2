@@ -20,6 +20,11 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     obj.findAllPartitions();
     obj.cleanInsideAccess();
 
+    if(obj.allPartitions.size()==1){
+        obj.deleteAll();
+        return((redT.getFitness() > blueT.getFitness()) ? redT : blueT);
+        //CHAMAR DELETE ALL FUCKING LIXO AQUI
+    }
     // Step 6
     obj.checkAllPartitions();
 
@@ -50,16 +55,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     }
 
     // Deletar as coisas
-    deleteCityMap(obj.red);
-    deleteCityMap(obj.blue);
-    deleteCityMap(obj.unitedGraph);
-
-    deletePartitionMap(obj.allPartitions);
-    deletePartitionMap(obj.unfeasiblePartitions);
-
-    obj.partitionsChoosen.clear();
-    obj.allPartitions.clear();
-
+    obj.deleteAll();
     return t;
 }
 
@@ -106,7 +102,6 @@ GPX2::CityMap GPX2::tourToMap(Tour& t)
 // -----------------------------------------------------------------------------
 
 // STEP 2 - Criar e inserir ghosts
-
 void GPX2::createGhosts()
 {
     set<string> isGhost;
@@ -574,6 +569,16 @@ vector<string> GPX2::cityToString(vector<City> cityList)
         tmp.push_back(to_string(c.getId()));
     }
     return tmp;
+}
+
+void GPX2::deleteAll(){
+    deleteCityMap(red);
+    deleteCityMap(blue);
+    deleteCityMap(unitedGraph);
+    deletePartitionMap(allPartitions);
+    deletePartitionMap(unfeasiblePartitions);
+    partitionsChoosen.clear();
+    allPartitions.clear();
 }
 
 void GPX2::deleteCityMap(CityMap& m)

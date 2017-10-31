@@ -108,3 +108,16 @@ Tour Noda feliz
     cities2.push_back(City(9, 3.0, 0.0)); 
     cities2.push_back(City(10, 0.0, 0.0));
     cities2.push_back(City(6, 1.0, 2.0));
+
+Tour One partition
+    cities.push_back(City(1, 2.0, 0.0));
+    cities.push_back(City(2, 2.0, 2.0));
+    cities.push_back(City(3, 1.0, 1.0));
+    cities.push_back(City(4, 0.0, 2.0));
+    cities.push_back(City(5, 0.0, 0.0));
+
+    cities2.push_back(City(1, 2.0, 0.0));
+    cities2.push_back(City(2, 2.0, 2.0));
+    cities2.push_back(City(4, 0.0, 2.0));
+    cities2.push_back(City(3, 1.0, 1.0));
+    cities2.push_back(City(5, 0.0, 0.0));
