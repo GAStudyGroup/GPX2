@@ -23,14 +23,18 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     if (obj.allPartitions.size() == 1) {
         obj.deleteAll();
         return ((redT.getFitness() > blueT.getFitness()) ? redT : blueT);
-        //CHAMAR DELETE ALL FUCKING LIXO AQUI
     }
 
     // Step 6
     obj.checkAllPartitions();
+    cout << "unfeasible partitions size before fusion " << obj.unfeasiblePartitions.size() << endl;
+    cout << "feasible partitions size before fusion " << obj.allPartitions.size() << endl;
 
     //fusion code here
     obj.fusion();
+
+    cout << "unfeasible partitions size after fusion " << obj.unfeasiblePartitions.size() << endl;
+    cout << "feasible partitions size after fusion " << obj.allPartitions.size() << endl;
 
     // Step 7
     obj.choose();
@@ -353,6 +357,7 @@ bool GPX2::checkPartition(Partition* partition)
     redNodes = blueNodes = partition->getNodes();
     if (!(size % 2 == 0)) {
         //não é uma partição recombinante pois não possui uma entrada para cada saida.
+        cout << "saiu aqui 0" << endl;
         return (false);
     } else {
         vector<string> nodesInPartition = partition->getNodes();
@@ -375,6 +380,7 @@ bool GPX2::checkPartition(Partition* partition)
                 }
             }
             if (!foundConnected) {
+                cout << "saiu aqui 1" << endl;
                 return (false);
             }
             //verifica no blue se os mesmos pontos de entrada e saida funcionam
@@ -383,14 +389,17 @@ bool GPX2::checkPartition(Partition* partition)
                 if (DFS_inside(access.first, access.second, blue, partition, nodesVisited) == SearchResult::IS_CONNECTED) {
                     eraseSubVector(blueNodes, nodesVisited);
                 } else {
+                    cout << "saiu aqui 2" << endl;
                     return (false);
                 }
             }
         }
         //depois de encontrar todas as entradas e saidas, é necessário verificar se todos os nós da partição foram percorridos pelos dois pais
         if (redNodes.empty() && blueNodes.empty()) {
+            cout << "saiu aqui 3" << endl;
             return (true);
         } else {
+            cout << "saiu aqui 4" << endl;
             return (false);
         }
     }
@@ -921,6 +930,7 @@ void GPX2::fusePartitions()
             partitionsToCheck.erase(remove(partitionsToCheck.begin(), partitionsToCheck.end(), secondPartiton), partitionsToCheck.end());
         }
     }
+
     //fazer a fusão das partições
     //unir os nodes
     //unir os accessNodes
@@ -930,10 +940,27 @@ void GPX2::fusePartitions()
     //resetar connections
     //deletar a segunda partição
     for (auto p : fuseWith) {
+        cout << "fusing partition " << p.first << " with " << p.second << endl;
         //não precisa mudar o custo pois a checkPartition não verifica isso
         Partition* p1Ptr = unfeasiblePartitions.at(p.first);
         Partition* p2Ptr = unfeasiblePartitions.at(p.second);
         vector<string> intermediariesNodes, accessNodesToRemove;
+        //deletar as connectedTo diferentes da partição que será fundida
+        for (auto it = p1Ptr->getConnectedTo().begin();it!=p1Ptr->getConnectedTo().end();) {
+            if((*it).first!=p.second){
+                p1Ptr->getConnectedTo().erase(it);
+            }else{
+                it++;
+            }
+        }
+        for (auto it = p2Ptr->getConnectedTo().begin();it!=p2Ptr->getConnectedTo().end();) {
+            if((*it).first!=p.first){
+                p2Ptr->getConnectedTo().erase(it);
+            }else{
+                it++;
+            }
+        }
+
         for (string nodes : p2Ptr->getNodes()) {
             p1Ptr->getNodes().push_back(nodes);
         }
@@ -941,6 +968,9 @@ void GPX2::fusePartitions()
             p1Ptr->getAccessNodes().push_back(access);
         }
         for (auto connectedNode : p2Ptr->getConnectedTo()) {
+            /* 
+                PEGAR APENAS OS NÓS QUE LIGAM NA PARTIÇÃO QUE VAI SER FEITA A FUSÃO
+            */
             //pegar os nós intermediários
             vector<string> tmp = DFS_outside_get_nodes(connectedNode.second.first, unfeasiblePartitions);
 
@@ -1009,25 +1039,31 @@ void GPX2::fusion()
 
     //enquanto houver mais que uma partição para fazer a fusão e tiver uma partição conectada com outra
     while ((unfeasiblePartitions.size() > 1)) {
+        cout << "unfeasible size begin " << unfeasiblePartitions.size() << endl;
         //verifica quais partições estão conectadas
         atLeastOneConnected = unfeasiblePartitionsConnected();
         if (!atLeastOneConnected) {
+            cout << "saiu no break" << endl;
             break;
         }
         //contas quantas vezes cada partição se conecta com outra unfeasible
         countConnectedPartitions();
+
         //faz a fusão das partições
         fusePartitions();
         //se a fusão der certo e a partição se tornar feasible ela passa para a allPartitions novamente
         checkUnfeasiblePartitions();
+        cout << "unfeasible size end " << unfeasiblePartitions.size() << endl;
+        cout << "feasible partitions size " << allPartitions.size() << endl;
     }
 }
 
 void GPX2::checkUnfeasiblePartitions()
 {
     for (auto p : unfeasiblePartitions) {
+        cout << "checking feasible " << p.first << " result " << checkPartition(p.second) << endl;
         if (checkPartition(p.second)) {
-            cout<<"fusion gerou uma particao recombinante"<<endl;
+            cout << "fusion gerou uma particao recombinante" << endl;
             allPartitions.insert(make_pair(p.first, p.second));
             unfeasiblePartitions.erase(p.first);
         }

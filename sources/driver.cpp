@@ -16,7 +16,7 @@ void run(vector<City>&, vector<City>&);
 
 int main()
 {
-    {
+    /*{
         cout<<"\nTour1 - Sem Ghost\n" << endl;
         vector<City> cities, cities2;
 
@@ -208,8 +208,81 @@ int main()
         cities2.push_back(City(2, 0.0, 0.0));
 
         run(cities, cities2);
-    }
+    } */
 
+    {
+        cout<<"\nTour exemplo gpx2_s\n" << endl;
+        vector<City> cities, cities2;
+
+        cities.push_back(City(1, 0.0, 5.0));
+        cities.push_back(City(2, 4.0, 5.0));
+        cities.push_back(City(3, 4.0, 4.0)); 
+        cities.push_back(City(4, 2.0, 4.0));
+        cities.push_back(City(5, 1.0, 3.0));  
+        cities.push_back(City(6, 3.0, 3.0));
+        cities.push_back(City(7, 3.0, 2.0));
+        cities.push_back(City(8, 1.0, 2.0)); 
+        cities.push_back(City(9, 2.0, 1.0)); 
+        cities.push_back(City(10, 4.0, 1.0));
+        cities.push_back(City(11, 5.0, 0.0));
+        cities.push_back(City(12, 6.0, 0.0));
+        cities.push_back(City(13, 7.0, 1.0));
+        cities.push_back(City(14, 9.0, 1.0));
+        cities.push_back(City(15, 8.0, 2.0));
+        cities.push_back(City(16, 10.0, 2.0));
+        cities.push_back(City(17, 10.0, 3.0));
+        cities.push_back(City(18, 8.0, 3.0));
+        cities.push_back(City(19, 9.0, 4.0)); 
+        cities.push_back(City(20, 7.0, 4.0));
+        cities.push_back(City(21, 6.0, 4.0));  
+        cities.push_back(City(22, 5.0, 4.0));
+        cities.push_back(City(23, 5.0, 5.0));
+        cities.push_back(City(24, 6.0, 5.0)); 
+        cities.push_back(City(25, 7.0, 5.0)); 
+        cities.push_back(City(26, 11.0, 5.0));
+        cities.push_back(City(27, 11.0, 0.0));
+        cities.push_back(City(28, 7.0, 0.0));
+        cities.push_back(City(29, 6.0, 1.0));
+        cities.push_back(City(30, 5.0, 1.0));
+        cities.push_back(City(31, 4.0, 0.0));
+        cities.push_back(City(32, 0.0, 0.0));
+    
+
+        cities2.push_back(City(1, 0.0, 5.0));
+        cities2.push_back(City(2, 4.0, 5.0));
+        cities2.push_back(City(23, 5.0, 5.0));
+        cities2.push_back(City(24, 6.0, 5.0)); 
+        cities2.push_back(City(21, 6.0, 4.0)); 
+        cities2.push_back(City(22, 5.0, 4.0));
+        cities2.push_back(City(3, 4.0, 4.0)); 
+        cities2.push_back(City(4, 2.0, 4.0)); 
+        cities2.push_back(City(6, 3.0, 3.0));
+        cities2.push_back(City(5, 1.0, 3.0)); 
+        cities2.push_back(City(8, 1.0, 2.0));
+        cities2.push_back(City(7, 3.0, 2.0)); 
+        cities2.push_back(City(9, 2.0, 1.0)); 
+        cities2.push_back(City(10, 4.0, 1.0));
+        cities2.push_back(City(30, 5.0, 1.0));
+        cities2.push_back(City(29, 6.0, 1.0));
+        cities2.push_back(City(13, 7.0, 1.0));
+        cities2.push_back(City(14, 9.0, 1.0));
+        cities2.push_back(City(16, 10.0, 2.0));
+        cities2.push_back(City(15, 8.0, 2.0));
+        cities2.push_back(City(18, 8.0, 3.0));
+        cities2.push_back(City(17, 10.0, 3.0));
+        cities2.push_back(City(19, 9.0, 4.0)); 
+        cities2.push_back(City(20, 7.0, 4.0));
+        cities2.push_back(City(25, 7.0, 5.0)); 
+        cities2.push_back(City(26, 11.0, 5.0));
+        cities2.push_back(City(27, 11.0, 0.0));
+        cities2.push_back(City(28, 7.0, 0.0));
+        cities2.push_back(City(12, 6.0, 0.0)); 
+        cities2.push_back(City(11, 5.0, 0.0));
+        cities2.push_back(City(31, 4.0, 0.0));
+        cities2.push_back(City(32, 0.0, 0.0));
+
+        run(cities, cities2);
+    }
     
     cout << "THE END" << endl;
 }
