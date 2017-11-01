@@ -2,33 +2,41 @@
 #define PARTITION_H
 
 #include <ostream>
+#include <set>
 #include <string>
-#include <vector>
 #include <utility>
+#include <vector>
 
 using std::string;
 using std::vector;
 using std::ostream;
 using std::endl;
 using std::pair;
+using std::set;
 
 class Partition {
 
     friend ostream& operator<<(ostream&, const Partition&);
 
 public:
+    using ConnectionPairVector = vector<pair<int, int>>;
+    //id da partição conectada, id do nó que liga e o id do nó que está ligado
+    using ConnectedNode = vector<pair<int, pair<string, string>>>;
+
     Partition();
     Partition(const int, vector<string>, vector<string>);
 
     vector<string>& getNodes();
     vector<string>& getAccessNodes();
-    vector<pair<int,string>>& getConnectedTo();
+    ConnectedNode& getConnectedTo();
+    ConnectionPairVector& getConnections();
     int getId();
 
     void setId(const int);
     void setNodes(vector<string>&);
     void setAccessNodes(vector<string>&);
-    void setConnectedTo(vector<pair<int,string>>&);
+    void setConnectedTo(ConnectedNode&);
+    void setConnections(ConnectionPairVector);
 
 private:
     int id;
@@ -36,7 +44,9 @@ private:
     vector<string> accessNodes;
 
     //connected to partition int in the node string
-    vector<pair<int,string>> connectedTo;
+    ConnectedNode connectedTo;
+
+    ConnectionPairVector connections;
 };
 
 #endif

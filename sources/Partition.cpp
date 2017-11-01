@@ -8,9 +8,10 @@ Partition::Partition(const int id, vector<string> nodes, vector<string> accessNo
 
 vector<string>& Partition::getNodes() { return (nodes); }
 vector<string>& Partition::getAccessNodes() { return (accessNodes); }
+Partition::ConnectionPairVector& Partition::getConnections(){ return(connections); }
 int Partition::getId() { return (id); }
 
-vector<pair<int,string>>& Partition::getConnectedTo(){return connectedTo;}
+Partition::ConnectedNode& Partition::getConnectedTo(){return connectedTo;}
 
 void Partition::setId(const int id)
 {
@@ -27,7 +28,11 @@ void Partition::setAccessNodes(vector<string>& accessNodes)
     this->accessNodes = accessNodes;
 }
 
-void Partition::setConnectedTo(vector<pair<int,string>> &connectedTo){this->connectedTo = connectedTo;}
+void Partition::setConnections(ConnectionPairVector){
+    this->connections = connections;
+}
+
+void Partition::setConnectedTo(ConnectedNode &connectedTo){this->connectedTo = connectedTo;}
 
 ostream& operator<<(ostream& output, const Partition& partition)
 {

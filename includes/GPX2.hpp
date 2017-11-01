@@ -82,7 +82,7 @@ private:
     void deleteAll();
     void static deleteCityMap(CityMap&);
     void static deletePartitionMap(PartitionMap&);
-    SearchResult DFS_outside(string, PartitionMap,bool = false);
+    SearchResult DFS_outside(string, PartitionMap, bool = false);
     SearchResult DFS_inside(string, string, CityMap, Partition*, vector<string>&);
     double distance(double, double, double, double);
     void eraseSubVector(vector<string>&, vector<string>&);
@@ -94,8 +94,13 @@ private:
     /* 
     NEW FUNCTIONS
     */
-    void unfeasiblePartitionsConnected();
-
+    bool unfeasiblePartitionsConnected();
+    void countConnectedPartitions();
+    int whichPartitionToFuseWith(Partition*);
+    void fusePartitions();
+    vector<string> DFS_outside_get_nodes(string, PartitionMap);
+    void fusion();
+    void checkUnfeasiblePartitions();
     /* 
     VARS
     */
@@ -103,7 +108,6 @@ private:
     PartitionMap unfeasiblePartitions;
     CityMap unitedGraph;
 
-    // Step 1
     CityMap red;
     CityMap blue;
     vector<Parent> partitionsChoosen;

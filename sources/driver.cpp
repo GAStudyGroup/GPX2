@@ -16,7 +16,7 @@ void run(vector<City>&, vector<City>&);
 
 int main()
 {
-    /* {
+    {
         cout<<"\nTour1 - Sem Ghost\n" << endl;
         vector<City> cities, cities2;
 
@@ -166,7 +166,7 @@ int main()
         cities2.push_back(City(5, 0.0, 0.0));
 
         run(cities, cities2);
-    } */
+    }
 
     {
         cout<<"\nTour unfeasable\n" << endl;
