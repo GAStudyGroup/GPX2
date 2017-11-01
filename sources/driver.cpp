@@ -16,7 +16,7 @@ void run(vector<City>&, vector<City>&);
 
 int main()
 {
-    /*{
+    {
         cout<<"\nTour1 - Sem Ghost\n" << endl;
         vector<City> cities, cities2;
 
@@ -208,7 +208,7 @@ int main()
         cities2.push_back(City(2, 0.0, 0.0));
 
         run(cities, cities2);
-    } */
+    }
 
     {
         cout<<"\nTour exemplo gpx2_s\n" << endl;
@@ -283,12 +283,81 @@ int main()
 
         run(cities, cities2);
     }
+
+    {
+        cout<<"\nTour exemplo tunneling\n" << endl;
+        vector<City> cities, cities2;
+
+        cities.push_back(City(1, 1.0, 1.0));
+        cities.push_back(City(2, 2.0, 1.0));
+        cities.push_back(City(3, 3.01, 0.47)); 
+        cities.push_back(City(4, 3.62, 1.6));
+        cities.push_back(City(5, 4.0, 1.0));  
+        cities.push_back(City(6, 5.0, 1.0));
+        cities.push_back(City(7, 4.98, 1.58));
+        cities.push_back(City(8, 5.59, 1.52));
+        cities.push_back(City(9, 6.0, 1.0)); 
+        cities.push_back(City(10, 6.0, 3.0)); 
+        cities.push_back(City(11, 4.61, 3.61));
+        cities.push_back(City(12, 5.0, 4.0));
+        cities.push_back(City(13, 5.79, 3.99));
+        cities.push_back(City(14, 5.76, 4.82));
+        cities.push_back(City(15, 4.02, 5.55));
+        cities.push_back(City(16, 2.99, 4.58));
+        cities.push_back(City(17, 2, 5));
+        cities.push_back(City(18, 1.38, 5.39));
+        cities.push_back(City(19, 0.99, 4.44));
+        cities.push_back(City(20, 1, 4.0)); 
+        cities.push_back(City(21, 2.02, 3.81));
+        cities.push_back(City(22, 3.02, 3.81));  
+        cities.push_back(City(23, 2.21, 3.18));
+        cities.push_back(City(24, 2.98, 3.19));
+        cities.push_back(City(25, 4.08, 3.22)); 
+        cities.push_back(City(26, 5.01, 2.87)); 
+        cities.push_back(City(27, 4.4, 2.32));
+        cities.push_back(City(28, 3.01, 0.47));
+        cities.push_back(City(29, 1.42, 2.02));
+
+        cities2.push_back(City(1, 1.0, 1.0));
+        cities2.push_back(City(2, 2.0, 1.0));
+        cities2.push_back(City(3, 3.01, 0.47));
+        cities2.push_back(City(5, 4.0, 1.0));  
+        cities2.push_back(City(4, 3.62, 1.6));
+        cities2.push_back(City(7, 4.98, 1.58));
+        cities2.push_back(City(6, 5.0, 1.0));
+        cities2.push_back(City(8, 5.59, 1.52));
+        cities2.push_back(City(9, 6.0, 1.0)); 
+        cities2.push_back(City(10, 6.0, 3.0)); 
+        cities2.push_back(City(13, 5.79, 3.99));
+        cities2.push_back(City(14, 5.76, 4.82));
+        cities2.push_back(City(15, 4.02, 5.55));
+        cities2.push_back(City(17, 2, 5));
+        cities2.push_back(City(18, 1.38, 5.39));
+        cities2.push_back(City(19, 0.99, 4.44));
+        cities2.push_back(City(20, 1, 4.0)); 
+        cities2.push_back(City(16, 2.99, 4.58));
+        cities2.push_back(City(12, 5.0, 4.0));
+        cities2.push_back(City(26, 5.01, 2.87)); 
+        cities2.push_back(City(11, 4.61, 3.61));
+        cities2.push_back(City(25, 4.08, 3.22)); 
+        cities2.push_back(City(27, 4.4, 2.32));
+        cities2.push_back(City(28, 3.01, 0.47));
+        cities2.push_back(City(24, 2.98, 3.19));
+        cities2.push_back(City(22, 3.02, 3.81)); 
+        cities2.push_back(City(21, 2.02, 3.81)); 
+        cities2.push_back(City(23, 2.21, 3.18));
+        cities2.push_back(City(29, 1.42, 2.02));
+        
+
+        run(cities, cities2);
+    }
     
     cout << "THE END" << endl;
 }
 
 void run(vector<City>& c1, vector<City>& c2)
 {
+    bool legacy {false};
     Tour t1(c1), t2(c2);
 
     cout << "red ";
@@ -303,7 +372,7 @@ void run(vector<City>& c1, vector<City>& c2)
     }
     cout << endl;
 
-    Tour offspring = GPX2::crossover(t1, t2);
+    Tour offspring = GPX2::crossover(t1, t2,legacy);
 
     cout << "offspring ";
     for (City c : offspring.getTour()) {

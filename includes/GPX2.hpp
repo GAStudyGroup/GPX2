@@ -41,7 +41,7 @@ class GPX2 {
 
 public:
     // Método principal do funcionamento do crossover, recebe dois pais e retorna um Tour filho
-    Tour static crossover(Tour, Tour);
+    Tour static crossover(Tour, Tour,bool=false);
 
 private:
     // Step 1 - Mapear o Tour passado, irá retornar um grafo com as conexões mapeadas
@@ -82,7 +82,7 @@ private:
     void deleteAll();
     void static deleteCityMap(CityMap&);
     void static deletePartitionMap(PartitionMap&);
-    SearchResult DFS_outside(string, PartitionMap, bool = false);
+    pair<SearchResult,vector<string>> DFS_outside(string, PartitionMap, bool = false);
     SearchResult DFS_inside(string, string, CityMap, Partition*, vector<string>&);
     double distance(double, double, double, double);
     void eraseSubVector(vector<string>&, vector<string>&);
@@ -96,7 +96,7 @@ private:
     */
     bool unfeasiblePartitionsConnected();
     void countConnectedPartitions();
-    int whichPartitionToFuseWith(Partition*);
+    pair<int,int> whichPartitionToFuseWith(Partition*);
     void fusePartitions();
     vector<string> DFS_outside_get_nodes(string, PartitionMap);
     void fusion();
