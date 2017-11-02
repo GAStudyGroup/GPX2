@@ -12,16 +12,16 @@ public:
     Tour();
     Tour(vector<City>);
 
-    void setTour(vector<City>);
+    void setRoute(vector<City>);
 
-    vector<City>& getTour();
+    vector<City>& getRoute();
 
     double getFitness();
 
     double distance(const int,const int);
 
 private:
-    vector<City> tour;
+    vector<City> route;
 };
 
 #endif

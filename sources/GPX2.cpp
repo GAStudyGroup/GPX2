@@ -12,7 +12,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT, bool legacy)
         obj.createGhosts();
     }
 
-    // Step 3
+    // Step 3 
     obj.joinGraphs();
 
     // Step 4
@@ -85,20 +85,20 @@ Tour GPX2::crossover(Tour redT, Tour blueT, bool legacy)
 GPX2::CityMap GPX2::tourToMap(Tour& t)
 { // Mapear o tour para um grafo com ligações entre os nós
 
-    if (t.getTour().empty()) {
+    if (t.getRoute().empty()) {
         exit(0);
     }
 
     map<string, CityNode*> aux; // Mapa com as conexões dos nodes
     double dist = 0;
-    vector<City> cities{ t.getTour() };
+    vector<City> cities{ t.getRoute() };
 
     CityNode* prev = new CityNode(to_string(cities.at(0).getId()), cities.at(0).getX(), cities.at(0).getY()); // ponto anterior ao atual dentro do for
     CityNode* first = prev; // referência do primeiro acesso
 
     aux.insert(make_pair(first->getId(), first)); // gera o mapa e insere o primeiro dentro dele
 
-    for (unsigned i = 1; i < t.getTour().size(); i++) { // percorre o vetor a partir do segundo elemento, o primeiro já foi transformado
+    for (unsigned i = 1; i < t.getRoute().size(); i++) { // percorre o vetor a partir do segundo elemento, o primeiro já foi transformado
         CityNode* cn = new CityNode(to_string(cities.at(i).getId()), cities.at(i).getX(), cities.at(i).getY()); // gera um node com o segundo elemento
 
         aux.insert(make_pair(cn->getId(), cn)); // insere o node dentro do mapa
@@ -560,7 +560,7 @@ Tour GPX2::mapToTour(CityMap& mapOffspring)
 
     isAlreadyVisited.push_back(mapOffspring.begin()->first);
 
-    offspring.getTour().push_back(City(stoi(city->getId()), city->getX(), city->getY())); // já foi visitado então entra no filho
+    offspring.getRoute().push_back(City(stoi(city->getId()), city->getX(), city->getY())); // já foi visitado então entra no filho
 
     nextToVisit.push_back(city->getEdges()[0].first);
 
@@ -570,7 +570,7 @@ Tour GPX2::mapToTour(CityMap& mapOffspring)
         city = mapOffspring[nextToVisit.front()];
         nextToVisit.pop_front();
 
-        offspring.getTour().push_back(City(stoi(city->getId()), city->getX(), city->getY()));
+        offspring.getRoute().push_back(City(stoi(city->getId()), city->getX(), city->getY()));
 
         for (CityNode::node n : city->getEdges()) {
 

@@ -361,13 +361,13 @@ void run(vector<City>& c1, vector<City>& c2)
     Tour t1(c1), t2(c2);
 
     cout << "red ";
-    for (City c : t1.getTour()) {
+    for (City c : t1.getRoute()) {
         cout << c.getId() << " ";
     }
     cout << endl;
 
     cout << "blue ";
-    for (City c : t2.getTour()) {
+    for (City c : t2.getRoute()) {
         cout << c.getId() << " ";
     }
     cout << endl;
@@ -375,7 +375,7 @@ void run(vector<City>& c1, vector<City>& c2)
     Tour offspring = GPX2::crossover(t1, t2,legacy);
 
     cout << "offspring ";
-    for (City c : offspring.getTour()) {
+    for (City c : offspring.getRoute()) {
         cout << c.getId() << " ";
     }
     cout << endl;

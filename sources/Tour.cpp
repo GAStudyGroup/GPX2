@@ -2,20 +2,20 @@
 
 Tour::Tour(){}
 
-Tour::Tour(vector<City> tour):tour(tour){}
+Tour::Tour(vector<City> route):route(route){}
 
-void Tour::setTour(vector<City> tour){
-    this->tour = tour;
+void Tour::setRoute(vector<City> route){
+    this->route = route;
 }
 
-vector<City>& Tour::getTour(){
-    return tour;
+vector<City>& Tour::getRoute(){
+    return route;
 }
 
 double Tour::getFitness(){  // Irá retornar a fitness do Tour específico
     double sum{0.0};
-    for(unsigned i=0;i<(tour).size();i++){
-        if((i+1) == (tour).size()){
+    for(unsigned i=0;i<(route).size();i++){
+        if((i+1) == (route).size()){
             sum+=distance(i,0);
         }else{
             sum+=distance(i,i+1);
@@ -25,5 +25,5 @@ double Tour::getFitness(){  // Irá retornar a fitness do Tour específico
 }
 
 double Tour::distance(const int a,const int b){  // Retorno da distancia entre duas cidades adjacentes
-    return(sqrt(pow(((tour)[a].getX())-((tour)[b].getX()),2)+pow(((tour)[a].getY())-((tour)[b].getY()),2)));
+    return(sqrt(pow(((route)[a].getX())-((route)[b].getX()),2)+pow(((route)[a].getY())-((route)[b].getY()),2)));
 }
