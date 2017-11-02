@@ -27,31 +27,12 @@ Tour GPX2::crossover(Tour redT, Tour blueT, bool legacy)
         return ((redT.getFitness() > blueT.getFitness()) ? redT : blueT);
     }
 
-    cout << "all partitions found" << endl;
-    for (auto p : obj.allPartitions) {
-        for (auto node : p.second->getNodes()) {
-            cout << node << " ";
-        }
-        cout << endl;
-        cout << "access nodes: ";
-        for (auto anode : p.second->getAccessNodes()) {
-            cout << anode << " ";
-        }
-        cout << endl;
-    }
-
     // Step 6
     obj.checkAllPartitions();
-    cout << "unfeasible partitions size before fusion " << obj.unfeasiblePartitions.size() << endl;
-    cout << "feasible partitions size before fusion " << obj.allPartitions.size() << endl;
-
     //fusion code here
     if (!legacy) {
         obj.fusion();
     }
-
-    cout << "unfeasible partitions size after fusion " << obj.unfeasiblePartitions.size() << endl;
-    cout << "feasible partitions size after fusion " << obj.allPartitions.size() << endl;
 
     // Step 7
     obj.choose();
@@ -800,9 +781,7 @@ void GPX2::printMap(CityMap& graph)
     CityNode* city = graph.begin()->second; // Reduzir chamadas (CityNode dentro do map)
 
     isAlreadyVisited.push_back(graph.begin()->first);
-    cout << graph.begin()->first << " ";
     nextToVisit.push_back(city->getEdges()[0].first);
-    cout << city->getEdges()[0].first << " ";
 
     while (!nextToVisit.empty()) {
 
@@ -817,11 +796,9 @@ void GPX2::printMap(CityMap& graph)
 
             if (notAlreadyVisited && notToVisit) {
                 nextToVisit.push_back(n.first);
-                cout << n.first << " ";
             }
         }
     }
-    cout << endl;
 }
 
 double GPX2::totalDistance(CityMap& graph)
@@ -960,7 +937,6 @@ void GPX2::fusePartitions()
     for (unsigned i = 0; i < fuseWith.size(); i++) {
         for (unsigned j = 0; j < fuseWith.size(); j++) {
             if (fuseWith.at(i).first == fuseWith.at(j).second) {
-                cout << "erasing fusion of " << fuseWith.at(i).first << " with " << fuseWith.at(j).second << endl;
                 fuseWith.erase(fuseWith.begin() + i);
             }
         }
@@ -973,9 +949,6 @@ void GPX2::fusePartitions()
             if (i != j) {
                 //partição será utilizada em duas fusões
                 if (fuseWith.at(i).second == fuseWith.at(j).second) {
-                    cout << "particao " << fuseWith.at(i).second << " sera utiliza em duas ou mais fusões!" << endl;
-                    cout << "\tparticao " << fuseWith.at(i).first << " conectou " << numberOfConnections.at(i) << " vezes" << endl;
-                    cout << "\tparticao " << fuseWith.at(j).first << " conectou " << numberOfConnections.at(j) << " vezes" << endl;
                     if (numberOfConnections.at(i) < numberOfConnections.at(j)) {
                         numberOfConnections.erase(numberOfConnections.begin() + i);
                         fuseWith.erase(fuseWith.begin() + i);
@@ -997,7 +970,6 @@ void GPX2::fusePartitions()
     //resetar connections
     //deletar a segunda partição
     for (auto p : fuseWith) {
-        cout << "fusing partition " << p.first << " with " << p.second << endl;
         //não precisa mudar o custo pois a checkPartition não verifica isso
         Partition* p1Ptr = unfeasiblePartitions.at(p.first);
         Partition* p2Ptr = unfeasiblePartitions.at(p.second);
@@ -1100,11 +1072,9 @@ void GPX2::fusion()
 
     //enquanto houver mais que uma partição para fazer a fusão e tiver uma partição conectada com outra
     while ((unfeasiblePartitions.size() > 1)) {
-        cout << "unfeasible size begin " << unfeasiblePartitions.size() << endl;
         //verifica quais partições estão conectadas
         atLeastOneConnected = unfeasiblePartitionsConnected();
         if (!atLeastOneConnected) {
-            cout << "saiu no break" << endl;
             break;
         }
         //contas quantas vezes cada partição se conecta com outra unfeasible
@@ -1114,17 +1084,13 @@ void GPX2::fusion()
         fusePartitions();
         //se a fusão der certo e a partição se tornar feasible ela passa para a allPartitions novamente
         checkUnfeasiblePartitions();
-        cout << "unfeasible size end " << unfeasiblePartitions.size() << endl;
-        cout << "feasible partitions size " << allPartitions.size() << endl;
     }
 }
 
 void GPX2::checkUnfeasiblePartitions()
 {
     for (auto p : unfeasiblePartitions) {
-        cout << "checking feasible " << p.first << " result " << checkPartition(p.second) << endl;
         if (checkPartition(p.second)) {
-            cout << "fusion gerou uma particao recombinante" << endl;
             allPartitions.insert(make_pair(p.first, p.second));
             unfeasiblePartitions.erase(p.first);
         }
