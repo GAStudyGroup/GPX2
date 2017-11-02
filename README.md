@@ -1,7 +1,6 @@
 # Crossover GPX implementado para o problema do TSP
 
-#TODO List
-
+## TODO List
 - [X] Mapear os Tours
 - [X] Adicionar os Ghosts
 - [X] Unir os grafos
@@ -11,5 +10,4 @@
 - [X] Escolher partições para filho
 - [X] Montar o filho
 - [X] Linearizar o mapa do filho
-
-- [ ] Implementar Fusion
+- [X] Implementar Fusion
