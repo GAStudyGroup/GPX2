@@ -1,19 +1,31 @@
-#ifndef CITY_H
-#define CITY_H
+#ifndef CITY_HPP
+#define CITY_HPP
 
-class City {
+#include <iostream>
+#include <iomanip>
+
+using std::ostream;
+using std::endl;
+using std::setfill;
+using std::setw;
+
+class City{
+
+    friend ostream& operator<<(ostream&,const City&);
+
 public:
     City();
-    City(int, double, double);
+    City(const int,const double,const double);
+    int getId() const;
+    double getX() const;
+    double getY() const;
+    void setId(const int);
+    void setX(const double);
+    void setY(const double);
 
-    void setId(int);
-    void setX(double);
-    void setY(double);
-
-    int getId();
-    double getX();
-    double getY();
-
+    //overload do operador de comparação
+    bool operator==(const City &) const;
+    const City& operator=(const City &);
 private:
     int id;
     double x;
