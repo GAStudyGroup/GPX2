@@ -1,9 +1,10 @@
 #ifndef TOUR_HPP
 #define TOUR_HPP
 
-#include "City.hpp"
 #include <cmath>
+#include <iostream>
 #include <vector>
+#include "City.hpp"
 
 using std::vector;
 using std::ostream;
