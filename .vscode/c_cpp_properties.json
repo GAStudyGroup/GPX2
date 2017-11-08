@@ -40,6 +40,8 @@
                 "/usr/include/linux",
                 "/usr/include/linux",
                 "/usr/include/linux",
+                "/usr/include/linux",
+                "/usr/include/linux",
                 "/usr/include/linux"
             ],
             "defines": [],
