@@ -6,8 +6,14 @@
 #include <vector>
 
 using std::vector;
+using std::ostream;
+using std::setfill;
+using std::setw;
 
 class Tour {
+
+    friend ostream& operator<<(ostream&,Tour &);    
+
 public:
     Tour();
     Tour(vector<City>);
@@ -18,7 +24,7 @@ public:
 
     double getFitness();
 
-    double distance(const int,const int);
+    double distance(const int, const int);
 
 private:
     vector<City> route;
