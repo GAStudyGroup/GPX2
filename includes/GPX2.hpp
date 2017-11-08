@@ -11,7 +11,6 @@
 
 #include "City.hpp"
 #include "CityNode.hpp"
-#include "ListOfCities.hpp"
 #include "Partition.hpp"
 
 using std::string;
@@ -66,6 +65,7 @@ private:
     // Step 6 - Irá checar se as partições encontradas são recombinantes
     void checkAllPartitions();
     bool checkPartition(Partition*);
+    void fusion();
 
     // Step 7 - Escolher partições para o filho
     void choose();
@@ -91,16 +91,14 @@ private:
     double totalDistance(CityMap&);
     int whichPartition(const string, PartitionMap);
 
-    /* 
-    NEW FUNCTIONS
-    */
-    bool unfeasiblePartitionsConnected();
-    void countConnectedPartitions();
-    pair<int,int> whichPartitionToFuseWith(Partition*);
-    void fusePartitions();
-    vector<string> DFS_outside_get_nodes(string, PartitionMap);
-    void fusion();
+    // Fusion Utils
     void checkUnfeasiblePartitions();
+    void countConnectedPartitions();
+    vector<string> DFS_outside_get_nodes(string, PartitionMap);
+    void fusePartitions();
+    bool unfeasiblePartitionsConnected();
+    pair<int,int> whichPartitionToFuseWith(Partition*);
+    
     /* 
     VARS
     */
