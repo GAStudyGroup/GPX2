@@ -35,6 +35,6 @@ ostream& operator<<(ostream &output,Tour &t){  // Overload de operador para impr
         ++i;
     }
     output<<"Fitness: "<<t.getFitness()<<endl;
-    output<<"Distance: "<<t.dist<<endl;
+    //output<<"Distance: "<<t.dist<<endl;
     return(output);
 }

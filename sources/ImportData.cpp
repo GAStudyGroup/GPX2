@@ -3,6 +3,7 @@
 ImportData::ImportData(string nome)
 {
     string input;
+    int cityId{0};
     cout << "Importando Arquivo \n";
     myfile.open(nome);
     if(!myfile.is_open()){
@@ -16,7 +17,7 @@ ImportData::ImportData(string nome)
         regexManager(input);
         if (findIgnoredWords(input))
         {
-            reader(flag, input);
+            reader(flag, input, cityId);
         }
     }
 }
@@ -74,7 +75,7 @@ bool ImportData::findIgnoredWords(string input)
     return true;
 }
 
-void ImportData::reader(string flag, string input)
+void ImportData::reader(string flag, string input, int &id)
 {
     if (flag == "name")
     {
@@ -116,7 +117,8 @@ void ImportData::reader(string flag, string input)
         myfile >> input;
         double y = std::stod(input);
         //     cout << "\t Y: " << input << "\n";
-        citiescoord.push_back(City(x,y));
+        id++;
+        citiescoord.push_back(City(id,x,y));
     }
 }
 void ImportData::printInfos(){

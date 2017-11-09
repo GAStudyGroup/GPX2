@@ -4,7 +4,7 @@ Population::Population(){}
 
 vector<Tour>& Population::getPopulation(){ return(population); }
 
-void addNewTour(Tour& t){ population.push_back(t); }
+void Population::addNewTour(Tour& t){ population.push_back(t); }
 
 ostream& operator<<(ostream &output,Population &pop){  // Overload de operador para impressão da população
    int i{0};

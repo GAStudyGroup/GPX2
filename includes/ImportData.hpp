@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 #include <stdlib.h>
-#include "City.h"
+#include "City.hpp"
 
 using std:: ifstream;
 using std:: string;
@@ -42,7 +42,7 @@ private:
    int dimension;
    void regexManager(string);
    bool findIgnoredWords(string);
-   void reader(string, string);
+   void reader(string, string, int&);
 };
 
 #endif
