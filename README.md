@@ -4,6 +4,15 @@ Implementação do Generalized Partition Crossover para o problema do Traveling 
 
 Existem dois Branchs neste repositório, o Branch *master* contém a implementação de um algoritmo genético utilizando o GPX e o Branch *basedev* contém a implementação do GPX e as estruturas básicas que precisam ser utilizadas, City e Tour, para fins de uso por terceiros.
 
+
+# AG TODO
+
+- [ ] Executar LKH para gerar a pop Inicial
+- [ ] Ler os arquivos e carregar como popInicial
+- [ ] Cruzar par a par para gerar nova Pop
+- [ ] Gerar log do melhor indíviduo por geração
+- [ ] Critério de parada por estagnação
+
 # Etapas da execução do GPX
 
 ## STEP 1 - Mapeamento do Tour
