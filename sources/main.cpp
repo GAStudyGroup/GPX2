@@ -67,7 +67,7 @@ void GA(string name,unsigned popSize){
         cout<<"new pop"<<endl;
         pop = generateNewPopulation(pop);
         cout<<"pop size "<<pop.getPopulation().size()<<endl;
-        if(i%100 == 0){
+        if(i%10 == 0){
             cout<<"gen "<<i<<" best fitness "<<pop.bestFitness()<<endl;
         }
         i++;

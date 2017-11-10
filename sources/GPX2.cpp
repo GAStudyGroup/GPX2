@@ -960,8 +960,12 @@ void GPX2::fusePartitions()
 
     cout<<"escolher as fusões"<<endl;
     // Percorre as partições gerando um par de fusões
-    for (auto it = partitionsToCheck.begin(); it != partitionsToCheck.end(); it++) {
-    
+    for (auto it = partitionsToCheck.begin(); it != partitionsToCheck.end();it++) {
+        cout<<"unfeasible partitions "<<endl;
+        for(auto p : unfeasiblePartitions){
+            cout<<"id "<<p.first<<endl;
+        }
+        cout<<(*it)<<endl;
         pair<int, int> data = whichPartitionToFuseWith(unfeasiblePartitions.at((*it)));
         // Se for "-1" então ela está conectada à uma partição feasible
     
@@ -971,7 +975,7 @@ void GPX2::fusePartitions()
             // Carrega o valor de conexões entre elas
             numberOfConnections.push_back(data.second);
             // Apaga da lista "para checar"
-            partitionsToCheck.erase(remove(partitionsToCheck.begin(), partitionsToCheck.end(), data.first), partitionsToCheck.end());
+            //partitionsToCheck.erase(remove(partitionsToCheck.begin(), partitionsToCheck.end(), data.first), partitionsToCheck.end());
         }
     }
 
