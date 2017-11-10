@@ -1,3 +1,4 @@
+*.d
 
 sources/*.o
 bin/

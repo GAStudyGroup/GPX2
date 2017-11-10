@@ -9,26 +9,26 @@ CC := g++ -std=gnu++17
 CFLAGS := -fsanitize=leak -fsanitize=address -Wall -g
 INC_FOLDER := -I includes
 SRC_FOLDER := sources
+HISTORY := history
 
 EXE_OUT := bin/GA
 DIST_OUT := bin/dist
 
 SOURCES := $(shell find $(SRC_FOLDER) -type f -name *.cpp)
 
-all: build run
+all: $(EXE_OUT)
 
-build:
-	@mkdir -p bin
-	#@clear
-	$(CC) $(SOURCES) $(INC_FOLDER) -o $(EXE_OUT) $(CFLAGS)
+$(EXE_OUT): $(SOURCES:.cpp=.o)
+	$(CC) -o $@ $^ $(CFLAGS)
 
-run:
-	@./$(EXE_OUT)
+%.o: %.cpp
+	$(CC) -c $< $(INC_FOLDER) -o $@ $(CFLAGS)
 
 clean:
-	rm bin/*
+	-rm -f $(SRC_FOLDER)/*.o *.d
 
-dist:
-	$(CC) $(SOURCES) $(INC_FOLDER) -o $(DIST_OUT) -O3
-	$(DIST_OUT)
+-include $(SOURCES:.cpp=.d)
 
+%.d: %.cpp
+	#@mkdir -p $(HISTORY)
+	g++ $< -MM -MT '$*.o $*.d ' -MD $(INC_FOLDER)
