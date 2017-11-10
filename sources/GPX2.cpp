@@ -3,20 +3,28 @@
 Tour GPX2::crossover(Tour redT, Tour blueT)
 {
     GPX2 obj;
+    cout<<"step 1"<<endl;
     // Step 1
     obj.red = obj.tourToMap(redT);
     obj.blue = obj.tourToMap(blueT);
 
+
+    cout<<"step 2"<<endl;
     // Step 2
     obj.createGhosts();
 
 
+    cout<<"step 3"<<endl;
     // Step 3 
     obj.joinGraphs();
 
+
+    cout<<"step 4"<<endl;
     // Step 4
     obj.cutCommonEdges();
 
+
+    cout<<"step 5"<<endl;
     // Step 5
     obj.findAllPartitions();
     obj.cleanInsideAccess();
@@ -26,17 +34,27 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
         return ((redT.getFitness() > blueT.getFitness()) ? redT : blueT);
     }
 
+
+    cout<<"step 6"<<endl;
     // Step 6
     obj.checkAllPartitions();
+
+    cout<<"fusion "<<endl;
     // Fusion
     obj.fusion();
 
+
+    cout<<"step 7"<<endl;
     // Step 7
     obj.choose();
 
+
+    cout<<"step 8"<<endl;
     // Step 8
     obj.buildOffspring();
 
+
+    cout<<"step 9"<<endl;
     Tour t;
     if (obj.offspringChoosen == Parent::RED) {
         obj.removeGhosts(obj.red);
@@ -421,18 +439,23 @@ void GPX2::fusion()
     while ((unfeasiblePartitions.size() > 1)) {
 
         //verifica quais partições estão conectadas
+        cout<<"ver 1"<<endl;
         atLeastOneConnected = unfeasiblePartitionsConnected();
         if (!atLeastOneConnected) {
             break;
         }
 
         // Conta o total de vezes que cada partição se conecta com outra unfeasible, ou seja, os nós que possuem um "caminho" de uma partição à outra
+        cout<<"count 2"<<endl;
         countConnectedPartitions(); 
 
         // Executa a fusão das partições de acordo com as verificações feitas
+
+        cout<<"fuse 3"<<endl;
         fusePartitions();
 
         // Irá verificar se a fusão gerou uma partição feasible, caso aconteça ela será colocada nas partições feasible (allPartitions)
+        cout<<"check 4"<<endl;
         checkUnfeasiblePartitions();
     }
 }
@@ -935,6 +958,7 @@ void GPX2::fusePartitions()
         partitionsToCheck.push_back(p.first);
     }
 
+    cout<<"escolher as fusões"<<endl;
     // Percorre as partições gerando um par de fusões
     for (auto it = partitionsToCheck.begin(); it != partitionsToCheck.end(); it++) {
     
@@ -959,6 +983,7 @@ void GPX2::fusePartitions()
 
             Outra fusão possível 2,3 -> ela não pode ser realizada pois a unfeasiblePartition 2 já está fundida com a 1
     */
+    cout<<"primeira validacao"<<endl;
     for (unsigned i = 0; i < fuseWith.size(); i++) {
         for (unsigned j = 0; j < fuseWith.size(); j++) {
             if (fuseWith.at(i).first == fuseWith.at(j).second) {
@@ -978,6 +1003,7 @@ void GPX2::fusePartitions()
 
             Será mantida a fusão 2,3 e será eliminada a fusão 1,2
     */
+    cout<<"segunda validacao"<<endl;
     for (unsigned i = 0; i < fuseWith.size(); i++) {
         for (unsigned j = 0; j < fuseWith.size(); j++) {
             
@@ -998,6 +1024,8 @@ void GPX2::fusePartitions()
         }
     }
     
+
+    cout<<"fusao"<<endl;
     // Início da execução da fusão em si
     for (auto p : fuseWith) {
 

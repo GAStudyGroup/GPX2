@@ -9,6 +9,8 @@
 #include <vector>
 #include <stdlib.h>
 #include "City.hpp"
+#include "Population.hpp"
+#include "Map.hpp"
 
 using std:: ifstream;
 using std:: string;
@@ -16,6 +18,7 @@ using std:: cout;
 using std:: regex;
 using std:: vector;
 using std:: ostringstream;
+using std::to_string;
 
 
 class ImportData{
@@ -29,6 +32,8 @@ public:
    string getcomment();
    void printInfos();
    string getInfos();
+
+   Population importFirstPopulation(Map,string,unsigned);
 private:
    string tspName="N/A";
    string type="N/A";

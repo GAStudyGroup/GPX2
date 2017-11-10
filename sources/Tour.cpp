@@ -29,10 +29,10 @@ double Tour::distance(const int a,const int b){  // Retorno da distancia entre d
 }
 
 ostream& operator<<(ostream &output,Tour &t){  // Overload de operador para impressão da população
-    int i{0};
+    
     for(City c : t.getRoute()){
-        output<<setfill(' ')<<setw(3)<<i<<": "<<c<<endl;
-        ++i;
+        output<<"\t"<<c<<endl;
+        
     }
     output<<"Fitness: "<<t.getFitness()<<endl;
     //output<<"Distance: "<<t.dist<<endl;

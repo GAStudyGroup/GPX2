@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include <limits>
 #include "Tour.hpp"
 
 using std::cout;
@@ -11,6 +12,7 @@ using std::vector;
 using std::ostream;
 using std::setfill;
 using std::setw;
+using std::numeric_limits;
 
 class Population{
 
@@ -21,7 +23,9 @@ public:
 
    vector<Tour>& getPopulation();
 
-   void addNewTour(Tour&); 
+   void addNewTour(Tour); 
+
+   double bestFitness();
 private:
    vector<Tour> population;
 };

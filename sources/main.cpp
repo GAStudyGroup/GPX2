@@ -1,23 +1,32 @@
 #include <iostream>
-
-#include <fstream>
+#include <algorithm>
+#include <cstdlib>
+#include <ctime>
 
 #include "Map.hpp"
 #include "Population.hpp"
 #include "ImportData.hpp"
+#include "GPX2.hpp"
 
 using std::cout;
 using std::endl;
 using std::stoi;
-using std::to_string;
 using std::invalid_argument;
+using std::random_shuffle;
+using std::srand;
 
-using std:: ifstream;
+void GA(string,unsigned);
+bool stop(Population);
+double compareDouble(const double,const double,const double = 0.000001);
+Population generateNewPopulation(Population);
+
 
 //primeiro argumento tour_name, segundo tamanho da pop
 int main(int argc, char *argv[]){
     string name{""};
-    int popSize{0};
+    unsigned popSize{0};
+    
+    srand(time(NULL));
 
     if(argc == 3){
         try{
@@ -40,21 +49,70 @@ int main(int argc, char *argv[]){
     return 0;
 }
 
-void GA(string name,int popSize){
+void GA(string name,unsigned popSize){
 
     Map map;
+    Population pop;
 
     {
         ImportData dataFile(name);
+        //carrega o mapa
         map.setCityList(dataFile.getCitiesCoord());
+
+        //carrega a primeira população
+        pop = dataFile.importFirstPopulation(map,name,popSize);
     }
+    int i{0};
+    while(stop(pop)){
+        cout<<"new pop"<<endl;
+        pop = generateNewPopulation(pop);
+        cout<<"pop size "<<pop.getPopulation().size()<<endl;
+        if(i%100 == 0){
+            cout<<"gen "<<i<<" best fitness "<<pop.bestFitness()<<endl;
+        }
+        i++;
+    }
+    cout<<"THE END"<<endl;
+    cout<<"gen "<<i<<" best fitness "<<pop.bestFitness()<<endl;
 
 }
 
-void readLKPop(Population pop,string name,int popSize){
-    ifstream file;
-    for(unsigned i=1;i<=popSize;i++){
-        file.open(name+"_exec_1_"+to_string(i)+"_"+to_string(popSize)+".dat");
+bool stop(Population pop){
+
+    int static generationsWithoutChange{0};
+    double static bestFitness{0};
+    double currentFitness{pop.bestFitness()};
+
+    if(bestFitness > currentFitness){
+        bestFitness = currentFitness;
+        generationsWithoutChange = 0;
+        cout<<"new best fitness: "<<bestFitness<<endl;
+    }else{
+        generationsWithoutChange++;
     }
-    
+
+    if(generationsWithoutChange >= 1000){
+        return(false);
+    }else{
+        return(true);
+    }
+}
+
+Population generateNewPopulation(Population pop){
+    unsigned size = pop.getPopulation().size();
+    Population newPop;
+
+    for(unsigned i=0;i<size;i++){
+        if(i==(size-1)){
+            newPop.addNewTour(GPX2::crossover(pop.getPopulation().at(i),pop.getPopulation().at(0)));
+        }else{
+            newPop.addNewTour(GPX2::crossover(pop.getPopulation().at(i),pop.getPopulation().at(i+1)));
+        }
+    }
+
+    return newPop;
+}
+
+double compareDouble(const double a,const double b,const double delta){
+    return(abs(a-b)<delta);
 }

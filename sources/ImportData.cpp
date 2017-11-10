@@ -3,7 +3,6 @@
 ImportData::ImportData(string nome)
 {
     string input;
-    int cityId{0};
     cout << "Importando Arquivo \n";
     myfile.open(nome+".tsp");
     if(!myfile.is_open()){
@@ -161,4 +160,28 @@ string ImportData:: getcomment(){
     }else{
         return comment;
     }
+}
+
+Population ImportData::importFirstPopulation(Map map,string name,unsigned popSize){
+    ifstream file;
+    string word{""};
+    Population pop;
+    for(unsigned i=1;i<=popSize;i++){
+        string fileName{name+"_exec_1_sol_"+to_string(i)+"_"+to_string(popSize)+".dat"};
+        file.open(fileName);
+        if(!file.is_open()){
+            cout<<"error reading file"<<endl;
+            exit(EXIT_FAILURE);
+        }
+
+        Tour newT;
+        newT.getRoute().reserve(popSize);
+        while(file>>word){
+            newT.getRoute().push_back(map.getCityById(stoi(word)));
+        }
+        file.close();
+
+        pop.addNewTour(newT);
+    }
+    return(pop);
 }

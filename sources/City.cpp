@@ -3,6 +3,7 @@
 
 // Construtores
 City::City(){
+    this->id = 0;
     this->x = 0;
     this->y = 0;
 }
@@ -26,7 +27,7 @@ void City::setId(const int id){this->id = id;}
 // Overload de operadores
 
 bool City::operator==(const City &c) const{  // Overload para comparação de city==city
-    if((c.getX() == this->x) && (c.getY() == this->y) ){
+    if((c.getX() == this->x) && (c.getY() == this->y) && (c.getId() == this->id)){
         return(true);
     }else{
         return(false);
@@ -34,7 +35,7 @@ bool City::operator==(const City &c) const{  // Overload para comparação de ci
 }
 
 ostream& operator<<(ostream &output,const City &c){  // Overload para impressão da população
-    output<<setfill(' ')<<"x: "<<setw(6)<<c.getX()<<" y: "<<setw(6)<<c.getY();
+    output<<setfill(' ')<<"id: "<<setw(6)<<c.getId()<<" x: "<<setw(6)<<c.getX()<<" y: "<<setw(6)<<c.getY();
     return(output);
 }
 
