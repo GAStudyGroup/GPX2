@@ -17,7 +17,7 @@ ImportData::ImportData(string nome)
         regexManager(input);
         if (findIgnoredWords(input))
         {
-            reader(flag, input, cityId);
+            reader(flag, input);
         }
     }
 }
@@ -75,7 +75,7 @@ bool ImportData::findIgnoredWords(string input)
     return true;
 }
 
-void ImportData::reader(string flag, string input, int &id)
+void ImportData::reader(string flag, string input)
 {
     if (flag == "name")
     {
@@ -110,14 +110,14 @@ void ImportData::reader(string flag, string input, int &id)
     }
     else if (flag == "number" && flagaux == "wait for number")
     {
-        //  cout << "I: " << input;
+        int id = std::stod(input);
+            //cout << "I: " << input;
         myfile >> input;
         double x = std::stod(input);
-        //   cout << "\t X: " << input;
+            //cout << "\t X: " << input;
         myfile >> input;
         double y = std::stod(input);
-        //     cout << "\t Y: " << input << "\n";
-        id++;
+            //cout << "\t Y: " << input << "\n";
         citiescoord.push_back(City(id,x,y));
     }
 }
