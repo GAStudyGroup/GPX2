@@ -10,7 +10,7 @@ CFLAGS := -fsanitize=leak -fsanitize=address -Wall
 INC_FOLDER := -I includes
 SRC_FOLDER := sources
 
-EXE_OUT := bin/main
+EXE_OUT := bin/GA
 DIST_OUT := bin/dist
 
 SOURCES := $(shell find $(SRC_FOLDER) -type f -name *.cpp)

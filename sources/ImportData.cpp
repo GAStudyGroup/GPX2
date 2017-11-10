@@ -5,7 +5,7 @@ ImportData::ImportData(string nome)
     string input;
     int cityId{0};
     cout << "Importando Arquivo \n";
-    myfile.open(nome);
+    myfile.open(nome+".tsp");
     if(!myfile.is_open()){
         cout <<"Falha na leitura do arquivo" <<endl;
         exit(EXIT_FAILURE);
