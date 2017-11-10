@@ -974,11 +974,16 @@ void GPX2::fusePartitions()
             fuseWith.push_back(make_pair((*it), data.first));
             // Carrega o valor de conexões entre elas
             numberOfConnections.push_back(data.second);
-            // Apaga da lista "para checar"
-            //partitionsToCheck.erase(remove(partitionsToCheck.begin(), partitionsToCheck.end(), data.first), partitionsToCheck.end());
         }
     }
 
+    for(auto f : fuseWith){
+        cout<<f.first<<" with "<<f.second<<"\n";
+    }
+    cout<<endl;
+
+    cout<<"continue..."<<endl;
+    std::getchar();
 
     /* 
         Verifica se uma partição foi utilizada em uma fusão, caso tenha sido então ela não pode ser fundida com outra
@@ -1032,7 +1037,7 @@ void GPX2::fusePartitions()
     cout<<"fusao"<<endl;
     // Início da execução da fusão em si
     for (auto p : fuseWith) {
-
+        cout<<"FUSÃO "<<p.first<<" with "<<p.second<<endl;
         // Não precisa mudar o custo pois a checkPartition não verifica isso
         Partition* p1Ptr = unfeasiblePartitions.at(p.first);
         Partition* p2Ptr = unfeasiblePartitions.at(p.second);
@@ -1099,6 +1104,7 @@ void GPX2::fusePartitions()
         p1Ptr->getConnections().clear();
         delete p2Ptr;
         unfeasiblePartitions.erase(p.second);
+        cout<<"OK"<<endl;
     }
 }
 

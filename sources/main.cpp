@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
     string name{""};
     unsigned popSize{0};
     
-    srand(time(NULL));
+    //srand(time(NULL));
 
     if(argc == 3){
         try{
