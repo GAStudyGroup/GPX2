@@ -42,7 +42,7 @@ private:
    int dimension;
    void regexManager(string);
    bool findIgnoredWords(string);
-   void reader(string, string, int&);
+   void reader(string, string);
 };
 
 #endif
