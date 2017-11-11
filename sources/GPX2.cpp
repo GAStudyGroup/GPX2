@@ -125,12 +125,15 @@ void GPX2::createGhosts()
 
         string idKey = city.first;
         if (idKey.find(ghostToken) == string::npos) { // the node is not a ghost
-
+            cout<<"bug 0"<<endl;
             for (unsigned i = 0; i < 2; i++) {
-                isGhost.insert(city.second->getEdges()[i].first);
-                isGhost.insert(blue[idKey]->getEdges()[i].first);
+                cout<<"insert 1"<<endl;
+                isGhost.insert(city.second->getEdges().at(i).first);
+                cout<<"insert 2 idKey: "<<idKey<<endl;
+                isGhost.insert(blue.at(idKey)->getEdges().at(i).first);
+                cout<<"end"<<endl;
             }
-
+            cout<<"bug 1"<<endl;
             if (isGhost.size() == 4) { // node with degree 4
                 string ghostID = idKey + ghostToken;
                 double x = city.second->getX(), y = city.second->getY();
@@ -149,25 +152,25 @@ void GPX2::createGhosts()
 
 void GPX2::insertGhost(string& id, CityMap& tour, CityNode* ghost)
 {
-    CityNode::node edgeFirst = tour[id]->getEdges()[0]; // edge que será mandado para o ghost
+    CityNode::node edgeFirst = tour.at(id)->getEdges().at(0); // edge que será mandado para o ghost
     tour[id]->deleteEdge(0); // delete edge
     tour[id]->addEdge(CityNode::node(ghost->getId(), 0)); // adiciona ao node "REAL" o edge de ligação com o ghost
 
     for (unsigned i = 0; i < 2; i++) {
         // percorre os edges de ligação com o nó que foi para o ghost
-        CityNode::node edge = tour[edgeFirst.first]->getEdges()[i];
+        CityNode::node edge = tour.at(edgeFirst.first)->getEdges().at(i);
 
         if (edge.first.compare(id) == 0) { // verifica se é a ligação
 
             // adiciona a ligação ao ghost e deleta do "REAL"
-            tour[edgeFirst.first]->deleteEdge(i);
-            tour[edgeFirst.first]->addEdge(CityNode::node(ghost->getId(), edgeFirst.second));
+            tour.at(edgeFirst.first)->deleteEdge(i);
+            tour.at(edgeFirst.first)->addEdge(CityNode::node(ghost->getId(), edgeFirst.second));
         }
     }
 
     ghost->addEdge(edgeFirst); // faz o ghost se ligar ao edge
     ghost->setAccess(true);
-    ghost->addEdge(CityNode::node(tour[id]->getId(), 0)); // adiciona o REAL como um edge do ghost
+    ghost->addEdge(CityNode::node(tour.at(id)->getId(), 0)); // adiciona o REAL como um edge do ghost
 
     tour.insert(make_pair(ghost->getId(), ghost)); // insere o ghost no mapPai
 }
@@ -986,26 +989,31 @@ void GPX2::fusePartitions()
         if(fuseWith.size()<2){
             break;
         }
-        int maxCon{-1}, maxPos{-1};
-        for(unsigned i=0; i<tmp.size();i++){
-            if(tmp[i].second > maxCon){
-                maxCon = tmp[i].second;
-                maxPos = i;
+        if(!tmp.empty()){
+            int maxCon{-1}, maxPos{-1};
+            for(unsigned i=0; i<tmp.size();i++){
+                if(tmp[i].second > maxCon){
+                    maxCon = tmp[i].second;
+                    maxPos = i;
+                }
             }
-        }
-        
-        tmp.erase(tmp.begin() + maxPos);
-        
-        for(const auto &unfCon : tmp){
-            for(auto it=fuseWith.begin();it!=fuseWith.end();){
-                if(unfCon==(*it)){
-                    
-                    it = fuseWith.erase(it);
-                }else{
-                    it++;
+            
+            
+            tmp.erase(tmp.begin() + maxPos);
+            
+            for(const auto &unfCon : tmp){
+                for(auto it=fuseWith.begin();it!=fuseWith.end();){
+
+                    if(unfCon==(*it)){
+                        
+                        it = fuseWith.erase(it);
+                    }else{
+                        it++;
+                    }
                 }
             }
         }
+        
     }
 
     // Início da execução da fusão em si
