@@ -3,28 +3,28 @@
 Tour GPX2::crossover(Tour redT, Tour blueT)
 {
     GPX2 obj;
-    cout<<"step 1"<<endl;
+    //cout<<"step 1"<<endl;
     // Step 1
     obj.red = obj.tourToMap(redT);
     obj.blue = obj.tourToMap(blueT);
 
 
-    cout<<"step 2"<<endl;
+    //cout<<"step 2"<<endl;
     // Step 2
     obj.createGhosts();
 
 
-    cout<<"step 3"<<endl;
+    //cout<<"step 3"<<endl;
     // Step 3 
     obj.joinGraphs();
 
 
-    cout<<"step 4"<<endl;
+    //cout<<"step 4"<<endl;
     // Step 4
     obj.cutCommonEdges();
 
 
-    cout<<"step 5"<<endl;
+    //cout<<"step 5"<<endl;
     // Step 5
     obj.findAllPartitions();
     obj.cleanInsideAccess();
@@ -35,26 +35,26 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     }
 
 
-    cout<<"step 6"<<endl;
+    //cout<<"step 6"<<endl;
     // Step 6
     obj.checkAllPartitions();
 
-    cout<<"fusion "<<endl;
+    //cout<<"fusion "<<endl;
     // Fusion
     obj.fusion();
 
 
-    cout<<"step 7"<<endl;
+    //cout<<"step 7"<<endl;
     // Step 7
     obj.choose();
 
 
-    cout<<"step 8"<<endl;
+    //cout<<"step 8"<<endl;
     // Step 8
     obj.buildOffspring();
 
 
-    cout<<"step 9"<<endl;
+    //cout<<"step 9"<<endl;
     Tour t;
     if (obj.offspringChoosen == Parent::RED) {
         obj.removeGhosts(obj.red);

@@ -95,7 +95,7 @@ bool stop(Population pop){
         generationsWithoutChange++;
     }
 
-    if(generationsWithoutChange == 100){
+    if(generationsWithoutChange == 30){
         return(false);
     }else{
         return(true);
