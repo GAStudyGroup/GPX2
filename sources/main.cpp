@@ -63,15 +63,15 @@ void GA(string name,unsigned popSize){
         pop = dataFile.importFirstPopulation(map,name,popSize);
     }
 
-    for(Tour t : pop.getPopulation()){
-        cout<<t<<endl;
-    }
-    cout<<"best fitness "<<pop.bestFitness()<<endl;
+    
 
     int i{0};
     while(stop(pop)){
         pop = generateNewPopulation(pop);
         if(i%10 == 0){
+            for(Tour t : pop.getPopulation()){
+                cout<<t<<endl;
+            }
             cout<<"gen "<<i<<" best fitness "<<pop.bestFitness()<<endl;
         }
         i++;
@@ -84,8 +84,8 @@ void GA(string name,unsigned popSize){
 bool stop(Population pop){
 
     int static generationsWithoutChange{0};
-    double static bestFitness{0};
-    double currentFitness{pop.bestFitness()};
+    int static bestFitness{0};
+    int currentFitness{pop.bestFitness()};
 
     if(bestFitness > currentFitness){
         bestFitness = currentFitness;

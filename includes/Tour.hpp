@@ -10,6 +10,7 @@ using std::vector;
 using std::ostream;
 using std::setfill;
 using std::setw;
+using std::round;
 
 class Tour {
 
@@ -23,7 +24,7 @@ public:
 
     vector<City>& getRoute();
 
-    double getFitness();
+    int getFitness();
 
     double distance(const int, const int);
 

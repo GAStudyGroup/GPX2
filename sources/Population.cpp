@@ -6,8 +6,8 @@ vector<Tour>& Population::getPopulation(){ return(population); }
 
 void Population::addNewTour(Tour t){ population.push_back(t); }
 
-double Population::bestFitness(){
-    double min = numeric_limits<double>::max(),fitness{0.0};
+int Population::bestFitness(){
+    int min = numeric_limits<int>::max(),fitness{0};
     for(Tour t : population){
         fitness = t.getFitness();
         if(min > fitness){

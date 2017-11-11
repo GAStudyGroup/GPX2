@@ -25,7 +25,7 @@ public:
 
    void addNewTour(Tour); 
 
-   double bestFitness();
+   int bestFitness();
 private:
    vector<Tour> population;
 };

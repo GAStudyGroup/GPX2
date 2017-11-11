@@ -20,9 +20,9 @@ call(["./bin/GA", tour_name, str(population_size)])
 
 print("\n\nclean up\n")
 
-'''
+
 #apagar a pop inicial
 for f in os.listdir("."): 
     if f.endswith(".dat"):  
         os.remove(f)
-'''
+
