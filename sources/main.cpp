@@ -66,6 +66,7 @@ void GA(string name,unsigned popSize){
     for(Tour t : pop.getPopulation()){
         cout<<t<<endl;
     }
+    cout<<"best fitness "<<pop.bestFitness()<<endl;
 
     int i{0};
     while(stop(pop)){
