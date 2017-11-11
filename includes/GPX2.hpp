@@ -9,6 +9,8 @@
 #include <stack>
 #include <string>
 
+#include <fstream>
+
 #include "City.hpp"
 #include "CityNode.hpp"
 #include "Partition.hpp"
@@ -199,7 +201,7 @@ private:
     // Distância parcial, usado para medir o melhor pai em cada partição
     double parcialDistance(string, string, CityMap, Partition*);
     // Imprimir o mapa
-    void printMap(CityMap&);
+    void static printMap(CityMap&,std::ostream&);
     // Retorna a distância necessária para percorrer todo o grafo
     double totalDistance(CityMap&);
     // Retorna o ID da partição que a cidade está contida

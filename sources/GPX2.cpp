@@ -2,12 +2,42 @@
 
 Tour GPX2::crossover(Tour redT, Tour blueT)
 {
+    cout<<"new cross"<<endl;
+    std::cin.get();
     GPX2 obj;
     cout<<"step 1"<<endl;
     // Step 1
     obj.red = obj.tourToMap(redT);
     obj.blue = obj.tourToMap(blueT);
 
+    if(obj.red.size()!=redT.getRoute().size()){
+        std::ofstream file;
+        file.open("broken_tour_red.txt");
+        file<<"size: "<<redT.getRoute().size()<<endl;
+        file<<redT<<endl;
+        file.close();
+
+        file.open("broken_map_red.txt");
+        printMap(obj.red,file);
+        file.close();
+        exit(EXIT_FAILURE);
+    }
+    if(obj.blue.size()!=blueT.getRoute().size()){
+        std::ofstream file;
+        file.open("broken_tour_blue.txt");
+        file<<"size: "<<blueT.getRoute().size()<<endl;
+        file<<blueT<<endl;
+        file.close();
+
+        file.open("broken_map_blue.txt");
+        printMap(obj.blue,file);
+        file.close();
+        exit(EXIT_FAILURE);
+    }
+
+    if(obj.red.size()!=obj.blue.size()){
+        cout<<"BUG-SIZE-GPX2 red size: "<<obj.red.size()<<", blue size: "<<obj.blue.size()<<" | red tuor size: "<<redT.getRoute().size()<<" blue tuor size: "<<blueT.getRoute().size()<<endl;
+    }
 
     cout<<"step 2"<<endl;
     // Step 2
@@ -60,12 +90,15 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
         obj.removeGhosts(obj.red);
 
         // Step 9
+        cout<<"size before mapToTour "<<obj.red.size()<<endl;
         t = obj.mapToTour(obj.red);
+        cout<<"size after "<<t.getRoute().size()<<endl;
     } else {
         obj.removeGhosts(obj.blue);
-
         // Step 9
+        cout<<"size before mapToTour "<<obj.blue.size()<<endl;
         t = obj.mapToTour(obj.blue);
+        cout<<"size after "<<t.getRoute().size()<<endl;
     }
 
     // Deletar as coisas
@@ -130,12 +163,16 @@ void GPX2::createGhosts()
                 cout<<"insert 1"<<endl;
                 isGhost.insert(city.second->getEdges().at(i).first);
                 cout<<"insert 2 idKey: "<<idKey<<endl;
+                cout<<"blue at idKey "<<blue.at(idKey)->getId()<<endl;
                 isGhost.insert(blue.at(idKey)->getEdges().at(i).first);
                 cout<<"end"<<endl;
             }
             cout<<"bug 1"<<endl;
             if (isGhost.size() == 4) { // node with degree 4
                 string ghostID = idKey + ghostToken;
+                cout<<"GHOST ID"<<ghostID<<endl;
+                std::cin.get();
+
                 double x = city.second->getX(), y = city.second->getY();
 
                 CityNode* ghostNode = new CityNode(ghostID, x, y);
@@ -583,7 +620,7 @@ void GPX2::removeGhosts(CityMap& graph)
 
 Tour GPX2::mapToTour(CityMap& mapOffspring)
 {   // Map para tour
-
+    
     Tour offspring;
     deque<string> nextToVisit;
     vector<string> isAlreadyVisited;
@@ -617,6 +654,20 @@ Tour GPX2::mapToTour(CityMap& mapOffspring)
                 nextToVisit.push_back(n.first);
             }
         }
+    }
+
+    if(mapOffspring.size()!=offspring.getRoute().size()){
+        cout<<"map size: "<<mapOffspring.size()<<", tour size: "<<offspring.getRoute().size()<<endl;
+        std::ofstream file;
+        file.open("broken_tour.txt");
+        file<<"size: "<<offspring.getRoute().size()<<endl;
+        file<<offspring<<endl;
+        file.close();
+
+        file.open("broken_map.txt");
+        printMap(mapOffspring,file);
+        file.close();
+        exit(EXIT_FAILURE);
     }
 
     return (offspring);
@@ -759,7 +810,7 @@ GPX2::SearchResult GPX2::DFS_inside(string entry, string exit, CityMap father, P
 
 double GPX2::distance(double x1, double y1, double x2, double y2)
 {
-    return (sqrt(pow((x1 - x2), 2) + pow((y1 - y2), 2)));
+    return (round(sqrt(pow((x1 - x2), 2) + pow((y1 - y2), 2))));
 }
 
 void GPX2::eraseSubVector(vector<string>& vec, vector<string>& subvec)
@@ -813,23 +864,29 @@ double GPX2::parcialDistance(string entry, string exit, CityMap father, Partitio
     return(totalDistance);
 }
 
-void GPX2::printMap(CityMap& graph)
+void GPX2::printMap(CityMap &graph,std::ostream &stream)
 {
-    /* for (map<string, CityNode*>::iterator it = m.begin(); it != m.end(); it++) {
-        cout << " " << it->first << " | " << m[it->first]->getId() << endl;
-        cout << "Acess: " << it->second->getAccess() << endl;
-        cout << "==================================" << endl;
-
-        for (int i = 0; i < it->second->getEdges().size(); i++) {
-            cout << "Edge " << i << ": " << m[it->second->getEdges().at(i).first]->getId();
-            cout << "\t#\t";
-            cout << "Distance: " << it->second->getEdges().at(i).second << endl;
+    stream<<"size: "<<graph.size()<<endl;
+    for (map<string, CityNode*>::iterator it = graph.begin(); it != graph.end(); it++) {
+        stream << " " << it->first << " | " << graph[it->first]->getId() << endl;
+        if(it->second->getAccess()){
+            stream << "Access: " << true << endl;
+        }else{
+            stream << "Access: " << false << endl;
         }
-        cout << "----------------------------------" << endl;
-        cout << endl;
-    } */
+        stream << "==================================" << endl;
 
-    deque<string> nextToVisit;
+        stream<<"connections: "<<it->second->getEdges().size()<<endl;
+        for (unsigned i = 0; i < it->second->getEdges().size(); i++) {
+            stream << "Edge " << i << ": " << graph[it->second->getEdges().at(i).first]->getId();
+            stream << "\t#\t";
+            stream << "Distance: " << it->second->getEdges().at(i).second << endl;
+        }
+        stream << "----------------------------------" << endl;
+        stream << endl;
+    }
+
+    /* deque<string> nextToVisit;
     vector<string> isAlreadyVisited;
     bool notAlreadyVisited{ false };
     bool notToVisit{ false };
@@ -837,10 +894,12 @@ void GPX2::printMap(CityMap& graph)
     CityNode* city = graph.begin()->second; // Reduzir chamadas (CityNode dentro do map)
 
     isAlreadyVisited.push_back(graph.begin()->first);
+    stream<<graph.begin()->first<<endl;
     nextToVisit.push_back(city->getEdges()[0].first);
 
     while (!nextToVisit.empty()) {
 
+        stream<<nextToVisit.front()<<endl;
         isAlreadyVisited.push_back(nextToVisit.front());
         city = graph[nextToVisit.front()];
         nextToVisit.pop_front();
@@ -854,7 +913,7 @@ void GPX2::printMap(CityMap& graph)
                 nextToVisit.push_back(n.first);
             }
         }
-    }
+    } */
 }
 
 double GPX2::totalDistance(CityMap& graph)
