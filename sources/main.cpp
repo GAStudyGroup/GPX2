@@ -20,6 +20,8 @@ using std::srand;
 void GA(string,unsigned,int);
 bool stop(Population);
 Population generateNewPopulation(Population);
+std::ofstream file;
+std::ofstream fileDebug;
 
 
 //primeiro argumento tour_name, segundo tamanho da pop
@@ -28,7 +30,7 @@ int main(int argc, char *argv[]){
     unsigned popSize{0};
     int id{0};
     
-    srand(time(NULL));
+    //srand(time(NULL));
 
     if(argc == 4){
         try{
@@ -63,23 +65,23 @@ void GA(string name,unsigned popSize,int id){
         map.setCityList(dataFile.getCitiesCoord());
 
         //carrega a primeira população
-        pop = dataFile.importFirstPopulation(map,name,popSize);
+        //pop = dataFile.importFirstPopulation(map,name,popSize);
+        pop = dataFile.importFirstPopulation(map,"log",popSize);
+
     }
 
-    for(Tour t : pop.getPopulation()){
+    /* for(Tour t : pop.getPopulation()){
         cout<<t<<"\n";
     }
-    cout.flush();
+    cout.flush(); */
     
-    std::ofstream file;
-    file.open("log_"+to_string(id)+".txt");
+    
+/*     file.open("log_"+to_string(id)+".txt");
+    fileDebug.open("log_"+to_string(id)+"_BUG.txt");
 
     int i{0},firstBestFitness{pop.bestFitness()};
     while(stop(pop)){
-        file<<"---------------------------------------------------------------------------------------------------------\ngen "<<i<<" best fitness "<<pop.bestFitness()<<"\n";
-        for(Tour t : pop.getPopulation()){
-            file<<t<<"\n";
-        }
+        file<<"BestFitness: "<<pop.bestFitness()<<endl;
 
         pop = generateNewPopulation(pop);
 
@@ -91,12 +93,8 @@ void GA(string name,unsigned popSize,int id){
     cout<<"THE END"<<endl;
     cout<<"first best fitness: "<<firstBestFitness<<endl;
     cout<<"gen "<<i<<" best fitness "<<pop.bestFitness()<<endl;
+    cout << "========================="<<endl; */
 
-    /* std::random_shuffle(pop.getPopulation().begin(),pop.getPopulation().end());
-
-    while(pop.getPopulation().size()!=4){
-        pop.getPopulation().pop_back();
-    }
     cout<<"Antes"<<endl;
     for(auto t : pop.getPopulation()){
         cout << t.getFitness() << endl;
@@ -108,7 +106,9 @@ void GA(string name,unsigned popSize,int id){
     for(auto t : pop.getPopulation()){
         cout << t.getFitness() << endl;
     }
-*/
+
+    fileDebug.flush();
+    fileDebug.close();
     file.flush();
     file.close(); 
 
@@ -131,14 +131,15 @@ bool stop(Population pop){
     if(bestFitness > currentFitness){
         bestFitness = currentFitness;
         generationsWithoutChange = 0;
-        cout<<"new best fitness: "<<bestFitness<<endl;
+        //cout<<"new best fitness: "<<bestFitness<<endl;
     }else if(totalCon==pop.getPopulation().size()){
         cout<<"all the tours are the same"<<endl;
         return(false);
     }else{
         generationsWithoutChange++;
     }
-    cout<<"tours that are the same "<<totalCon<<endl;
+    //cout<<"tours that are the same "<<totalCon<<endl;
+    //file<<"SameTours: "<<totalCon<<endl;
     if(generationsWithoutChange == 100){
         return(false);
     }else{
@@ -153,14 +154,23 @@ Population generateNewPopulation(Population pop){
     std::random_shuffle(pop.getPopulation().begin(),pop.getPopulation().end());
     
     for(unsigned i=0;i<size;i++){
+        //file << "CROSSOVER: ";
         if(i==(size-1)){
-            
             newPop.addNewTour(GPX2::crossover(pop.getPopulation().at(i),pop.getPopulation().at(0)));
-            
+            /* file<<pop.getPopulation().at(i).getFitness()<<" "<<pop.getPopulation().at(0).getFitness()<<" "<<newPop.getPopulation().back().getFitness()<<endl;
+            if(pop.getPopulation().at(i).getFitness() < newPop.getPopulation().back().getFitness() || pop.getPopulation().at(0).getFitness() < newPop.getPopulation().back().getFitness()){
+                fileDebug<<pop.getPopulation().at(i)<<endl;
+                fileDebug<<"\n\n\n\n\n\n"<<endl;
+                fileDebug<<pop.getPopulation().at(0)<<endl;
+            } */
         }else{
-            
             newPop.addNewTour(GPX2::crossover(pop.getPopulation().at(i),pop.getPopulation().at(i+1)));
-            
+            /* file<<pop.getPopulation().at(i).getFitness()<<" "<<pop.getPopulation().at(i+1).getFitness()<<" "<<newPop.getPopulation().back().getFitness()<<endl;
+            if(pop.getPopulation().at(i).getFitness() < newPop.getPopulation().back().getFitness() || pop.getPopulation().at(i+1).getFitness() < newPop.getPopulation().back().getFitness()){
+                fileDebug<<pop.getPopulation().at(i)<<endl;
+                fileDebug<<"\n\n\n\n\n\n"<<endl;
+                fileDebug<<pop.getPopulation().at(i+1)<<endl;
+            } */
         }
     }
 

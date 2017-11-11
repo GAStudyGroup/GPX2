@@ -162,7 +162,7 @@ string ImportData:: getcomment(){
     }
 }
 
-Population ImportData::importFirstPopulation(Map map,string name,unsigned popSize){
+/* Population ImportData::importFirstPopulation(Map map,string name,unsigned popSize){
     ifstream file;
     string word{""};
     Population pop;
@@ -176,6 +176,32 @@ Population ImportData::importFirstPopulation(Map map,string name,unsigned popSiz
 
         Tour newT;
         newT.getRoute().reserve(popSize);
+        while(file>>word){
+            newT.getRoute().push_back(map.getCityById(stoi(word)));
+        }
+        file.close();
+
+        pop.addNewTour(newT);
+    }
+    return(pop);
+} */
+
+Population ImportData::importFirstPopulation(Map map,string name,unsigned popSize){
+    ifstream file;
+    string word{""};
+    Population pop;
+    for(unsigned i=1;i<3;i++){
+        //string fileName{name+"_exec_1_sol_"+to_string(i)+"_"+to_string(popSize)+".dat"};
+        cout << name+"_"+to_string(i)+".log"<<endl;
+        string fileName{name+"_"+to_string(i)+".log"};
+        file.open(fileName);
+        if(!file.is_open()){
+            cout<<"error reading file"<<endl;
+            exit(EXIT_FAILURE);
+        }
+
+        Tour newT;
+        //newT.getRoute().reserve(popSize);
         while(file>>word){
             newT.getRoute().push_back(map.getCityById(stoi(word)));
         }
