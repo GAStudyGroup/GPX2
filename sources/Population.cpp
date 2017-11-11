@@ -7,14 +7,14 @@ vector<Tour>& Population::getPopulation(){ return(population); }
 void Population::addNewTour(Tour t){ population.push_back(t); }
 
 double Population::bestFitness(){
-    double max = -1*numeric_limits<double>::max(),fitness{0.0};
+    double min = numeric_limits<double>::max(),fitness{0.0};
     for(Tour t : population){
         fitness = t.getFitness();
-        if(max < fitness){
-            max = fitness;
+        if(min > fitness){
+            min = fitness;
         }
     }
-    return(max);
+    return(min);
 }
 
 ostream& operator<<(ostream &output,Population &pop){  // Overload de operador para impressão da população

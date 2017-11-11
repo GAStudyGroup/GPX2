@@ -30,5 +30,4 @@ clean:
 -include $(SOURCES:.cpp=.d)
 
 %.d: %.cpp
-	#@mkdir -p $(HISTORY)
-	g++ $< -MM -MT '$*.o $*.d ' -MD $(INC_FOLDER)
+	@g++ $< -MM -MT '$*.o $*.d ' -MD $(INC_FOLDER)

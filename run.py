@@ -3,7 +3,6 @@
 
 from subprocess import call
 #import subprocess
-import os
 
 population_size = 10
 tour_name = "att532"

@@ -31,6 +31,7 @@ class GPX2 {
 
     using CityMap = map<string, CityNode*>;
     using PartitionMap = map<int, Partition*>;
+    using unfeasibleConnection = pair<pair<int, int>,int>;
 
     enum class SearchResult { CONNECTED_TO_PARTITION,
         CONNECTED_TO_SELF,
@@ -38,6 +39,13 @@ class GPX2 {
         IS_NOT_CONNECTED };
     enum class Parent { RED,
         BLUE };
+
+    struct cmp
+    {
+        bool operator()(const pair<pair<int, int>,int> &p1, const pair<pair<int, int>,int> &p2){
+            return(!(p1.first.first==p2.first.first || p1.first.first==p2.first.second) && (p1.first.second==p2.first.first || p1.first.second==p2.first.second));
+        }
+    };
     // -------------------------------------------------
 
 public:
@@ -207,10 +215,12 @@ private:
     void countConnectedPartitions();
     // Fundir as partições
     void fusePartitions();
+    // Retorna uma lista com todas as fusões que a partição participa
+    vector<unfeasibleConnection> fusionsWithPartition(const int, set<unfeasibleConnection, cmp>&);
     // Verificar as partições unfeasible que estão conectadas
     bool unfeasiblePartitionsConnected();
     // Gerar uma lista com os IDs das partições que podem ser fundidas
-    pair<int,int> whichPartitionToFuseWith(Partition*);
+    unfeasibleConnection whichPartitionToFuseWith(Partition*);
     
     /* 
         VARIÁVEIS UTILIZADAS
@@ -223,6 +233,14 @@ private:
     CityMap blue;
     vector<Parent> partitionsChoosen;
     Parent offspringChoosen;
+
+    /* 
+        NEW FUNCTIONS
+    */
+    
+    /* bool isPairEqual(const pair<int,int> &p1, const pair<int,int> &p2){
+        return((p1.first==p2.first || p1.first==p2.second) && (p1.second==p2.first || p1.second==p2.second));
+    } */
 };
 
 #endif

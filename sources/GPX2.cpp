@@ -457,6 +457,7 @@ void GPX2::fusion()
         // Irá verificar se a fusão gerou uma partição feasible, caso aconteça ela será colocada nas partições feasible (allPartitions)
         cout<<"check 4"<<endl;
         checkUnfeasiblePartitions();
+        cout<<"passou daqui"<<endl;
     }
 }
 
@@ -912,13 +913,26 @@ int GPX2::whichPartition(const string id, PartitionMap allPartitions)
 void GPX2::checkUnfeasiblePartitions()
 {   // Função que irá verificar se foi gerada alguma partição feasible durante a fusão
 
-    for (auto p : unfeasiblePartitions) {
 
+    /* for (auto p : unfeasiblePartitions) {
+        cout<<"test "<<endl;
         if (checkPartition(p.second)) { // Checar se é feasible
 
             // se for irá ser retirada das partições unfeasible e colocada nas partições feasible
             allPartitions.insert(make_pair(p.first, p.second));
             unfeasiblePartitions.erase(p.first);
+        }
+    } */
+
+    for (auto it=unfeasiblePartitions.begin(); it!=unfeasiblePartitions.end();) {
+        cout<<"test "<<(*it).first<<endl;
+        if (checkPartition((*it).second)) { // Checar se é feasible
+            cout<<"chegou dentro"<<endl;
+            // se for irá ser retirada das partições unfeasible e colocada nas partições feasible
+            allPartitions.insert(make_pair((*it).first,(*it).second));
+            it = unfeasiblePartitions.erase(it);
+        }else{
+            it++;
         }
     }
 }
@@ -949,8 +963,8 @@ void GPX2::countConnectedPartitions()
 void GPX2::fusePartitions()
 {   // Realiza a fusão entre as partições, de acordo com as validações já realizadas
 
-    vector<int> partitionsToCheck;
-    vector<pair<int, int>> fuseWith;
+    vector<int> partitionsToCheck; 
+    set<unfeasibleConnection, cmp> fuseWith;
     vector<int> numberOfConnections;
     
     // Carrega o vetor de checagem com as partições unfesible existentes
@@ -966,19 +980,95 @@ void GPX2::fusePartitions()
             cout<<"id "<<p.first<<endl;
         }
         cout<<(*it)<<endl;
-        pair<int, int> data = whichPartitionToFuseWith(unfeasiblePartitions.at((*it)));
+        
+        pair<pair<int, int>,int> data = whichPartitionToFuseWith(unfeasiblePartitions.at((*it)));
         // Se for "-1" então ela está conectada à uma partição feasible
     
-        if (data.first != -1) {
+        if (data.first.first != -1) {
             // Carrega o par de partições para fundir
-            fuseWith.push_back(make_pair((*it), data.first));
+            fuseWith.insert(make_pair(make_pair((*it), data.first.first),data.second));
             // Carrega o valor de conexões entre elas
-            numberOfConnections.push_back(data.second);
+            numberOfConnections.push_back(data.first.second);
         }
     }
 
     for(auto f : fuseWith){
-        cout<<f.first<<" with "<<f.second<<"\n";
+        cout<<f.first.first<<" with "<<f.first.second<<" connected "<<f.second<<" times"<<"\n";
+    }
+    cout<<endl;
+
+    cout<<"continue..."<<endl;
+    std::getchar();
+
+    vector<unfeasibleConnection> fusionsToErase;
+    /* for(auto out : fuseWith){
+        int cons{-1};
+        for(auto in : fuseWith){
+            if(out.first.first==in.first.first || out.first.first==in.first.second){
+                if(out.second>in.second){
+                    cons = out.second;
+                }else{
+                    cons = in.second;
+                }
+            }
+        }
+    } */
+    /* for(auto itOut=fuseWith.begin();itOut!=fuseWith.end();itOut++){
+        for(auto itIn=fuseWith.begin();itIn!=fuseWith.end();itIn++){
+            if(itOut!=itIn){
+                if((*itOut).first.first==(*itIn).first.first || (*itOut).first.first==(*itIn).first.second){
+                    if((*itOut).second>(*itIn).second){
+                        fusionsToErase.push_back(*itIn);
+                    }else{
+                        fusionsToErase.push_back(*itOut);
+                    }
+                }
+            }
+        }
+    } */
+
+    for(const auto &p : unfeasiblePartitions){
+        vector<unfeasibleConnection> tmp = fusionsWithPartition(p.first, fuseWith);
+        int maxCon{-1};
+        for(const auto &unfCon : tmp){
+            if(unfCon.second > maxCon){
+                cout << "TMP " << unfCon.first.first << " " << unfCon.first.second << " " << unfCon.second << endl;
+                maxCon = unfCon.second;
+            }
+        }
+        tmp.erase(tmp.begin() + maxCon);
+        for(const auto &unfCon : tmp){
+            fuseWith.erase(unfCon);
+            cout << "FUSE WITH SIZE: " << fuseWith.size() << endl;
+        }
+
+    }
+
+    /* cout<<"fusions to erase"<<endl;
+    for(auto f : fusionsToErase){
+        cout<<f.first.first<<" with "<<f.first.second<<" connected "<<f.second<<" times"<<"\n";
+    }
+    cout<<endl;
+
+    cout<<"continue..."<<endl;
+    std::getchar();
+
+    for(auto f : fusionsToErase){
+        cout<<"entrou aqui"<<endl;
+        for(auto it=fuseWith.begin();it!=fuseWith.end();){
+            cout<<"entrou aqui tambem"<<endl;
+            if(f.first.first==(*it).first.first && f.first.second==(*it).first.second){
+                cout<<"apagou "<<f.first.first<<" "<<f.first.second<<endl;
+                it = fuseWith.erase(it);
+            }else{
+                it++;
+            }
+        }
+    } */
+
+    cout<<"fuse with"<<endl;
+    for(auto f : fuseWith){
+        cout<<f.first.first<<" with "<<f.first.second<<" connected "<<f.second<<" times"<<"\n";
     }
     cout<<endl;
 
@@ -992,15 +1082,7 @@ void GPX2::fusePartitions()
 
             Outra fusão possível 2,3 -> ela não pode ser realizada pois a unfeasiblePartition 2 já está fundida com a 1
     */
-    cout<<"primeira validacao"<<endl;
-    for (unsigned i = 0; i < fuseWith.size(); i++) {
-        for (unsigned j = 0; j < fuseWith.size(); j++) {
-            if (fuseWith.at(i).first == fuseWith.at(j).second) {
-                fuseWith.erase(fuseWith.begin() + i);
-            }
-        }
-    }
-
+    
     /*  
         Mesmo príncipio da validação anterior
 
@@ -1012,47 +1094,26 @@ void GPX2::fusePartitions()
 
             Será mantida a fusão 2,3 e será eliminada a fusão 1,2
     */
-    cout<<"segunda validacao"<<endl;
-    for (unsigned i = 0; i < fuseWith.size(); i++) {
-        for (unsigned j = 0; j < fuseWith.size(); j++) {
-            
-            // Não verificar o nó com ele mesmo
-            if (i != j) {
-            
-                // Partição será utilizada em duas fusões
-                if (fuseWith.at(i).second == fuseWith.at(j).second) {
-                    if (numberOfConnections.at(i) < numberOfConnections.at(j)) {
-                        numberOfConnections.erase(numberOfConnections.begin() + i);
-                        fuseWith.erase(fuseWith.begin() + i);
-                    } else {
-                        numberOfConnections.erase(numberOfConnections.begin() + j);
-                        fuseWith.erase(fuseWith.begin() + j);
-                    }
-                }
-            }
-        }
-    }
-    
 
     cout<<"fusao"<<endl;
     // Início da execução da fusão em si
     for (auto p : fuseWith) {
-        cout<<"FUSÃO "<<p.first<<" with "<<p.second<<endl;
+        cout<<"FUSÃO "<<p.first.first<<" with "<<p.first.second<<endl;
         // Não precisa mudar o custo pois a checkPartition não verifica isso
-        Partition* p1Ptr = unfeasiblePartitions.at(p.first);
-        Partition* p2Ptr = unfeasiblePartitions.at(p.second);
+        Partition* p1Ptr = unfeasiblePartitions.at(p.first.first);
+        Partition* p2Ptr = unfeasiblePartitions.at(p.first.second);
         vector<string> intermediariesNodes, accessNodesToRemove;
         
         // Deletar as entradas de conexões (connectTo) diferentes da partição que será fundida
         for (auto it = p1Ptr->getConnectedTo().begin(); it != p1Ptr->getConnectedTo().end();) {
-            if ((*it).first != p.second) {
+            if ((*it).first != p.first.second) {
                 p1Ptr->getConnectedTo().erase(it);
             } else {
                 it++;
             }
         }
         for (auto it = p2Ptr->getConnectedTo().begin(); it != p2Ptr->getConnectedTo().end();) {
-            if ((*it).first != p.first) {
+            if ((*it).first != p.first.first) {
                 p2Ptr->getConnectedTo().erase(it);
             } else {
                 it++;
@@ -1103,9 +1164,20 @@ void GPX2::fusePartitions()
         p1Ptr->getConnectedTo().clear();
         p1Ptr->getConnections().clear();
         delete p2Ptr;
-        unfeasiblePartitions.erase(p.second);
+        unfeasiblePartitions.erase(p.first.second);
         cout<<"OK"<<endl;
     }
+}
+
+vector<GPX2::unfeasibleConnection> GPX2::fusionsWithPartition(const int id, set<GPX2::unfeasibleConnection, cmp> &connections){
+    vector<GPX2::unfeasibleConnection> instances;
+
+    for(const auto &con : connections){
+        if(con.first.first == id || con.first.second == id){
+            instances.push_back(con);
+        }
+    }
+    return(instances);    
 }
 
 bool GPX2::unfeasiblePartitionsConnected()
@@ -1151,8 +1223,8 @@ bool GPX2::unfeasiblePartitionsConnected()
     }
     return (atLeastOneConnected);
 }
-
-pair<int, int> GPX2::whichPartitionToFuseWith(Partition* partition)
+ 
+GPX2::unfeasibleConnection GPX2::whichPartitionToFuseWith(Partition* partition)
 {   // Retorna um par com a partição que contém mais conexões e o total de conexões
 
     int partitionId{ -1 }, max{ -1 };
@@ -1162,5 +1234,5 @@ pair<int, int> GPX2::whichPartitionToFuseWith(Partition* partition)
             partitionId = p.first;
         }
     }
-    return (make_pair(partitionId, max));
+    return (make_pair(make_pair(partitionId, max),max));
 }
