@@ -72,3 +72,38 @@ Para melhoria, após a montagem do filho sobre os pais, é verificado qual Tour,
 ## STEP 9 - Linearização de Grafo para lista de City (Tour)
 
 Após terminado, o GPX irá retornar o Grafo filho ao estado original dos pais, forma de um Tour.
+--------------------------------------------------------------------------------------
+# GPX (Generalized Partition Crossover) for solving the TSP (Travelling Salesperson Problem)
+In this repository there are two branches, the *master* branch contains the implementation of a genetic algorithm using GPX, while the *basedev* branch contains the implementation of the GPX and its basic structures (City e Tour) to be used by others.
+
+# AG TODO 
+- [ ] Use LKH Local Search to generate the initial Population
+- [ ] Read the files and load as initialPop
+- [ ] Use GPX for generating new Populations
+- [ ] Create a log of the best individual of each generation
+- [ ] Use stagnation criterium to stop the algorithm
+
+# Execution steps of GPX
+
+## STEP 1 - Tour Mapping
+
+The Tour structure, initially , it is a city list in which its order represents the city visitation order. 
+
+To be possible of using GPX, it is necessary that the Tour be represented in the form of a graph, where the vertices are the cities, while the edges are the connections between the cities.
+
+## STEP 2 - Applicating GhostNodes
+
+The GPX uses the GhostNode concept, when two parent graphs are united may exist nodes of degree 4 , that are nodes connected to 4 other vertices.
+
+These vertices can be duplicated, therefore, a ghost node is created in the same spot of the "real" vertex, by doing this is possible to increase the partition number.
+
+## STEP 3 - Union of the Parent Graphs
+
+To be possible to create partitions it's needed that a Graph containing the union of the parents be generated, when the graphs are united, the resulting graph is an overlapping of the two parents. This graph will be called GU.
+
+## STEP 4 - Remove the overlapping edges
+
+After creating the GU it's necessary to remove the overlapping edges, that is, the edges which are in both parents. By doing theses "cuts" the partitions are created.
+
+The cuts will be described as cost 0 edges and also they will be marked as AcessNodes.
+
