@@ -1029,14 +1029,14 @@ void GPX2::fusePartitions()
 
     for(const auto &p : unfeasiblePartitions){
         vector<unfeasibleConnection> tmp = fusionsWithPartition(p.first, fuseWith);
-        int maxCon{-1};
-        for(const auto &unfCon : tmp){
-            if(unfCon.second > maxCon){
-                cout << "TMP " << unfCon.first.first << " " << unfCon.first.second << " " << unfCon.second << endl;
-                maxCon = unfCon.second;
+        int maxCon{-1}, maxPos{-1};
+        for(unsigned i=0; i<tmp.size();i++){
+            if(tmp[i].second > maxCon){
+                maxCon = tmp[i].second;
+                maxPos = i;
             }
         }
-        tmp.erase(tmp.begin() + maxCon);
+        tmp.erase(tmp.begin() + maxPos);
         for(const auto &unfCon : tmp){
             fuseWith.erase(unfCon);
             cout << "FUSE WITH SIZE: " << fuseWith.size() << endl;
