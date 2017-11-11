@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include <ctime>
 
+#include <fstream>
+
 #include "Map.hpp"
 #include "Population.hpp"
 #include "ImportData.hpp"
@@ -26,7 +28,7 @@ int main(int argc, char *argv[]){
     string name{""};
     unsigned popSize{0};
     
-    srand(time(NULL));
+    //srand(time(NULL));
 
     if(argc == 3){
         try{
@@ -63,19 +65,34 @@ void GA(string name,unsigned popSize){
         pop = dataFile.importFirstPopulation(map,name,popSize);
     }
 
+    for(Tour t : pop.getPopulation()){
+        cout<<t<<"\n";
+    }
+    cout.flush();
     
+    std::ofstream file;
+    file.open("log.txt");
 
-    int i{0};
+    int i{0},firstBestFitness{pop.bestFitness()};
     while(stop(pop)){
+        file<<"---------------------------------------------------------------------------------------------------------\ngen "<<i<<" best fitness "<<pop.bestFitness()<<"\n";
+        for(Tour t : pop.getPopulation()){
+            file<<t<<"\n";
+        }
+
         pop = generateNewPopulation(pop);
 
-        if(true){
+        if(i%10 == 0){
             cout<<"gen "<<i<<" best fitness "<<pop.bestFitness()<<endl;
         }
         i++;
     }
     cout<<"THE END"<<endl;
+    cout<<"first best fitness: "<<firstBestFitness<<endl;
     cout<<"gen "<<i<<" best fitness "<<pop.bestFitness()<<endl;
+
+    file.flush();
+    file.close();
 
 }
 

@@ -46,6 +46,14 @@ ostream& operator<<(ostream& output, const Partition& partition)
     for (string i : partition.accessNodes) {
         output << i << " ";
     }
-    output << endl;
+    output<<"connectedTo: \n";
+    for(auto a : partition.connectedTo){
+        output<<"partition "<<a.first<<" by node "<<a.second.first<<" wity "<<a.second.second<<"\n";
+    }
+    output<<"connections: \n";
+    for(auto a : partition.connections){
+        output<<a.first<<" with "<<a.second<<"\n";
+    }
+    output.flush();
     return (output);
 }

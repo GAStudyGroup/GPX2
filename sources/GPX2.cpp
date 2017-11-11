@@ -19,6 +19,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     // Step 4
     obj.cutCommonEdges();
 
+
     // Step 5
     obj.findAllPartitions();
     obj.cleanInsideAccess();
@@ -35,6 +36,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     // Fusion
     obj.fusion();
 
+
     // Step 7
     obj.choose();
 
@@ -42,6 +44,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     // Step 8
     obj.buildOffspring();
     
+
     Tour t;
     if (obj.offspringChoosen == Parent::RED) {
         obj.removeGhosts(obj.red);
@@ -433,6 +436,10 @@ void GPX2::fusion()
     // Continua a execução enquanto existir mais de uma partição para tentar realizar a fusão e elas possuirem conexões com outras
     while ((unfeasiblePartitions.size() > 1)) {
 
+        /* for(auto uP : unfeasiblePartitions){
+            cout<<*uP.second<<endl;
+        } */
+
         //verifica quais partições estão conectadas
         atLeastOneConnected = unfeasiblePartitionsConnected();
         if (!atLeastOneConnected) {
@@ -443,6 +450,10 @@ void GPX2::fusion()
         countConnectedPartitions(); 
 
         // Executa a fusão das partições de acordo com as verificações feitas
+
+        /* for(auto uP : unfeasiblePartitions){
+            cout<<*uP.second<<endl;
+        } */
 
         fusePartitions();
 
@@ -975,7 +986,6 @@ void GPX2::fusePartitions()
         }
     }
 
-
     for(const auto &p : unfeasiblePartitions){
         vector<unfeasibleConnection> tmp = fusionsWithPartition(p.first, fuseWith);
         if(fuseWith.size()<2){
@@ -1092,7 +1102,7 @@ bool GPX2::unfeasiblePartitionsConnected()
 {   // Verifica as conexões das partições unfeasible
 
     vector<string> nodesToCheck;
-    bool atLeastOneConnected;
+    bool atLeastOneConnected{false};
 
     // Pega todos os nós que serão verificados
     for (auto& it : unfeasiblePartitions) {
