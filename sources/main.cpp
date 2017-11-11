@@ -17,7 +17,7 @@ using std::invalid_argument;
 using std::random_shuffle;
 using std::srand;
 
-void GA(string,unsigned);
+void GA(string,unsigned,int);
 bool stop(Population);
 Population generateNewPopulation(Population);
 
@@ -26,13 +26,15 @@ Population generateNewPopulation(Population);
 int main(int argc, char *argv[]){
     string name{""};
     unsigned popSize{0};
+    int id{0};
     
-    //srand(time(NULL));
+    srand(time(NULL));
 
-    if(argc == 3){
+    if(argc == 4){
         try{
             name = argv[1];
             popSize = stoi(argv[2]);
+            id = stoi(argv[3]);
         }catch(invalid_argument &i_a){
             cout<<"Invalid population size! "<<i_a.what()<<endl;
             return(0);
@@ -45,12 +47,12 @@ int main(int argc, char *argv[]){
         return(0);
     }
 
-    GA(name,popSize);
+    GA(name,popSize,id);
 
     return 0;
 }
 
-void GA(string name,unsigned popSize){
+void GA(string name,unsigned popSize,int id){
 
     Map map;
     Population pop;
@@ -70,10 +72,10 @@ void GA(string name,unsigned popSize){
     cout.flush();
     
     std::ofstream file;
-    file.open("log.txt");
+    file.open("log_"+to_string(id)+".txt");
 
     int i{0},firstBestFitness{pop.bestFitness()};
-/*     while(stop(pop)){
+    while(stop(pop)){
         file<<"---------------------------------------------------------------------------------------------------------\ngen "<<i<<" best fitness "<<pop.bestFitness()<<"\n";
         for(Tour t : pop.getPopulation()){
             file<<t<<"\n";
@@ -88,9 +90,9 @@ void GA(string name,unsigned popSize){
     }
     cout<<"THE END"<<endl;
     cout<<"first best fitness: "<<firstBestFitness<<endl;
-    cout<<"gen "<<i<<" best fitness "<<pop.bestFitness()<<endl; */
+    cout<<"gen "<<i<<" best fitness "<<pop.bestFitness()<<endl;
 
-    std::random_shuffle(pop.getPopulation().begin(),pop.getPopulation().end());
+    /* std::random_shuffle(pop.getPopulation().begin(),pop.getPopulation().end());
 
     while(pop.getPopulation().size()!=4){
         pop.getPopulation().pop_back();
@@ -106,9 +108,9 @@ void GA(string name,unsigned popSize){
     for(auto t : pop.getPopulation()){
         cout << t.getFitness() << endl;
     }
-
+*/
     file.flush();
-    file.close();
+    file.close(); 
 
 }
 
@@ -152,13 +154,13 @@ Population generateNewPopulation(Population pop){
     
     for(unsigned i=0;i<size;i++){
         if(i==(size-1)){
-            cout<<"F1: "<<pop.getPopulation().at(i).getFitness()<<" F2: "<<pop.getPopulation().at(0).getFitness()<<endl;
+            
             newPop.addNewTour(GPX2::crossover(pop.getPopulation().at(i),pop.getPopulation().at(0)));
-            cout<<"Offspring: "<<newPop.getPopulation().back().getFitness()<<endl;
+            
         }else{
-            cout<<"F1: "<<pop.getPopulation().at(i).getFitness()<<" F2: "<<pop.getPopulation().at(i+1).getFitness()<<endl;
+            
             newPop.addNewTour(GPX2::crossover(pop.getPopulation().at(i),pop.getPopulation().at(i+1)));
-            cout<<"Offspring: "<<newPop.getPopulation().back().getFitness()<<endl;
+            
         }
     }
 
