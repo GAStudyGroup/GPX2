@@ -44,13 +44,17 @@ class GPX2 {
     struct cmp
     {
         bool operator()(const pair<pair<int, int>,int> &p1, const pair<pair<int, int>,int> &p2){
-            return(!(p1.first.first==p2.first.first || p1.first.first==p2.first.second) && (p1.first.second==p2.first.first || p1.first.second==p2.first.second));
+            bool first = (p1.first.first==p2.first.first || p1.first.first==p2.first.second);
+            bool second = (p1.first.second==p2.first.first || p1.first.second==p2.first.second);
+            return(!(first && second));
         }
     };
     struct cmp2
     {
         bool operator()(const pair<string, string> &p1, const pair<string, string> &p2){
-            return((!(p1.first.compare(p2.first)) || !(p1.first.compare(p2.second))) && (!(p1.second.compare(p2.first)) || !(p1.second.compare(p2.second))));
+            bool first = (!(p1.first.compare(p2.first)) || !(p1.first.compare(p2.second)));
+            bool second = (!(p1.second.compare(p2.first)) || !(p1.second.compare(p2.second)));
+            return(!(first && second));
         }
     };
     // -------------------------------------------------

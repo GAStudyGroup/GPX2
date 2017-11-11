@@ -486,7 +486,7 @@ void GPX2::choose()
         vector<string> accessVec = p.second->getAccessNodes();
         for(unsigned i=0;i<accessVec.size();i++){
             for(unsigned j=0;j<accessVec.size();j++){
-                if(i!=j){
+                if(i != j){
                     pair<SearchResult,vector<string>> result = DFS_inside(accessVec.at(i),accessVec.at(j),red,p.second);
                     cout<<"testing "<<accessVec.at(i)<<" with "<<accessVec.at(j)<<" result "<<(result.first==SearchResult::IS_CONNECTED?("IS_CONNECTED"):("IS_NOT_CONNECTED"))<<endl;
                     if(result.first==SearchResult::IS_CONNECTED){
