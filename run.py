@@ -4,13 +4,13 @@
 from subprocess import call
 import os
 
-population_size = 30
+population_size = 50
 tour_name = "a280"
 
 print("Generating population for problem "+tour_name+" with population size "+str(population_size)+"\n")
 
 #gerar a pop inicial
-call(["./bin/linkern", "-S"+tour_name, "-R"+str(population_size), tour_name+".tsp"])
+#call(["./bin/linkern", "-S"+tour_name, "-R"+str(population_size), tour_name+".tsp"])
 
 print("\n\nStarting GA\n")
 
