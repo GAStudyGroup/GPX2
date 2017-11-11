@@ -397,11 +397,11 @@ bool GPX2::checkPartition(Partition* partition)
             for (unsigned j = 0; j < size; j++) {
 
                 if (i != j) {
-                    vector<string> nodesVisited;
-                    if (DFS_inside(access.first, partition->getAccessNodes()[j], red, partition, nodesVisited) == SearchResult::IS_CONNECTED) {
+                    pair<SearchResult,vector<string>> result = DFS_inside(access.first, partition->getAccessNodes()[j], red, partition);
+                    if (result.first == SearchResult::IS_CONNECTED) {
                         access.second = partition->getAccessNodes()[j];
                         foundConnected = true;
-                        eraseSubVector(redNodes, nodesVisited);
+                        eraseSubVector(redNodes, result.second);
                         break;
                     }
                 }
@@ -411,9 +411,9 @@ bool GPX2::checkPartition(Partition* partition)
             }
             //verifica no blue se os mesmos pontos de entrada e saida funcionam
             {
-                vector<string> nodesVisited;
-                if (DFS_inside(access.first, access.second, blue, partition, nodesVisited) == SearchResult::IS_CONNECTED) {
-                    eraseSubVector(blueNodes, nodesVisited);
+                pair<SearchResult,vector<string>> result = DFS_inside(access.first, access.second, blue, partition);
+                if (result.first == SearchResult::IS_CONNECTED) {
+                    eraseSubVector(blueNodes, result.second);
                 } else {
                     return (false);
                 }
@@ -474,7 +474,51 @@ void GPX2::fusion()
 
 void GPX2::choose()
 {
-    for (auto p : allPartitions) {
+     
+
+    //encontrar as entradas e saídas
+    for(auto p : allPartitions){
+        set<pair<string,string>,cmp2> entryAndExit; 
+        vector<string> accessVec = p.second->getAccessNodes();
+        for(unsigned i=0;i<accessVec.size();i++){
+            for(unsigned j=0;j<accessVec.size();j++){
+                if(i!=j){
+                    pair<SearchResult,vector<string>> result = DFS_inside(accessVec.at(i),accessVec.at(j),red,p.second);
+                    if(result.first==SearchResult::IS_CONNECTED){
+                        entryAndExit.insert(make_pair(accessVec.at(i),accessVec.at(j)));
+                    }
+                }
+            }
+        }
+        int totalRed{0},totalBlue{0};
+        for(auto pair : entryAndExit){
+            totalRed+=parcialDistance(pair.first,pair.second,red,p.second);
+            totalBlue+=parcialDistance(pair.first,pair.second,blue,p.second);
+        }
+        if (totalRed < totalBlue) {
+            partitionsChoosen.push_back(Parent::RED);
+        } else {
+            partitionsChoosen.push_back(Parent::BLUE);
+        }
+    }
+
+    
+
+    /* for(auto p : allPartitions){
+        int totalRed{0},totalBlue{0};
+        for(auto pair : entryAndExit){
+            totalRed+=parcialDistance(pair.first,pair.second,red,p.second);
+            totalBlue+=parcialDistance(pair.first,pair.second,blue,p.second);
+        }
+        if (totalRed < totalBlue) {
+            partitionsChoosen.push_back(Parent::RED);
+        } else {
+            partitionsChoosen.push_back(Parent::BLUE);
+        }
+    } */
+    
+
+    /* for (auto p : allPartitions) {
         double totalRed{ 0.0 }, totalBlue{ 0.0 };
         vector<string> accessVec = p.second->getAccessNodes();
         for (unsigned i = 0; i < accessVec.size() / 2; i++) {
@@ -486,7 +530,7 @@ void GPX2::choose()
         } else {
             partitionsChoosen.push_back(Parent::BLUE);
         }
-    }
+    } */
 }
 
 // -----------------------------------------------------------------------------
@@ -723,8 +767,7 @@ pair<GPX2::SearchResult, vector<string>> GPX2::DFS_outside(string id, PartitionM
         return make_pair(SearchResult::CONNECTED_TO_PARTITION, alreadyVisited);
     }
 }
-
-GPX2::SearchResult GPX2::DFS_inside(string entry, string exit, CityMap father, Partition* partitionPtr, vector<string>& returnVector)
+pair<GPX2::SearchResult,vector<string>> GPX2::DFS_inside(string entry, string exit, CityMap father, Partition* partitionPtr)
 {
     //fazer uma busca em profundidade dentro da partição
     string now;
@@ -756,8 +799,7 @@ GPX2::SearchResult GPX2::DFS_inside(string entry, string exit, CityMap father, P
         }
     }
 
-    returnVector = alreadyVisited;
-    return (alreadyVisited.back() == exit ? SearchResult::IS_CONNECTED : SearchResult::IS_NOT_CONNECTED);
+    return (make_pair((alreadyVisited.back() == exit ? SearchResult::IS_CONNECTED : SearchResult::IS_NOT_CONNECTED),alreadyVisited));
 }
 
 double GPX2::distance(double x1, double y1, double x2, double y2)
@@ -777,19 +819,19 @@ void GPX2::eraseSubVector(vector<string>& vec, vector<string>& subvec)
     }
 }
 
-double GPX2::parcialDistance(string entry, string exit, CityMap father, Partition* partitionPtr)
+int GPX2::parcialDistance(string entry, string exit, CityMap father, Partition* partitionPtr)
 {   // Distancia do SubTour da partição no pai
 
     //fazer uma busca em profundidade dentro da partição
     string now;
     vector<string> alreadyVisited;
-    deque<string> nextToVisit;
+    deque<string> nextToVisit; 
     vector<string> partition = partitionPtr->getNodes();
     bool notAlreadyVisited{ false };
     bool notToVisit{ false };
     bool isInPartition{ false };
 
-    double totalDistance{ 0 };
+    int totalDistance{ 0 };
 
     nextToVisit.push_back(entry);
 
@@ -872,12 +914,12 @@ void GPX2::printMap(CityMap &graph,std::ostream &stream)
     stream<<"map size "<<graph.size()<<endl;
 }
 
-double GPX2::totalDistance(CityMap& graph)
+int GPX2::totalDistance(CityMap& graph)
 {   // Distancia total para percorrer o grafo
 
     deque<string> nextToVisit;
     vector<string> isAlreadyVisited;
-    double totalDistance{ 0.0 };
+    int totalDistance{0};
     bool notAlreadyVisited{ false };
     bool notToVisit{ false };
 

@@ -47,6 +47,12 @@ class GPX2 {
             return(!(p1.first.first==p2.first.first || p1.first.first==p2.first.second) && (p1.first.second==p2.first.first || p1.first.second==p2.first.second));
         }
     };
+    struct cmp2
+    {
+        bool operator()(const pair<string, string> &p1, const pair<string, string> &p2){
+            return(!(!p1.first.compare(p2.first) || !p1.first.compare(p2.second)) && (!p1.second.compare(p2.first) || !p1.second.compare(p2.second)));
+        }
+    };
     // -------------------------------------------------
 
 public:
@@ -193,17 +199,17 @@ private:
     // Busca em profundidade fora da partição para encontrar conexões entre partições
     pair<SearchResult,vector<string>> DFS_outside(string, PartitionMap, bool = false);
     // Busca em profundidade dentro da partição para verificar se os AccessNodes estão conectados
-    SearchResult DFS_inside(string, string, CityMap, Partition*, vector<string>&);
+    pair<SearchResult,vector<string>> DFS_inside(string, string, CityMap, Partition*);
     // Distancia entre dois pontos
     double distance(double, double, double, double);
     // Apagar subvetor de um vetor
     void eraseSubVector(vector<string>&, vector<string>&);
     // Distância parcial, usado para medir o melhor pai em cada partição
-    double parcialDistance(string, string, CityMap, Partition*);
+    int parcialDistance(string, string, CityMap, Partition*);
     // Imprimir o mapa
     void static printMap(CityMap&,std::ostream&);
     // Retorna a distância necessária para percorrer todo o grafo
-    double totalDistance(CityMap&);
+    int totalDistance(CityMap&);
     // Retorna o ID da partição que a cidade está contida
     int whichPartition(const string, PartitionMap);
 
