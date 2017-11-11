@@ -1,4 +1,5 @@
 *.d
+*.dat
 
 sources/*.o
 bin/
