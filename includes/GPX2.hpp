@@ -31,7 +31,6 @@ class GPX2 {
 
     using CityMap = map<string, CityNode*>;
     using PartitionMap = map<int, Partition*>;
-    using unfeasibleConnection = pair<pair<int, int>,int>;
 
     enum class SearchResult { CONNECTED_TO_PARTITION,
         CONNECTED_TO_SELF,
@@ -49,6 +48,8 @@ class GPX2 {
     // -------------------------------------------------
 
 public:
+    using unfeasibleConnection = pair<pair<int, int>,int>;
+    
     /*  
         Método principal do GPX.
         Recebe duas estruturas Tour, que serão os pais, e retorna um novo Tour que será o filho gerado.

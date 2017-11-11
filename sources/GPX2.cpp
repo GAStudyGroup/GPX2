@@ -1205,3 +1205,10 @@ GPX2::unfeasibleConnection GPX2::whichPartitionToFuseWith(Partition* partition)
     }
     return (make_pair(make_pair(partitionId, max),max));
 }
+
+bool operator==(GPX2::unfeasibleConnection &uf1, GPX2::unfeasibleConnection &uf2){
+    bool first = ((uf1.first.first == uf2.first.first) || (uf1.first.first == uf2.first.second));
+    bool second = ((uf1.first.second == uf2.first.first) || (uf1.first.second == uf2.first.second));
+
+    return(first && second);
+}
