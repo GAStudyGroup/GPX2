@@ -2,41 +2,37 @@
 
 Tour GPX2::crossover(Tour redT, Tour blueT)
 {
-    cout<<"new cross"<<endl;
-    std::cin.get();
     GPX2 obj;
     cout<<"step 1"<<endl;
     // Step 1
     obj.red = obj.tourToMap(redT);
     obj.blue = obj.tourToMap(blueT);
 
-    if(obj.red.size()!=redT.getRoute().size()){
+    if(obj.red.size()!=obj.blue.size()){
+        cout<<"BUG-SIZE-GPX2 red size: "<<obj.red.size()<<", blue size: "<<obj.blue.size()<<" | red tuor size: "<<redT.getRoute().size()<<" blue tuor size: "<<blueT.getRoute().size()<<endl;
+    }
+
+    if(true){
         std::ofstream file;
-        file.open("broken_tour_red.txt");
+        file.open("broken_tour_red_b.txt");
         file<<"size: "<<redT.getRoute().size()<<endl;
         file<<redT<<endl;
         file.close();
 
-        file.open("broken_map_red.txt");
+        file.open("broken_map_red_b.txt");
         printMap(obj.red,file);
         file.close();
-        exit(EXIT_FAILURE);
     }
-    if(obj.blue.size()!=blueT.getRoute().size()){
+    if(true){
         std::ofstream file;
-        file.open("broken_tour_blue.txt");
+        file.open("broken_tour_blue_b.txt");
         file<<"size: "<<blueT.getRoute().size()<<endl;
         file<<blueT<<endl;
         file.close();
 
-        file.open("broken_map_blue.txt");
+        file.open("broken_map_blue_b.txt");
         printMap(obj.blue,file);
         file.close();
-        exit(EXIT_FAILURE);
-    }
-
-    if(obj.red.size()!=obj.blue.size()){
-        cout<<"BUG-SIZE-GPX2 red size: "<<obj.red.size()<<", blue size: "<<obj.blue.size()<<" | red tuor size: "<<redT.getRoute().size()<<" blue tuor size: "<<blueT.getRoute().size()<<endl;
     }
 
     cout<<"step 2"<<endl;
@@ -53,7 +49,6 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     // Step 4
     obj.cutCommonEdges();
 
-
     cout<<"step 5"<<endl;
     // Step 5
     obj.findAllPartitions();
@@ -69,10 +64,22 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     // Step 6
     obj.checkAllPartitions();
 
+    cout<<"feasible partitions before fusion "<<obj.allPartitions.size()<<endl;
+    for(auto p : obj.allPartitions){
+        cout<<*p.second<<"\n";
+    }
+    cout<<endl;
+
     cout<<"fusion "<<endl;
     // Fusion
     obj.fusion();
 
+
+    cout<<"feasible partitions after fusion "<<obj.allPartitions.size()<<endl;
+    for(auto p : obj.allPartitions){
+        cout<<*p.second<<"\n";
+    }
+    cout<<endl;
 
     cout<<"step 7"<<endl;
     // Step 7
@@ -83,6 +90,35 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     // Step 8
     obj.buildOffspring();
 
+    cout<<"feasible partitions "<<obj.allPartitions.size()<<endl;
+    for(auto p : obj.allPartitions){
+        cout<<*p.second<<"\n";
+    }
+    cout<<endl;
+
+    if(true){
+        std::ofstream file;
+        file.open("broken_tour_red_a.txt");
+        file<<"size: "<<redT.getRoute().size()<<endl;
+        file<<redT<<endl;
+        file.close();
+
+        file.open("broken_map_red_a.txt");
+        printMap(obj.red,file);
+        file.close();
+    }
+    if(true){
+        std::ofstream file;
+        file.open("broken_tour_blue_a.txt");
+        file<<"size: "<<blueT.getRoute().size()<<endl;
+        file<<blueT<<endl;
+        file.close();
+
+        file.open("broken_map_blue_a.txt");
+        printMap(obj.blue,file);
+        file.close();
+    }
+    
 
     cout<<"step 9"<<endl;
     Tour t;
@@ -158,20 +194,12 @@ void GPX2::createGhosts()
 
         string idKey = city.first;
         if (idKey.find(ghostToken) == string::npos) { // the node is not a ghost
-            cout<<"bug 0"<<endl;
             for (unsigned i = 0; i < 2; i++) {
-                cout<<"insert 1"<<endl;
                 isGhost.insert(city.second->getEdges().at(i).first);
-                cout<<"insert 2 idKey: "<<idKey<<endl;
-                cout<<"blue at idKey "<<blue.at(idKey)->getId()<<endl;
                 isGhost.insert(blue.at(idKey)->getEdges().at(i).first);
-                cout<<"end"<<endl;
             }
-            cout<<"bug 1"<<endl;
             if (isGhost.size() == 4) { // node with degree 4
                 string ghostID = idKey + ghostToken;
-                cout<<"GHOST ID"<<ghostID<<endl;
-                std::cin.get();
 
                 double x = city.second->getX(), y = city.second->getY();
 
@@ -409,18 +437,32 @@ void GPX2::cleanInsideAccess()
 
 void GPX2::checkAllPartitions()
 {
+    cout<<"ENTRANDO NA CHECK ALL"<<endl;
     //verifica todas as partições
-    for (auto p : allPartitions) {
+    /* for (auto p : allPartitions) {
         //se não for uma partição recombinante ele deleta da lista de partições
         if (!checkPartition(p.second)) {
             unfeasiblePartitions.insert(make_pair(p.first, p.second));
             allPartitions.erase(p.first);
         }
+    } */
+
+    for (auto it=allPartitions.begin();it!=allPartitions.end();) {
+        //se não for uma partição recombinante ele deleta da lista de partições
+        if (!checkPartition((*it).second)) {
+            unfeasiblePartitions.insert(make_pair((*it).first,(*it).second));
+            it = allPartitions.erase(it);
+        }else{
+            it++;
+        }
     }
+    cout<<"SAINDO DA CHECK ALL"<<endl;
 }
 
 bool GPX2::checkPartition(Partition* partition)
 {
+    cout<<"\nchecking partition "<<partition->getId()<<endl;
+    cout<<*partition<<endl;
     unsigned size = partition->getAccessNodes().size();
     vector<string> redNodes, blueNodes;
     redNodes = blueNodes = partition->getNodes();
@@ -442,6 +484,7 @@ bool GPX2::checkPartition(Partition* partition)
                     vector<string> nodesVisited;
                     if (DFS_inside(access.first, partition->getAccessNodes()[j], red, partition, nodesVisited) == SearchResult::IS_CONNECTED) {
                         access.second = partition->getAccessNodes()[j];
+                        cout<<"red: entrada "<<access.first<<" saida "<<access.second<<endl;
                         foundConnected = true;
                         eraseSubVector(redNodes, nodesVisited);
                         break;
@@ -455,6 +498,7 @@ bool GPX2::checkPartition(Partition* partition)
             {
                 vector<string> nodesVisited;
                 if (DFS_inside(access.first, access.second, blue, partition, nodesVisited) == SearchResult::IS_CONNECTED) {
+                    cout<<"blue: entrada "<<access.first<<" saida "<<access.second<<endl;
                     eraseSubVector(blueNodes, nodesVisited);
                 } else {
                     return (false);
@@ -886,7 +930,9 @@ void GPX2::printMap(CityMap &graph,std::ostream &stream)
         stream << endl;
     }
 
-    /* deque<string> nextToVisit;
+    stream<<"______________________________________________________________THE DIVISION______________________________________________________________"<<endl;
+
+    deque<string> nextToVisit;
     vector<string> isAlreadyVisited;
     bool notAlreadyVisited{ false };
     bool notToVisit{ false };
@@ -913,7 +959,9 @@ void GPX2::printMap(CityMap &graph,std::ostream &stream)
                 nextToVisit.push_back(n.first);
             }
         }
-    } */
+    }
+    stream<<"size "<<isAlreadyVisited.size()<<endl;
+    stream<<"map size "<<graph.size()<<endl;
 }
 
 double GPX2::totalDistance(CityMap& graph)
