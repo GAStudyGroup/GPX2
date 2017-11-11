@@ -50,7 +50,7 @@ class GPX2 {
     struct cmp2
     {
         bool operator()(const pair<string, string> &p1, const pair<string, string> &p2){
-            return(!(!p1.first.compare(p2.first) || !p1.first.compare(p2.second)) && (!p1.second.compare(p2.first) || !p1.second.compare(p2.second)));
+            return((!(p1.first.compare(p2.first)) || !(p1.first.compare(p2.second))) && (!(p1.second.compare(p2.first)) || !(p1.second.compare(p2.second))));
         }
     };
     // -------------------------------------------------

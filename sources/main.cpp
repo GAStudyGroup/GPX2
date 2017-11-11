@@ -19,7 +19,6 @@ using std::srand;
 
 void GA(string,unsigned);
 bool stop(Population);
-double compareDouble(const double,const double,const double = 0.000001);
 Population generateNewPopulation(Population);
 
 
@@ -74,7 +73,7 @@ void GA(string name,unsigned popSize){
     file.open("log.txt");
 
     int i{0},firstBestFitness{pop.bestFitness()};
-    while(stop(pop)){
+/*     while(stop(pop)){
         file<<"---------------------------------------------------------------------------------------------------------\ngen "<<i<<" best fitness "<<pop.bestFitness()<<"\n";
         for(Tour t : pop.getPopulation()){
             file<<t<<"\n";
@@ -89,7 +88,24 @@ void GA(string name,unsigned popSize){
     }
     cout<<"THE END"<<endl;
     cout<<"first best fitness: "<<firstBestFitness<<endl;
-    cout<<"gen "<<i<<" best fitness "<<pop.bestFitness()<<endl;
+    cout<<"gen "<<i<<" best fitness "<<pop.bestFitness()<<endl; */
+
+    std::random_shuffle(pop.getPopulation().begin(),pop.getPopulation().end());
+
+    while(pop.getPopulation().size()!=4){
+        pop.getPopulation().pop_back();
+    }
+    cout<<"Antes"<<endl;
+    for(auto t : pop.getPopulation()){
+        cout << t.getFitness() << endl;
+    }
+
+    pop = generateNewPopulation(pop);
+
+    cout<<"Depois"<<endl;
+    for(auto t : pop.getPopulation()){
+        cout << t.getFitness() << endl;
+    }
 
     file.flush();
     file.close();
@@ -136,15 +152,15 @@ Population generateNewPopulation(Population pop){
     
     for(unsigned i=0;i<size;i++){
         if(i==(size-1)){
+            cout<<"F1: "<<pop.getPopulation().at(i).getFitness()<<" F2: "<<pop.getPopulation().at(0).getFitness()<<endl;
             newPop.addNewTour(GPX2::crossover(pop.getPopulation().at(i),pop.getPopulation().at(0)));
+            cout<<"Offspring: "<<newPop.getPopulation().back().getFitness()<<endl;
         }else{
+            cout<<"F1: "<<pop.getPopulation().at(i).getFitness()<<" F2: "<<pop.getPopulation().at(i+1).getFitness()<<endl;
             newPop.addNewTour(GPX2::crossover(pop.getPopulation().at(i),pop.getPopulation().at(i+1)));
+            cout<<"Offspring: "<<newPop.getPopulation().back().getFitness()<<endl;
         }
     }
 
     return newPop;
-}
-
-double compareDouble(const double a,const double b,const double delta){
-    return(abs(a-b)<delta);
 }

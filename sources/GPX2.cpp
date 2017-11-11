@@ -40,6 +40,9 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     // Step 7
     obj.choose();
 
+    for(auto c : obj.partitionsChoosen){
+        cout<< (c==Parent::RED ? "RED" : "BLUE") <<endl;
+    }
 
     // Step 8
     obj.buildOffspring();
@@ -478,23 +481,30 @@ void GPX2::choose()
 
     //encontrar as entradas e saídas
     for(auto p : allPartitions){
-        set<pair<string,string>,cmp2> entryAndExit; 
+        cout<<*p.second<<endl;
+        set<pair<string,string>,cmp2> entryAndExit;
         vector<string> accessVec = p.second->getAccessNodes();
         for(unsigned i=0;i<accessVec.size();i++){
             for(unsigned j=0;j<accessVec.size();j++){
                 if(i!=j){
                     pair<SearchResult,vector<string>> result = DFS_inside(accessVec.at(i),accessVec.at(j),red,p.second);
+                    cout<<"testing "<<accessVec.at(i)<<" with "<<accessVec.at(j)<<" result "<<(result.first==SearchResult::IS_CONNECTED?("IS_CONNECTED"):("IS_NOT_CONNECTED"))<<endl;
                     if(result.first==SearchResult::IS_CONNECTED){
-                        entryAndExit.insert(make_pair(accessVec.at(i),accessVec.at(j)));
+                        auto res = entryAndExit.insert(make_pair(accessVec.at(i),accessVec.at(j)));
+                        cout<<"result of insert "<<res.second<<endl;
                     }
                 }
             }
+        }
+        for(auto pair : entryAndExit){
+            cout<<"entry "<<pair.first<<", exit "<<pair.second<<endl;
         }
         int totalRed{0},totalBlue{0};
         for(auto pair : entryAndExit){
             totalRed+=parcialDistance(pair.first,pair.second,red,p.second);
             totalBlue+=parcialDistance(pair.first,pair.second,blue,p.second);
         }
+        cout<<"totalRed "<<totalRed<<" totalBlue "<<totalBlue<<endl;
         if (totalRed < totalBlue) {
             partitionsChoosen.push_back(Parent::RED);
         } else {
@@ -854,6 +864,12 @@ int GPX2::parcialDistance(string entry, string exit, CityMap father, Partition* 
             }
         }
     }
+
+    cout<<"nodes traveled ";
+    for(string s : alreadyVisited){
+        cout<<s<<" ";
+    }
+    cout<<endl;
 
     return(totalDistance);
 }
