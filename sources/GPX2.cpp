@@ -3,53 +3,22 @@
 Tour GPX2::crossover(Tour redT, Tour blueT)
 {
     GPX2 obj;
-    cout<<"step 1"<<endl;
     // Step 1
     obj.red = obj.tourToMap(redT);
     obj.blue = obj.tourToMap(blueT);
 
-    if(obj.red.size()!=obj.blue.size()){
-        cout<<"BUG-SIZE-GPX2 red size: "<<obj.red.size()<<", blue size: "<<obj.blue.size()<<" | red tuor size: "<<redT.getRoute().size()<<" blue tuor size: "<<blueT.getRoute().size()<<endl;
-    }
 
-    if(true){
-        std::ofstream file;
-        file.open("broken_tour_red_b.txt");
-        file<<"size: "<<redT.getRoute().size()<<endl;
-        file<<redT<<endl;
-        file.close();
-
-        file.open("broken_map_red_b.txt");
-        printMap(obj.red,file);
-        file.close();
-    }
-    if(true){
-        std::ofstream file;
-        file.open("broken_tour_blue_b.txt");
-        file<<"size: "<<blueT.getRoute().size()<<endl;
-        file<<blueT<<endl;
-        file.close();
-
-        file.open("broken_map_blue_b.txt");
-        printMap(obj.blue,file);
-        file.close();
-    }
-
-    cout<<"step 2"<<endl;
     // Step 2
     obj.createGhosts();
 
 
-    cout<<"step 3"<<endl;
     // Step 3 
     obj.joinGraphs();
 
 
-    cout<<"step 4"<<endl;
     // Step 4
     obj.cutCommonEdges();
 
-    cout<<"step 5"<<endl;
     // Step 5
     obj.findAllPartitions();
     obj.cleanInsideAccess();
@@ -60,81 +29,29 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     }
 
 
-    cout<<"step 6"<<endl;
     // Step 6
     obj.checkAllPartitions();
 
-    cout<<"feasible partitions before fusion "<<obj.allPartitions.size()<<endl;
-    for(auto p : obj.allPartitions){
-        cout<<*p.second<<"\n";
-    }
-    cout<<endl;
-
-    cout<<"fusion "<<endl;
     // Fusion
     obj.fusion();
 
-
-    cout<<"feasible partitions after fusion "<<obj.allPartitions.size()<<endl;
-    for(auto p : obj.allPartitions){
-        cout<<*p.second<<"\n";
-    }
-    cout<<endl;
-
-    cout<<"step 7"<<endl;
     // Step 7
     obj.choose();
 
 
-    cout<<"step 8"<<endl;
     // Step 8
     obj.buildOffspring();
-
-    cout<<"feasible partitions "<<obj.allPartitions.size()<<endl;
-    for(auto p : obj.allPartitions){
-        cout<<*p.second<<"\n";
-    }
-    cout<<endl;
-
-    if(true){
-        std::ofstream file;
-        file.open("broken_tour_red_a.txt");
-        file<<"size: "<<redT.getRoute().size()<<endl;
-        file<<redT<<endl;
-        file.close();
-
-        file.open("broken_map_red_a.txt");
-        printMap(obj.red,file);
-        file.close();
-    }
-    if(true){
-        std::ofstream file;
-        file.open("broken_tour_blue_a.txt");
-        file<<"size: "<<blueT.getRoute().size()<<endl;
-        file<<blueT<<endl;
-        file.close();
-
-        file.open("broken_map_blue_a.txt");
-        printMap(obj.blue,file);
-        file.close();
-    }
     
-
-    cout<<"step 9"<<endl;
     Tour t;
     if (obj.offspringChoosen == Parent::RED) {
         obj.removeGhosts(obj.red);
 
         // Step 9
-        cout<<"size before mapToTour "<<obj.red.size()<<endl;
         t = obj.mapToTour(obj.red);
-        cout<<"size after "<<t.getRoute().size()<<endl;
     } else {
         obj.removeGhosts(obj.blue);
         // Step 9
-        cout<<"size before mapToTour "<<obj.blue.size()<<endl;
         t = obj.mapToTour(obj.blue);
-        cout<<"size after "<<t.getRoute().size()<<endl;
     }
 
     // Deletar as coisas
@@ -437,7 +354,6 @@ void GPX2::cleanInsideAccess()
 
 void GPX2::checkAllPartitions()
 {
-    cout<<"ENTRANDO NA CHECK ALL"<<endl;
     //verifica todas as partições
     /* for (auto p : allPartitions) {
         //se não for uma partição recombinante ele deleta da lista de partições
@@ -456,13 +372,10 @@ void GPX2::checkAllPartitions()
             it++;
         }
     }
-    cout<<"SAINDO DA CHECK ALL"<<endl;
 }
 
 bool GPX2::checkPartition(Partition* partition)
 {
-    cout<<"\nchecking partition "<<partition->getId()<<endl;
-    cout<<*partition<<endl;
     unsigned size = partition->getAccessNodes().size();
     vector<string> redNodes, blueNodes;
     redNodes = blueNodes = partition->getNodes();
@@ -484,7 +397,6 @@ bool GPX2::checkPartition(Partition* partition)
                     vector<string> nodesVisited;
                     if (DFS_inside(access.first, partition->getAccessNodes()[j], red, partition, nodesVisited) == SearchResult::IS_CONNECTED) {
                         access.second = partition->getAccessNodes()[j];
-                        cout<<"red: entrada "<<access.first<<" saida "<<access.second<<endl;
                         foundConnected = true;
                         eraseSubVector(redNodes, nodesVisited);
                         break;
@@ -498,7 +410,6 @@ bool GPX2::checkPartition(Partition* partition)
             {
                 vector<string> nodesVisited;
                 if (DFS_inside(access.first, access.second, blue, partition, nodesVisited) == SearchResult::IS_CONNECTED) {
-                    cout<<"blue: entrada "<<access.first<<" saida "<<access.second<<endl;
                     eraseSubVector(blueNodes, nodesVisited);
                 } else {
                     return (false);
@@ -698,20 +609,6 @@ Tour GPX2::mapToTour(CityMap& mapOffspring)
                 nextToVisit.push_back(n.first);
             }
         }
-    }
-
-    if(mapOffspring.size()!=offspring.getRoute().size()){
-        cout<<"map size: "<<mapOffspring.size()<<", tour size: "<<offspring.getRoute().size()<<endl;
-        std::ofstream file;
-        file.open("broken_tour.txt");
-        file<<"size: "<<offspring.getRoute().size()<<endl;
-        file<<offspring<<endl;
-        file.close();
-
-        file.open("broken_map.txt");
-        printMap(mapOffspring,file);
-        file.close();
-        exit(EXIT_FAILURE);
     }
 
     return (offspring);
@@ -1023,18 +920,6 @@ int GPX2::whichPartition(const string id, PartitionMap allPartitions)
 
 void GPX2::checkUnfeasiblePartitions()
 {   // Função que irá verificar se foi gerada alguma partição feasible durante a fusão
-
-
-    /* for (auto p : unfeasiblePartitions) {
-        cout<<"test "<<endl;
-        if (checkPartition(p.second)) { // Checar se é feasible
-
-            // se for irá ser retirada das partições unfeasible e colocada nas partições feasible
-            allPartitions.insert(make_pair(p.first, p.second));
-            unfeasiblePartitions.erase(p.first);
-        }
-    } */
-
     for (auto it=unfeasiblePartitions.begin(); it!=unfeasiblePartitions.end();) {
         if (checkPartition((*it).second)) { // Checar se é feasible
             // se for irá ser retirada das partições unfeasible e colocada nas partições feasible

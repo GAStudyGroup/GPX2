@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
     string name{""};
     unsigned popSize{0};
     
-    //srand(time(NULL));
+    srand(time(NULL));
 
     if(argc == 3){
         try{
@@ -68,15 +68,8 @@ void GA(string name,unsigned popSize){
     int i{0};
     while(stop(pop)){
         pop = generateNewPopulation(pop);
-        for(auto t : pop.getPopulation()){
-            if(t.getRoute().size()!=map.getCityList().size()){
-                cout<<"BUG: map size: "<<map.getCityList().size()<<", route size: "<<t.getRoute().size()<<endl;
-            }
-        }
-        if(i%10 == i%10){
-            for(Tour t : pop.getPopulation()){
-                cout<<t<<endl;
-            }
+
+        if(true){
             cout<<"gen "<<i<<" best fitness "<<pop.bestFitness()<<endl;
         }
         i++;
@@ -89,18 +82,29 @@ void GA(string name,unsigned popSize){
 bool stop(Population pop){
 
     int static generationsWithoutChange{0};
-    int static bestFitness{0};
+    int static bestFitness{pop.bestFitness()};
     int currentFitness{pop.bestFitness()};
+    
+    unsigned totalCon{0};
+    for(Tour t : pop.getPopulation()){
+        if(t.getFitness()==bestFitness){
+            totalCon++;
+        }
+    }
+
 
     if(bestFitness > currentFitness){
         bestFitness = currentFitness;
         generationsWithoutChange = 0;
         cout<<"new best fitness: "<<bestFitness<<endl;
+    }else if(totalCon==pop.getPopulation().size()){
+        cout<<"all the tours are the same"<<endl;
+        return(false);
     }else{
         generationsWithoutChange++;
     }
-
-    if(generationsWithoutChange == 30){
+    cout<<"tours that are the same "<<totalCon<<endl;
+    if(generationsWithoutChange == 100){
         return(false);
     }else{
         return(true);
@@ -115,10 +119,8 @@ Population generateNewPopulation(Population pop){
     
     for(unsigned i=0;i<size;i++){
         if(i==(size-1)){
-            cout<<"red size: "<<pop.getPopulation().at(i).getRoute().size()<<" blue size "<<pop.getPopulation().at(0).getRoute().size()<<endl;
             newPop.addNewTour(GPX2::crossover(pop.getPopulation().at(i),pop.getPopulation().at(0)));
         }else{
-            cout<<"red size: "<<pop.getPopulation().at(i).getRoute().size()<<" blue size "<<pop.getPopulation().at(i+1).getRoute().size()<<endl;
             newPop.addNewTour(GPX2::crossover(pop.getPopulation().at(i),pop.getPopulation().at(i+1)));
         }
     }
