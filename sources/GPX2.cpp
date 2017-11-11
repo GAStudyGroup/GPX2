@@ -1029,6 +1029,9 @@ void GPX2::fusePartitions()
 
     for(const auto &p : unfeasiblePartitions){
         vector<unfeasibleConnection> tmp = fusionsWithPartition(p.first, fuseWith);
+        if(fuseWith.size()<2){
+            break;
+        }
         int maxCon{-1}, maxPos{-1};
         for(unsigned i=0; i<tmp.size();i++){
             if(tmp[i].second > maxCon){
@@ -1036,64 +1039,30 @@ void GPX2::fusePartitions()
                 maxPos = i;
             }
         }
+        
         tmp.erase(tmp.begin() + maxPos);
+        
         for(const auto &unfCon : tmp){
-            fuseWith.erase(unfCon);
-            cout << "FUSE WITH SIZE: " << fuseWith.size() << endl;
-        }
-
-    }
-
-    /* cout<<"fusions to erase"<<endl;
-    for(auto f : fusionsToErase){
-        cout<<f.first.first<<" with "<<f.first.second<<" connected "<<f.second<<" times"<<"\n";
-    }
-    cout<<endl;
-
-    cout<<"continue..."<<endl;
-    std::getchar();
-
-    for(auto f : fusionsToErase){
-        cout<<"entrou aqui"<<endl;
-        for(auto it=fuseWith.begin();it!=fuseWith.end();){
-            cout<<"entrou aqui tambem"<<endl;
-            if(f.first.first==(*it).first.first && f.first.second==(*it).first.second){
-                cout<<"apagou "<<f.first.first<<" "<<f.first.second<<endl;
-                it = fuseWith.erase(it);
-            }else{
-                it++;
+            for(auto it=fuseWith.begin();it!=fuseWith.end();){
+                if(unfCon.first.first==(*it).first.first && unfCon.first.second==(*it).first.second){
+                    
+                    it = fuseWith.erase(it);
+                }else{
+                    it++;
+                }
             }
         }
-    } */
+    }
 
+    
     cout<<"fuse with"<<endl;
     for(auto f : fuseWith){
         cout<<f.first.first<<" with "<<f.first.second<<" connected "<<f.second<<" times"<<"\n";
     }
     cout<<endl;
 
-    cout<<"continue..."<<endl;
-    std::getchar();
-
-    /* 
-        Verifica se uma partição foi utilizada em uma fusão, caso tenha sido então ela não pode ser fundida com outra
-        Ex: 
-            Fusão entre 1,2 ...
-
-            Outra fusão possível 2,3 -> ela não pode ser realizada pois a unfeasiblePartition 2 já está fundida com a 1
-    */
-    
-    /*  
-        Mesmo príncipio da validação anterior
-
-        Porém é verificado o total de conexões entre elas, mantendo apenas as fusões possíveis entre partições com mais conexões.
-
-        Ex: 
-            Fusão entre 1,2 com 2 conexões
-            Fusão entre 2,3 com 4 conexões
-
-            Será mantida a fusão 2,3 e será eliminada a fusão 1,2
-    */
+    /* cout<<"continue..."<<endl;
+    std::getchar(); */
 
     cout<<"fusao"<<endl;
     // Início da execução da fusão em si
