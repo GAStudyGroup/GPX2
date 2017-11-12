@@ -28,6 +28,16 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
 
     // Step 5
     obj.findAllPartitions();
+
+    std::ofstream file4;
+    file4.open("LOG_DO_HELL_PARTITIONS_BEFORE_CLEAN.log");
+    file4<<"size "<<obj.allPartitions.size()<<endl;
+    for(auto p : obj.allPartitions){
+        file4<<(*p.second)<<endl;
+    }
+    
+    file4.close();
+
     obj.cleanInsideAccess();
 
     if (obj.allPartitions.size() < 2) {
@@ -345,11 +355,14 @@ void GPX2::findAllPartitions()
     for (vector<string> vi : partitions) { // retirar partições com tamanho 1
         if (vi.size() != 1) {
             vector<string> accessNodes;
-            for (string id : vi) {
-                if (unitedGraph[id]->getAccess()) {
-                    accessNodes.push_back(id);
+            cout<<"INSIDE findALL partition "<<id<<": ";
+            for (string idN : vi) {
+                if (unitedGraph[idN]->getAccess()) {
+                    cout<<idN<<" ";
+                    accessNodes.push_back(idN);
                 }
             }
+            cout<<endl;
             allPartitions.insert(make_pair(id, new Partition(id, vi, accessNodes)));
             id++;
         }
@@ -363,7 +376,7 @@ void GPX2::cleanInsideAccess()
     for (auto& p : allPartitions) {
         vector<string> tmp;
         
-        // Percorre os vértices que estão na partição
+        /* // Percorre os vértices que estão na partição
         for (string id : p.second->getAccessNodes()) {
 
             // Verificar se o vértice está ligado a outras partições
@@ -372,6 +385,27 @@ void GPX2::cleanInsideAccess()
             if (result.first == SearchResult::CONNECTED_TO_PARTITION) {
                 tmp.push_back(id);
             } else {
+                if (!result.second.empty()) {
+                    result.second.erase(result.second.begin());
+                }
+                if (!result.second.empty()) {
+                    result.second.erase(result.second.end());
+                }
+                // Insere o caminho da ligação na partição
+                p.second->getNodes().insert(p.second->getNodes().end(), result.second.begin(), result.second.end());
+            }
+        }
+        p.second->setAccessNodes(tmp); */
+
+        vector<string> accessNodes = p.second->getAccessNodes();
+        for(auto it=accessNodes.begin();it!=accessNodes.end();it++){
+            // Verificar se o vértice está ligado a outras partições
+            pair<SearchResult, vector<string>> result = DFS_outside((*it), allPartitions);
+
+            if (result.first == SearchResult::CONNECTED_TO_PARTITION) {
+                tmp.push_back((*it));
+            } else {
+                accessNodes.erase(remove(accessNodes.begin(),accessNodes.end(),result.second.back()),accessNodes.end());
                 if (!result.second.empty()) {
                     result.second.erase(result.second.begin());
                 }

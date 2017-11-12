@@ -1,6 +1,6 @@
 size 7
 Partition 1
-Nodes: 100 81 80 49 79 16 78 17 77 50- 76 82 44 83- 11 84 12 439 45 83 46 51 13 50 14 49- 15 48 47 47 
+Nodes: 100 81 80 49 79 16 78 17 77 50- 76 82 44 83- 11 84 12 439 45 83 46 51 13 50 14 49- 15 48 47 
 Access List: 100 17 77 76 11 84 439 51 connectedTo: 
 connections: 
 
@@ -10,7 +10,7 @@ Access List: 128 153 connectedTo:
 connections: 
 
 Partition 4
-Nodes: 2 35 3 67 36 68 1 442 34 66 66 34 442 1 
+Nodes: 2 35 3 67 36 68 1 442 34 66 
 Access List: 3 68 connectedTo: 
 connections: 
 
