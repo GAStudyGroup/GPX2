@@ -1,0 +1,51 @@
+size 10
+Partition 1
+Nodes: 100 81 80 49 79 16 78 17 77 50- 76 82 44 83- 11 84 12 439 45 83 46 51 13 50 14 49- 15 48 47 47 
+Access List: 100 17 77 76 11 84 439 51 connectedTo: 
+connections: 
+
+Partition 2
+Nodes: 116 389 152 137 392 151 175 162 211 173 212 174 229 186 230 401 212- 400 221 405 403 406 407 228 138 387 127 386 115 104 441 102 103 114 126 136 149 161 172 185 150 138 187 399 396 150 396 399 187 185 172 161 149 136 126 114 103 102 441 104 115 386 127 387 280 426 283 440 309 308 339 283- 433 284 348 310 349 311 350 340 285 285 347 346 342 341 428 282 281 279 276 273 269 266 239 238 234 227 312 286 287 313 314 315 289 288 424 421 425 291 290 316 317 318 292 293 319 320 294 295 321 322 323 430 429 324 298 297 296 278 417 418 253 252 251 250 415 249 248 247 246 245 244 243 242 241 277 274 271 270 267 240 235 
+Access List: 230 350 connectedTo: 
+connections: 
+
+Partition 3
+Nodes: 128 139 140 153 
+Access List: 128 153 connectedTo: 
+connections: 
+
+Partition 4
+Nodes: 2 35 3 67 36 68 1 442 34 66 66 34 442 1 
+Access List: 3 68 connectedTo: 
+connections: 
+
+Partition 5
+Nodes: 236 262 264 263 
+Access List: 262 264 connectedTo: 
+connections: 
+
+Partition 6
+Nodes: 25 58 26 59 27 60 
+Access List: 25 58 27 60 connectedTo: 
+connections: 
+
+Partition 8
+Nodes: 37 4 69 5 70 38 
+Access List: 4 69 5 70 connectedTo: 
+connections: 
+
+Partition 9
+Nodes: 379 96 380 64 97 65 62 94 63 95 
+Access List: 97 65 62 94 connectedTo: 
+connections: 
+
+Partition 10
+Nodes: 52 53 84- 85 54 86 55 87 382 381 
+Access List: 52 84- 55 87 connectedTo: 
+connections: 
+
+Partition 12
+Nodes: 56 57 88 58- 89 90 
+Access List: 56 88 58- 90 connectedTo: 
+connections: 
+

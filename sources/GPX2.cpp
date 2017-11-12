@@ -8,7 +8,12 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     obj.red = obj.tourToMap(redT);
     obj.blue = obj.tourToMap(blueT);
 
+    std::ofstream file;
+    file.open("LOG_DO_HELL.log");
 
+    printMap(obj.red,file);
+    printMap(obj.blue,file);
+    file.close();
     // Step 2
     obj.createGhosts();
 
@@ -34,9 +39,26 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     // Step 6
     obj.checkAllPartitions();
 
+    std::ofstream file3;
+    file3.open("LOG_DO_HELL_PARTITIONS_BEFORE_FUSION.log");
+    file3<<"size "<<obj.allPartitions.size()<<endl;
+    for(auto p : obj.allPartitions){
+        file3<<(*p.second)<<endl;
+    }
+    
+    file3.close();
+
     // Fusion
     obj.fusion();
 
+    std::ofstream file2;
+    file2.open("LOG_DO_HELL_PARTITIONS.log");
+    file2<<"size "<<obj.allPartitions.size()<<endl;
+    for(auto p : obj.allPartitions){
+        file2<<(*p.second)<<endl;
+    }
+    
+    file2.close();
 
     // Step 7
     obj.choose();
@@ -400,36 +422,30 @@ bool GPX2::checkPartition(Partition* partition)
         return (false);
     } else {
         vector<string> nodesInPartition = partition->getNodes();
+        
+        vector<string> accessVec = partition->getAccessNodes();
         pair<string, string> access;
-        //for (unsigned i = 0; i < size / 2; i++) {
+        set<pair<string,string>,cmp2> entryAndExit;
+        bool foundConnected{ false };
         for (unsigned i = 0; i < size; i++) {
             //encontrando entrada e saida no red e verifica se elas existem
-            /* access.first = partition->getAccessNodes()[2 * i]; */
-            access.first = partition->getAccessNodes()[i];
-            bool foundConnected{ false };
             for (unsigned j = 0; j < size; j++) {
-
                 if (i != j) {
-                    pair<SearchResult,vector<string>> result = DFS_inside(access.first, partition->getAccessNodes()[j], red, partition);
-                    if (result.first == SearchResult::IS_CONNECTED) {
-                        access.second = partition->getAccessNodes()[j];
+                    pair<SearchResult,vector<string>> resultRed = DFS_inside(accessVec.at(i),accessVec.at(j),red,partition);
+
+                    pair<SearchResult,vector<string>> resultBlue = DFS_inside(accessVec.at(i),accessVec.at(j),blue,partition);
+
+                    if ((resultRed.first == SearchResult::IS_CONNECTED) && (resultBlue.first == SearchResult::IS_CONNECTED)) {
                         foundConnected = true;
-                        eraseSubVector(redNodes, result.second);
+                        eraseSubVector(redNodes, resultRed.second);
+                        eraseSubVector(blueNodes, resultBlue.second);
                         break;
                     }
                 }
             }
+            //se não possui nenhuma saida e entrada conectada
             if (!foundConnected) {
                 return (false);
-            }
-            //verifica no blue se os mesmos pontos de entrada e saida funcionam
-            {
-                pair<SearchResult,vector<string>> result = DFS_inside(access.first, access.second, blue, partition);
-                if (result.first == SearchResult::IS_CONNECTED) {
-                    eraseSubVector(blueNodes, result.second);
-                } else {
-                    return (false);
-                }
             }
         }
         //depois de encontrar todas as entradas e saidas, é necessário verificar se todos os nós da partição foram percorridos pelos dois pais
@@ -500,7 +516,7 @@ void GPX2::choose()
                     pair<SearchResult,vector<string>> result = DFS_inside(accessVec.at(i),accessVec.at(j),red,p.second);
                     pair<SearchResult,vector<string>> resultTmp = DFS_inside(accessVec.at(i),accessVec.at(j),blue,p.second);
                     if(result.first==SearchResult::IS_CONNECTED){
-                        auto res = entryAndExit.insert(make_pair(accessVec.at(i),accessVec.at(j)));
+                        entryAndExit.insert(make_pair(accessVec.at(i),accessVec.at(j)));
                         /* if(res.second){
                             totalRed+=parcialDistance(accessVec.at(i),accessVec.at(j),red,p.second);
                             totalBlue+=parcialDistance(accessVec.at(i),accessVec.at(j),blue,p.second);
@@ -524,6 +540,7 @@ void GPX2::choose()
             totalBlue+=parcialDistance(pair.first,pair.second,blue,p.second);
         }
         /* cout<<"RED: "<<totalRed<<" BLUE: "<<totalBlue<<" choosen: "<<((totalRed < totalBlue)?("RED"):("BLUE"))<<endl; */
+        cout<<"RED: "<<totalRed<<" OR BLUE: "<<totalBlue<<"?"<<endl;
         if (totalRed < totalBlue) {
             cout<<"partition "<<p.first<<" RED"<<endl;
             partitionsChoosen.push_back(Parent::RED);

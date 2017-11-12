@@ -1,0 +1,36 @@
+size 7
+Partition 1
+Nodes: 100 81 80 49 79 16 78 17 77 50- 76 82 44 83- 11 84 12 439 45 83 46 51 13 50 14 49- 15 48 47 47 
+Access List: 100 17 77 76 11 84 439 51 connectedTo: 
+connections: 
+
+Partition 3
+Nodes: 128 139 140 153 
+Access List: 128 153 connectedTo: 
+connections: 
+
+Partition 4
+Nodes: 2 35 3 67 36 68 1 442 34 66 66 34 442 1 
+Access List: 3 68 connectedTo: 
+connections: 
+
+Partition 5
+Nodes: 236 262 264 263 
+Access List: 262 264 connectedTo: 
+connections: 
+
+Partition 6
+Nodes: 25 58 26 59 27 60 
+Access List: 25 58 27 60 connectedTo: 
+connections: 
+
+Partition 8
+Nodes: 37 4 69 5 70 38 
+Access List: 4 69 5 70 connectedTo: 
+connections: 
+
+Partition 12
+Nodes: 56 57 88 58- 89 90 
+Access List: 56 88 58- 90 connectedTo: 
+connections: 
+
