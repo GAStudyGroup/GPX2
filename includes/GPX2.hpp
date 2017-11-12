@@ -1,13 +1,13 @@
 #ifndef GPX2_HPP
 #define GPX2_HPP
 
-#include <stack>
-#include <string>
 #include <algorithm>
 #include <deque>
 #include <iterator>
 #include <map>
 #include <set>
+#include <stack>
+#include <string>
 
 #include <fstream>
 
@@ -15,16 +15,16 @@
 #include "CityNode.hpp"
 #include "Partition.hpp"
 
-using std::string;
-using std::to_string;
-using std::stack;
-using std::map;
-using std::make_pair;
-using std::find;
 using std::deque;
+using std::find;
+using std::make_pair;
+using std::map;
+using std::remove;
 using std::set;
 using std::size_t;
-using std::remove;
+using std::stack;
+using std::string;
+using std::to_string;
 
 class GPX2 {
 
@@ -32,7 +32,7 @@ class GPX2 {
 
     using CityMap = map<string, CityNode*>;
     using PartitionMap = map<int, Partition*>;
-    using unfeasibleConnection = pair<pair<int, int>,int>;
+    using unfeasibleConnection = pair<pair<int, int>, int>;
 
     enum class SearchResult { CONNECTED_TO_PARTITION,
         CONNECTED_TO_SELF,
@@ -41,21 +41,20 @@ class GPX2 {
     enum class Parent { RED,
         BLUE };
 
-    struct cmp
-    {
-        bool operator()(const pair<pair<int, int>,int> &p1, const pair<pair<int, int>,int> &p2){
-            bool first = (p1.first.first==p2.first.first || p1.first.first==p2.first.second);
-            bool second = (p1.first.second==p2.first.first || p1.first.second==p2.first.second);
-            return(!(first && second));
+    struct cmp {
+        bool operator()(const pair<pair<int, int>, int>& p1, const pair<pair<int, int>, int>& p2)
+        {
+            bool first = (p1.first.first == p2.first.first || p1.first.first == p2.first.second);
+            bool second = (p1.first.second == p2.first.first || p1.first.second == p2.first.second);
+            return (!(first && second));
         }
     };
     // -------------------------------------------------
 
     const string ghostToken = "-";
-    friend bool operator==(unfeasibleConnection &, unfeasibleConnection &);
+    friend bool operator==(unfeasibleConnection&, unfeasibleConnection&);
 
 public:
-    
     /*  
         Método principal do GPX.
         Recebe duas estruturas Tour, que serão os pais, e retorna um novo Tour que será o filho gerado.
@@ -74,7 +73,6 @@ private:
     */
     CityMap tourToMap(Tour&);
 
-
     // -----------------------------------------------------------------------------------------------------
     /*  
         STEP 2 - Adição dos GhostNodes
@@ -89,7 +87,6 @@ private:
     // O método irá inserir o nó Ghost criado no Grafo do pai
     void insertGhost(string&, CityMap&, CityNode*);
 
-
     // -----------------------------------------------------------------------------------------------------
     /*  
         STEP 3 - União dos Grafos dos pais
@@ -99,7 +96,6 @@ private:
         O método irá unir o Tour Red com o Tour Blue
     */
     void joinGraphs();
-
 
     // -----------------------------------------------------------------------------------------------------
     /*  
@@ -111,7 +107,6 @@ private:
         O método realiza os cortes, gerando o GU'.
     */
     void cutCommonEdges();
-
 
     // -----------------------------------------------------------------------------------------------------
     /* 
@@ -126,7 +121,6 @@ private:
     void findAllPartitions();
     // Após encontradas, as partições podem conter AccessNodes ligando entre os vértices que a compõem, esses vértices deixarão de ser AccessNodes.
     void cleanInsideAccess();
-
 
     // -----------------------------------------------------------------------------------------------------
     /*  
@@ -147,7 +141,6 @@ private:
     // obtem a lista de entrada e saida de todas as partições
     void setAllEntryAndExits();
 
-    
     // -----------------------------------------------------------------------------------------------------
     /*  
         STEP 7 - Escolher os "SubTours" que irão compor o filho
@@ -157,7 +150,6 @@ private:
         O método irá executar a verificação em cada partição, salvando em uma lista o pai com o melhor SubTour.
     */
     void choose();
-
 
     // -----------------------------------------------------------------------------------------------------
     /*  
@@ -173,7 +165,6 @@ private:
     // Irá remover os Ghosts do melhor filho criado
     void removeGhosts(CityMap&);
 
-
     // -----------------------------------------------------------------------------------------------------
     /*  
         STEP 9 - Linearização de Grafo para lista de City (Tour)
@@ -182,7 +173,6 @@ private:
     */
     Tour mapToTour(CityMap&);
 
-    
     /*  
     -------------------------------------------------------------------------------------------------------------
 
@@ -193,26 +183,26 @@ private:
     // Irá transformar um vetor de Objeto City em um vetor de Strings com os ID dos objeto
     vector<string> cityToString(vector<City>);
     //funções utilizadas para verificar se dois pares são iguais
-    bool comparePairInt(const pair<pair<int, int>,int> &, const pair<pair<int, int>,int> &);
-    bool comparePairString(const pair<string, string> &, const pair<string, string> &);
+    bool comparePairInt(const pair<pair<int, int>, int>&, const pair<pair<int, int>, int>&);
+    bool comparePairString(const pair<string, string>&, const pair<string, string>&);
     // Métodos que irão limpar os ponteiros e vetores utilizados
     void deleteAll();
     void static deleteCityMap(CityMap&);
     void static deletePartitionMap(PartitionMap&);
     // Busca em profundidade fora da partição para encontrar conexões entre partições
-    pair<SearchResult,vector<string>> DFS_outside(string, PartitionMap, bool = false);
+    pair<SearchResult, vector<string>> DFS_outside(string, PartitionMap, bool = false);
     // Busca em profundidade dentro da partição para verificar se os AccessNodes estão conectados
-    pair<SearchResult,vector<string>> DFS_inside(string, string, CityMap, Partition*);
+    pair<SearchResult, vector<string>> DFS_inside(string, string, CityMap, Partition*);
     // Distancia entre dois pontos
     double distance(const CityNode&, const CityNode&);
     // Apagar subvetor de um vetor
     void eraseSubVector(vector<string>&, vector<string>&);
     //f Função utilizada para obter as entradas e saídas que estão conectadas de uma partição
-    vector<pair<string,string>> getEntryAndExitList(Partition*);
+    vector<pair<string, string>> getEntryAndExitList(Partition*);
     // Distância parcial, usado para medir o melhor pai em cada partição
     int partialDistance(string, string, CityMap, Partition*);
     // Imprimir o mapa
-    void static printMap(CityMap&,std::ostream&);
+    void static printMap(CityMap&, std::ostream&);
     // Retorna a distância necessária para percorrer todo o grafo
     int totalDistance(CityMap&);
     // Retorna o ID da partição que a cidade está contida
