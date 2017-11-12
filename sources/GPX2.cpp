@@ -7,12 +7,6 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     obj.red = obj.tourToMap(redT);
     obj.blue = obj.tourToMap(blueT);
 
-    /* std::ofstream file;
-    file.open("LOG_DO_HELL.log");
-
-    printMap(obj.red,file);
-    printMap(obj.blue,file);
-    file.close(); */
     // Step 2
     obj.createGhosts();
 
@@ -27,17 +21,9 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
 
     // Step 5
     obj.findAllPartitions();
-
-    /*std::ofstream file4;
-    file4.open("LOG_DO_HELL_PARTITIONS_BEFORE_CLEAN.log");
-    file4<<"size "<<obj.allPartitions.size()<<endl;
-    for(auto p : obj.allPartitions){
-        file4<<(*p.second)<<endl;
-    } 
-    file4.close();*/
-    
     obj.cleanInsideAccess();
 
+    // se houver menos de 2 partições o GPX não consegue recombina-las
     if (obj.allPartitions.size() < 2) {
         obj.deleteAll();
         return ((redT.getFitness() < blueT.getFitness()) ? redT : blueT);
@@ -47,42 +33,14 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     // Step 6
     obj.checkAllPartitions(); 
 
-    /* std::ofstream file3;
-    file3.open("LOG_DO_HELL_PARTITIONS_BEFORE_FUSION.log");
-    file3<<"size "<<obj.allPartitions.size()<<endl;
-    for(auto p : obj.allPartitions){
-        file3<<(*p.second)<<endl;
-    }
-    file3.close(); */
-
     // Fusion
-    //obj.fusion();
-
-    /* std::ofstream file2;
-    file2.open("LOG_DO_HELL_PARTITIONS.log");
-    file2<<"size "<<obj.allPartitions.size()<<endl;
-    for(auto p : obj.allPartitions){
-        file2<<(*p.second)<<endl;
-    }
-    file2.close(); */
+    obj.fusion();
 
     // Step 7
     obj.choose();
 
-    /* cout<<"choosen partitions "<<endl;
-    for(auto p : obj.partitionsChoosen){
-        cout<<((p==Parent::RED)?("RED"):("BLUE"))<<endl;
-    } */
-
-    /* cout<<"Red fitness before "<<obj.totalDistance(obj.red)<<"\n";
-    cout<<"Blue fitness before "<<obj.totalDistance(obj.blue)<<"\n"; */
-
     // Step 8
     obj.buildOffspring();
-    
-
-    /* cout<<"Red fitness after "<<obj.totalDistance(obj.red)<<"\n";
-    cout<<"Blue fitness after "<<obj.totalDistance(obj.blue)<<"\n"; */
 
     Tour t;
     if (obj.offspringChoosen == Parent::RED) {
@@ -97,7 +55,6 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     }
 
     // Deletar as coisas
-
     obj.deleteAll();
     return t;
 }
@@ -148,8 +105,8 @@ GPX2::CityMap GPX2::tourToMap(Tour& t)
 void GPX2::createGhosts()
 {
     set<string> isGhost;
-    // The SET containner does not allow repeated values inside yourself
 
+    // The SET containner does not allow repeated values inside himself
     for (auto& city : red) {
 
         string idKey = city.first;
@@ -490,8 +447,8 @@ void GPX2::choose()
 
         int totalRed{0},totalBlue{0};
         for(auto pair : entryAndExit){
-            totalRed+=parcialDistance(pair.first,pair.second,red,p.second);
-            totalBlue+=parcialDistance(pair.first,pair.second,blue,p.second);
+            totalRed+=partialDistance(pair.first,pair.second,red,p.second);
+            totalBlue+=partialDistance(pair.first,pair.second,blue,p.second);
         }
         if (totalRed < totalBlue) {
             partitionsChoosen.push_back(Parent::RED);
@@ -794,7 +751,7 @@ void GPX2::eraseSubVector(vector<string>& vec, vector<string>& subvec)
     }
 }
 
-int GPX2::parcialDistance(string entry, string exit, CityMap father, Partition* partitionPtr)
+int GPX2::partialDistance(string entry, string exit, CityMap father, Partition* partitionPtr)
 {   // Distancia do SubTour da partição no pai
 
     //fazer uma busca em profundidade dentro da partição
@@ -1176,7 +1133,7 @@ bool operator==(GPX2::unfeasibleConnection &uf1, GPX2::unfeasibleConnection &uf2
 
     return(first && second);
 }
-
+ 
 vector<pair<string,string>> GPX2::getEntryAndExitList(Partition *p){ 
     vector<pair<string,string>> entryAndExit; 
         vector<string> accessVec = p->getAccessNodes();
@@ -1208,4 +1165,16 @@ vector<pair<string,string>> GPX2::getEntryAndExitList(Partition *p){
             }
         }
         return(entryAndExit);
+}
+
+bool GPX2::comparePairInt(const pair<pair<int, int>,int> &p1, const pair<pair<int, int>,int> &p2){
+    bool first = (p1.first.first==p2.first.first || p1.first.first==p2.first.second);
+    bool second = (p1.first.second==p2.first.first || p1.first.second==p2.first.second);
+    return((first && second));
+}
+
+bool GPX2::comparePairString(const pair<string, string> &p1, const pair<string, string> &p2){
+    bool first = (!(p1.first.compare(p2.first)) || !(p1.first.compare(p2.second)));
+    bool second = (!(p1.second.compare(p2.first)) || !(p1.second.compare(p2.second)));
+     return((first && second));
 }

@@ -29,10 +29,10 @@ using std::remove;
 class GPX2 {
 
     // Definições das principais estruturas utilizadas
-    const string ghostToken = "-";
 
     using CityMap = map<string, CityNode*>;
     using PartitionMap = map<int, Partition*>;
+    using unfeasibleConnection = pair<pair<int, int>,int>;
 
     enum class SearchResult { CONNECTED_TO_PARTITION,
         CONNECTED_TO_SELF,
@@ -48,37 +48,13 @@ class GPX2 {
             bool second = (p1.first.second==p2.first.first || p1.first.second==p2.first.second);
             return(!(first && second));
         }
-    }; 
-    /*  struct cmp2
-    {
-        bool operator()(const pair<string, string> &p1, const pair<string, string> &p2){
-            bool first = (!(p1.first.compare(p2.first)) || !(p1.first.compare(p2.second)));
-            bool second = (!(p1.second.compare(p2.first)) || !(p1.second.compare(p2.second)));
-            return(!(first && second));
-        }
-    }; */
-    /* struct cmp2{
-        bool operator()(const pair<string,string> pair1,const pair<string,string> pair2){
-            cout<<"BEGIN comparing "<<pair1.first<<" and "<<pair1.second<<" WITH "<<pair2.first<<" and "<<pair2.second<<endl;
-            bool first_first = (pair1.first==pair2.first);
-            cout<<"comparing "<<pair1.first<<" with "<<pair2.first<<" result: "<<first_first<<endl;
-
-            bool first_second = (pair1.first==pair2.second);
-            cout<<"comparing "<<pair1.first<<" with "<<pair2.second<<" result: "<<first_second<<endl;
-
-            bool second_first = (pair1.second==pair2.first);
-            cout<<"comparing "<<pair1.second<<" with "<<pair2.first<<" result: "<<second_first<<endl;
-
-            bool second_second = (pair1.second==pair2.second);
-            cout<<"comparing "<<pair1.first<<" with "<<pair2.second<<" result: "<<second_second<<endl;
-            cout<<"RESULTS "<<!((first_first || first_second) && (second_first || second_second))<<endl;
-            return(!((first_first || first_second) && (second_first || second_second)));
-        }
-    }; */
+    };
     // -------------------------------------------------
 
+    const string ghostToken = "-";
+    friend bool operator==(unfeasibleConnection &, unfeasibleConnection &);
+
 public:
-    using unfeasibleConnection = pair<pair<int, int>,int>;
     
     /*  
         Método principal do GPX.
@@ -212,8 +188,11 @@ private:
 
         Métodos utilizados para dar suporte aos passos que compõem o GPX.
     */
-    // Irá transformar um vetor de Objeto Cituy em um vetor de Strings com os ID dos objeto
+    // Irá transformar um vetor de Objeto City em um vetor de Strings com os ID dos objeto
     vector<string> cityToString(vector<City>);
+    //funções utilizadas para verificar se dois pares são iguais
+    bool comparePairInt(const pair<pair<int, int>,int> &, const pair<pair<int, int>,int> &);
+    bool comparePairString(const pair<string, string> &, const pair<string, string> &);
     // Métodos que irão limpar os ponteiros e vetores utilizados
     void deleteAll();
     void static deleteCityMap(CityMap&);
@@ -226,8 +205,10 @@ private:
     double distance(double, double, double, double);
     // Apagar subvetor de um vetor
     void eraseSubVector(vector<string>&, vector<string>&);
+    //f Função utilizada para obter as entradas e saídas que estão conectadas de uma partição
+    vector<pair<string,string>> getEntryAndExitList(Partition*);
     // Distância parcial, usado para medir o melhor pai em cada partição
-    int parcialDistance(string, string, CityMap, Partition*);
+    int partialDistance(string, string, CityMap, Partition*);
     // Imprimir o mapa
     void static printMap(CityMap&,std::ostream&);
     // Retorna a distância necessária para percorrer todo o grafo
@@ -253,24 +234,6 @@ private:
     // Gerar uma lista com os IDs das partições que podem ser fundidas
     unfeasibleConnection whichPartitionToFuseWith(Partition*);
 
-
-    /* 
-    NEW FUNCTIONS
-    */
-    vector<pair<string,string>> getEntryAndExitList(Partition*);
-
-    bool comparePairInt(const pair<pair<int, int>,int> &p1, const pair<pair<int, int>,int> &p2){
-            bool first = (p1.first.first==p2.first.first || p1.first.first==p2.first.second);
-            bool second = (p1.first.second==p2.first.first || p1.first.second==p2.first.second);
-            return((first && second));
-    }
-
-    bool comparePairString(const pair<string, string> &p1, const pair<string, string> &p2){
-            bool first = (!(p1.first.compare(p2.first)) || !(p1.first.compare(p2.second)));
-            bool second = (!(p1.second.compare(p2.first)) || !(p1.second.compare(p2.second)));
-            return((first && second));
-    }
-    
     /* 
         VARIÁVEIS UTILIZADAS
     */
@@ -283,13 +246,6 @@ private:
     vector<Parent> partitionsChoosen;
     Parent offspringChoosen;
 
-    /* 
-        NEW FUNCTIONS
-    */
-    
-    /* bool isPairEqual(const pair<int,int> &p1, const pair<int,int> &p2){
-        return((p1.first==p2.first || p1.first==p2.second) && (p1.second==p2.first || p1.second==p2.second));
-    } */
 };
 
 #endif

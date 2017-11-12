@@ -90,10 +90,10 @@ void GA(string name,unsigned popSize,int id){
         }
         i++;
     }
-    /* cout<<"THE END"<<endl;
+    cout<<"THE END"<<endl;
     cout<<"first best fitness: "<<firstBestFitness<<endl;
     cout<<"gen "<<i<<" best fitness "<<pop.bestFitness()<<endl;
-    cout << "========================="<<endl; */
+    cout << "========================="<<endl;
 
     /* cout<<"before"<<endl;
     for(Tour t : pop.getPopulation()){
