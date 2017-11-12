@@ -37,7 +37,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     }
     
     file4.close();
-
+    
     obj.cleanInsideAccess();
 
     if (obj.allPartitions.size() < 2) {
@@ -59,7 +59,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     file3.close();
 
     // Fusion
-    obj.fusion();
+    //obj.fusion();
 
     std::ofstream file2;
     file2.open("LOG_DO_HELL_PARTITIONS.log");
@@ -540,35 +540,45 @@ void GPX2::choose()
     //encontrar as entradas e saídas
     for(auto p : allPartitions){
 
-        int totalRed{0},totalBlue{0};
+        
 
-        set<pair<string,string>,cmp2> entryAndExit;
+        vector<pair<string,string>> entryAndExit;
         vector<string> accessVec = p.second->getAccessNodes();
         for(unsigned i=0;i<accessVec.size();i++){
             for(unsigned j=0;j<accessVec.size();j++){
-                if(i != j){
+                if(i != j){ 
                     pair<SearchResult,vector<string>> result = DFS_inside(accessVec.at(i),accessVec.at(j),red,p.second);
                     pair<SearchResult,vector<string>> resultTmp = DFS_inside(accessVec.at(i),accessVec.at(j),blue,p.second);
-                    if(result.first==SearchResult::IS_CONNECTED){
-                        entryAndExit.insert(make_pair(accessVec.at(i),accessVec.at(j)));
-                        /* if(res.second){
-                            totalRed+=parcialDistance(accessVec.at(i),accessVec.at(j),red,p.second);
-                            totalBlue+=parcialDistance(accessVec.at(i),accessVec.at(j),blue,p.second);
-                            
-                            cout<<"blue ok? "<<(resultTmp.first==SearchResult::IS_CONNECTED)<<endl;
-                            
-                            cout<<"totalRed parcial "<<totalRed<<endl;
-                            cout<<"totalBlue parcial "<<totalBlue<<endl;
-                        } */
+                    if(result.first==SearchResult::IS_CONNECTED && resultTmp.first==SearchResult::IS_CONNECTED){
+                        
+                        entryAndExit.push_back(make_pair(accessVec.at(i),accessVec.at(j)));
                         
                     }
                 }
             }
         }
-                        /* cout<<"totalRed "<<totalRed<<endl;
-                        cout<<"totalBlue "<<totalBlue<<endl; */
-        totalRed=0;totalBlue=0;
+
+        for(auto itOut=entryAndExit.begin();itOut!=entryAndExit.end();itOut++){
+            for(auto itIn=entryAndExit.begin();itIn!=entryAndExit.end();){
+                if(itOut!=itIn){
+                    if(comparePairString(*itOut,*itIn)){
+                        itIn = entryAndExit.erase(itIn);
+                    }else{
+                        itIn++;
+                    }
+                }else{
+                    itIn++;
+                }
+            }
+        }
+
+        int totalRed{0},totalBlue{0};
         //int totalRed{0},totalBlue{0};
+        cout<<"entry exit size: "<<entryAndExit.size()<<endl;
+        for(auto eae : entryAndExit){
+            cout<<"\n"<<eae.first<<" "<<eae.second<<endl;
+        }
+        cout<<"-----------------------------------------------------------------------"<<endl;
         for(auto pair : entryAndExit){
             totalRed+=parcialDistance(pair.first,pair.second,red,p.second);
             totalBlue+=parcialDistance(pair.first,pair.second,blue,p.second);
@@ -602,15 +612,105 @@ void GPX2::buildOffspring()
     for (auto& allP : allPartitions) {
         if (partitionsChoosen[index] == Parent::BLUE) { // se o Blue for melhor que o Red naquela partição
             cout<<"partition "<<allP.first<<" BLUE"<<endl;
+
+            /* 
+                verifying partition lenght
+            */
+            cout<<"antes de colocar a partição: "<<endl;
+            vector<string> accessVecB = allP.second->getAccessNodes();
+            set<pair<string,string>,cmp2> entryAndExitB;
+            int totalRedB{0},totalBlueB{0};
+            for(unsigned i=0;i<accessVecB.size();i++){
+                for(unsigned j=0;j<accessVecB.size();j++){
+                    if(i != j){
+                        pair<SearchResult,vector<string>> result = DFS_inside(accessVecB.at(i),accessVecB.at(j),red,allP.second);
+                        pair<SearchResult,vector<string>> resultTmp = DFS_inside(accessVecB.at(i),accessVecB.at(j),blue,allP.second);
+                        if(result.first==SearchResult::IS_CONNECTED && resultTmp.first==SearchResult::IS_CONNECTED){
+                            auto res = entryAndExitB.insert(make_pair(accessVecB.at(i),accessVecB.at(j)));
+                            if(res.second){
+                                totalRedB+=parcialDistance(accessVecB.at(i),accessVecB.at(j),red,allP.second);
+                                totalBlueB+=parcialDistance(accessVecB.at(i),accessVecB.at(j),blue,allP.second);
+                                
+                                cout<<"totalRed parcial "<<totalRedB<<endl;
+                                cout<<"totalBlue parcial "<<totalBlueB<<endl;
+                            }
+                        }
+                    }
+                }
+            }
+            cout<<"totalRed"<<totalRedB<<endl;
+            cout<<"totalBlue"<<totalBlueB<<endl;
+
             for (string s : allP.second->getNodes()) {
                 delete red.at(s);
                 red.erase(s);
 
                 CityNode* newNode = new CityNode(blue.at(s)->getId(), blue.at(s)->getX(), blue.at(s)->getY());
                 newNode->setEdges(blue.at(s)->getEdges());
-                red.insert(make_pair(s, newNode));
+                auto res = red.insert(make_pair(s, newNode));
             }
+
+            /* 
+                verifying partition lenght
+            */
+            cout<<"DEPOIS de colocar a partição: "<<endl;
+            vector<string> accessVecA = allP.second->getAccessNodes();
+            set<pair<string,string>,cmp2> entryAndExitA;
+            int totalRedA{0},totalBlueA{0};
+            for(unsigned i=0;i<accessVecA.size();i++){
+                for(unsigned j=0;j<accessVecA.size();j++){
+                    if(i != j){
+                        pair<SearchResult,vector<string>> result = DFS_inside(accessVecA.at(i),accessVecA.at(j),red,allP.second);
+                        pair<SearchResult,vector<string>> resultTmp = DFS_inside(accessVecA.at(i),accessVecA.at(j),blue,allP.second);
+                        if(result.first==SearchResult::IS_CONNECTED && resultTmp.first==SearchResult::IS_CONNECTED){
+                            auto res = entryAndExitA.insert(make_pair(accessVecA.at(i),accessVecA.at(j)));
+                            if(res.second){
+                                totalRedA+=parcialDistance(accessVecA.at(i),accessVecA.at(j),red,allP.second);
+                                totalBlueA+=parcialDistance(accessVecA.at(i),accessVecA.at(j),blue,allP.second);
+                                
+                                cout<<"totalRed parcial "<<totalRedA<<endl;
+                                cout<<"totalBlue parcial "<<totalBlueA<<endl;
+                            }
+                        }
+                    }
+                }
+            }
+            cout<<"totalRed"<<totalRedA<<endl;
+            cout<<"totalBlue"<<totalBlueA<<endl;
+            Tour tmp{mapToTour(red)};
+            cout<<"\n\n\nTOUR FITNESS RED "<<tmp.getFitness()<<endl;
+            tmp = mapToTour(blue);
+            cout<<"TOUR FITNESS BLUE "<<tmp.getFitness()<<endl;
         } else {
+
+            /* 
+                verifying partition lenght
+            */
+            cout<<"antes de colocar a partição: "<<endl;
+            vector<string> accessVecB = allP.second->getAccessNodes();
+            set<pair<string,string>,cmp2> entryAndExitB;
+            int totalRedB{0},totalBlueB{0};
+            for(unsigned i=0;i<accessVecB.size();i++){
+                for(unsigned j=0;j<accessVecB.size();j++){
+                    if(i != j){
+                        pair<SearchResult,vector<string>> result = DFS_inside(accessVecB.at(i),accessVecB.at(j),red,allP.second);
+                        pair<SearchResult,vector<string>> resultTmp = DFS_inside(accessVecB.at(i),accessVecB.at(j),blue,allP.second);
+                        if(result.first==SearchResult::IS_CONNECTED && resultTmp.first==SearchResult::IS_CONNECTED){
+                            auto res = entryAndExitB.insert(make_pair(accessVecB.at(i),accessVecB.at(j)));
+                            if(res.second){
+                                totalRedB+=parcialDistance(accessVecB.at(i),accessVecB.at(j),red,allP.second);
+                                totalBlueB+=parcialDistance(accessVecB.at(i),accessVecB.at(j),blue,allP.second);
+                                
+                                cout<<"totalRed parcial "<<totalRedB<<endl;
+                                cout<<"totalBlue parcial "<<totalBlueB<<endl;
+                            }
+                        }
+                    }
+                }
+            }
+            cout<<"totalRed"<<totalRedB<<endl;
+            cout<<"totalBlue"<<totalBlueB<<endl;
+
             cout<<"partition "<<allP.first<<" RED"<<endl;
             for (string s : allP.second->getNodes()) {
                 delete blue.at(s);
@@ -618,10 +718,42 @@ void GPX2::buildOffspring()
 
                 CityNode* newNode = new CityNode(red.at(s)->getId(), red.at(s)->getX(), red.at(s)->getY());
                 newNode->setEdges(red.at(s)->getEdges());
-                blue.insert(make_pair(s, newNode));
+                auto res =blue.insert(make_pair(s, newNode));
             }
+
+            /* 
+                verifying partition lenght
+            */
+            cout<<"DEPOIS de colocar a partição: "<<endl;
+            vector<string> accessVecA = allP.second->getAccessNodes();
+            set<pair<string,string>,cmp2> entryAndExitA;
+            int totalRedA{0},totalBlueA{0};
+            for(unsigned i=0;i<accessVecA.size();i++){
+                for(unsigned j=0;j<accessVecA.size();j++){
+                    if(i != j){
+                        pair<SearchResult,vector<string>> result = DFS_inside(accessVecA.at(i),accessVecA.at(j),red,allP.second);
+                        pair<SearchResult,vector<string>> resultTmp = DFS_inside(accessVecA.at(i),accessVecA.at(j),blue,allP.second);
+                        if(result.first==SearchResult::IS_CONNECTED && resultTmp.first==SearchResult::IS_CONNECTED){
+                            auto res = entryAndExitA.insert(make_pair(accessVecA.at(i),accessVecA.at(j)));
+                            if(res.second){
+                                totalRedA+=parcialDistance(accessVecA.at(i),accessVecA.at(j),red,allP.second);
+                                totalBlueA+=parcialDistance(accessVecA.at(i),accessVecA.at(j),blue,allP.second);
+                                
+                                cout<<"totalRed parcial "<<totalRedA<<endl;
+                                cout<<"totalBlue parcial "<<totalBlueA<<endl;
+                            }
+                        }
+                    }
+                }
+            }
+            cout<<"totalRed"<<totalRedA<<endl;
+            cout<<"totalBlue"<<totalBlueA<<endl;
         }
         cout<<" AFTER CHANGE "<<index<<" RED: "<<totalDistance(red)<<" BLUE: "<<totalDistance(blue)<<endl;
+        Tour tmp{mapToTour(red)};
+        cout<<"\n\n\nTOUR FITNESS RED "<<tmp.getFitness()<<endl;
+        tmp = mapToTour(blue);
+        cout<<"TOUR FITNESS BLUE "<<tmp.getFitness()<<endl;
         index++;
     }
     offspringChoosen = ((totalDistance(red) < totalDistance(blue)) ? (Parent::RED) : (Parent::BLUE));
@@ -985,14 +1117,12 @@ int GPX2::totalDistance(CityMap& graph)
     bool notToVisit{ false };
 
     CityNode *city = graph.begin()->second, *last = nullptr; // Reduzir chamadas (CityNode dentro do map)
-
     isAlreadyVisited.push_back(graph.begin()->first);
 
     nextToVisit.push_back(city->getEdges()[0].first);
     totalDistance += city->getEdges()[0].second;
 
     while (!nextToVisit.empty()) {
-
         isAlreadyVisited.push_back(nextToVisit.front());
         city = graph[nextToVisit.front()];
         nextToVisit.pop_front();
@@ -1010,7 +1140,7 @@ int GPX2::totalDistance(CityMap& graph)
         last = city;
     }
     for (CityNode::node n : last->getEdges()) {
-        if (n.first.compare(isAlreadyVisited.front()) == 0) {
+        if (n.first.compare(graph.begin()->first) == 0) {
             totalDistance += n.second;
         }
     }
@@ -1254,7 +1384,7 @@ GPX2::unfeasibleConnection GPX2::whichPartitionToFuseWith(Partition* partition)
             max = p.second;
             partitionId = p.first;
         }
-    }
+    } 
     return (make_pair(make_pair(partitionId, max),max));
 }
 

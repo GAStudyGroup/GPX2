@@ -1,13 +1,13 @@
 #ifndef GPX2_HPP
 #define GPX2_HPP
 
+#include <stack>
+#include <string>
 #include <algorithm>
 #include <deque>
 #include <iterator>
 #include <map>
 #include <set>
-#include <stack>
-#include <string>
 
 #include <fstream>
 
@@ -48,8 +48,8 @@ class GPX2 {
             bool second = (p1.first.second==p2.first.first || p1.first.second==p2.first.second);
             return(!(first && second));
         }
-    };
-    struct cmp2
+    }; 
+     struct cmp2
     {
         bool operator()(const pair<string, string> &p1, const pair<string, string> &p2){
             bool first = (!(p1.first.compare(p2.first)) || !(p1.first.compare(p2.second)));
@@ -57,6 +57,24 @@ class GPX2 {
             return(!(first && second));
         }
     };
+    /* struct cmp2{
+        bool operator()(const pair<string,string> pair1,const pair<string,string> pair2){
+            cout<<"BEGIN comparing "<<pair1.first<<" and "<<pair1.second<<" WITH "<<pair2.first<<" and "<<pair2.second<<endl;
+            bool first_first = (pair1.first==pair2.first);
+            cout<<"comparing "<<pair1.first<<" with "<<pair2.first<<" result: "<<first_first<<endl;
+
+            bool first_second = (pair1.first==pair2.second);
+            cout<<"comparing "<<pair1.first<<" with "<<pair2.second<<" result: "<<first_second<<endl;
+
+            bool second_first = (pair1.second==pair2.first);
+            cout<<"comparing "<<pair1.second<<" with "<<pair2.first<<" result: "<<second_first<<endl;
+
+            bool second_second = (pair1.second==pair2.second);
+            cout<<"comparing "<<pair1.first<<" with "<<pair2.second<<" result: "<<second_second<<endl;
+            cout<<"RESULTS "<<!((first_first || first_second) && (second_first || second_second))<<endl;
+            return(!((first_first || first_second) && (second_first || second_second)));
+        }
+    }; */
     // -------------------------------------------------
 
 public:
@@ -234,6 +252,22 @@ private:
     bool unfeasiblePartitionsConnected();
     // Gerar uma lista com os IDs das partições que podem ser fundidas
     unfeasibleConnection whichPartitionToFuseWith(Partition*);
+
+
+    /* 
+    NEW FUNCTIONS
+    */
+    bool comparePairInt(const pair<pair<int, int>,int> &p1, const pair<pair<int, int>,int> &p2){
+            bool first = (p1.first.first==p2.first.first || p1.first.first==p2.first.second);
+            bool second = (p1.first.second==p2.first.first || p1.first.second==p2.first.second);
+            return((first && second));
+    }
+
+    bool comparePairString(const pair<string, string> &p1, const pair<string, string> &p2){
+            bool first = (!(p1.first.compare(p2.first)) || !(p1.first.compare(p2.second)));
+            bool second = (!(p1.second.compare(p2.first)) || !(p1.second.compare(p2.second)));
+            return((first && second));
+    }
     
     /* 
         VARIÁVEIS UTILIZADAS

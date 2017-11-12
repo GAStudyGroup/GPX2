@@ -100,7 +100,17 @@ void GA(string name,unsigned popSize,int id){
         cout << t.getFitness() << endl;
     }
  */
+    cout<<"before"<<endl;
+    for(Tour t : pop.getPopulation()){
+        cout<<t<<endl;
+    }
+
     pop = generateNewPopulation(pop);
+
+    cout<<"after"<<endl;
+    for(Tour t : pop.getPopulation()){
+        cout<<t<<endl;
+    }
 
     /* cout<<"Depois"<<endl;
     for(auto t : pop.getPopulation()){
