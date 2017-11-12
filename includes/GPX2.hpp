@@ -49,14 +49,14 @@ class GPX2 {
             return(!(first && second));
         }
     }; 
-     struct cmp2
+    /*  struct cmp2
     {
         bool operator()(const pair<string, string> &p1, const pair<string, string> &p2){
             bool first = (!(p1.first.compare(p2.first)) || !(p1.first.compare(p2.second)));
             bool second = (!(p1.second.compare(p2.first)) || !(p1.second.compare(p2.second)));
             return(!(first && second));
         }
-    };
+    }; */
     /* struct cmp2{
         bool operator()(const pair<string,string> pair1,const pair<string,string> pair2){
             cout<<"BEGIN comparing "<<pair1.first<<" and "<<pair1.second<<" WITH "<<pair2.first<<" and "<<pair2.second<<endl;
@@ -257,6 +257,8 @@ private:
     /* 
     NEW FUNCTIONS
     */
+    vector<pair<string,string>> getEntryAndExitList(Partition*);
+
     bool comparePairInt(const pair<pair<int, int>,int> &p1, const pair<pair<int, int>,int> &p2){
             bool first = (p1.first.first==p2.first.first || p1.first.first==p2.first.second);
             bool second = (p1.first.second==p2.first.first || p1.first.second==p2.first.second);
