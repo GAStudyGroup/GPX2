@@ -162,7 +162,7 @@ string ImportData:: getcomment(){
     }
 }
 
-/* Population ImportData::importFirstPopulation(Map map,string name,unsigned popSize){
+Population ImportData::importFirstPopulation(Map map,string name,unsigned popSize){
     ifstream file;
     string word{""};
     Population pop;
@@ -184,9 +184,9 @@ string ImportData:: getcomment(){
         pop.addNewTour(newT);
     }
     return(pop);
-} */
+}
 
-Population ImportData::importFirstPopulation(Map map,string name,unsigned popSize){
+/* Population ImportData::importFirstPopulation(Map map,string name,unsigned popSize){
     ifstream file;
     string word{""};
     Population pop;
@@ -210,4 +210,4 @@ Population ImportData::importFirstPopulation(Map map,string name,unsigned popSiz
         pop.addNewTour(newT);
     }
     return(pop);
-}
+} */

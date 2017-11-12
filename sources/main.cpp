@@ -30,7 +30,7 @@ int main(int argc, char *argv[]){
     unsigned popSize{0};
     int id{0};
     
-    //srand(time(NULL));
+    srand(time(NULL));
 
     if(argc == 4){
         try{
@@ -65,8 +65,8 @@ void GA(string name,unsigned popSize,int id){
         map.setCityList(dataFile.getCitiesCoord());
 
         //carrega a primeira população
-        //pop = dataFile.importFirstPopulation(map,name,popSize);
-        pop = dataFile.importFirstPopulation(map,"log",popSize);
+        pop = dataFile.importFirstPopulation(map,name,popSize);
+        //pop = dataFile.importFirstPopulation(map,"log",popSize);
 
     }
 
@@ -76,7 +76,7 @@ void GA(string name,unsigned popSize,int id){
     cout.flush(); */
     
     
-    /* file.open("logRun_"+to_string(id)+".log");
+    file.open("logRun_"+to_string(id)+".log");
     //fileDebug.open("log_"+to_string(id)+"_BUG.txt");
 
     int i{0},firstBestFitness{pop.bestFitness()};
@@ -89,13 +89,13 @@ void GA(string name,unsigned popSize,int id){
             cout<<"gen "<<i<<" best fitness "<<pop.bestFitness()<<endl;
         }
         i++;
-    } */
+    }
     /* cout<<"THE END"<<endl;
     cout<<"first best fitness: "<<firstBestFitness<<endl;
     cout<<"gen "<<i<<" best fitness "<<pop.bestFitness()<<endl;
     cout << "========================="<<endl; */
 
-    cout<<"before"<<endl;
+    /* cout<<"before"<<endl;
     for(Tour t : pop.getPopulation()){
         cout<<t<<endl;
     }
@@ -105,7 +105,7 @@ void GA(string name,unsigned popSize,int id){
     cout<<"after"<<endl;
     for(Tour t : pop.getPopulation()){
         cout<<t<<endl;
-    }
+    } */
 
     /* fileDebug.flush();
     fileDebug.close(); */
@@ -150,7 +150,7 @@ Population generateNewPopulation(Population pop){
     unsigned size = pop.getPopulation().size();
     Population newPop;
 
-    //std::random_shuffle(pop.getPopulation().begin(),pop.getPopulation().end());
+    std::random_shuffle(pop.getPopulation().begin(),pop.getPopulation().end());
     
     for(unsigned i=0;i<size;i++){
         if(i==(size-1)){
@@ -163,7 +163,7 @@ Population generateNewPopulation(Population pop){
                 fileDebug<<pop.getPopulation().at(0)<<endl;
             } */
             
-            //file<<"CROSSOVER "<<pop.getPopulation().at(i).getFitness()<<" "<<pop.getPopulation().at(0).getFitness()<<" "<<newPop.getPopulation().back().getFitness() <<" "<< i << " " << 0 << " " << endl;
+            file<<"CROSSOVER "<<pop.getPopulation().at(i).getFitness()<<" "<<pop.getPopulation().at(0).getFitness()<<" "<<newPop.getPopulation().back().getFitness() <<" "<< i << " " << 0 << " " << endl;
         }else{
             
             newPop.addNewTour(GPX2::crossover(pop.getPopulation().at(i),pop.getPopulation().at(i+1)));
@@ -174,7 +174,7 @@ Population generateNewPopulation(Population pop){
                 fileDebug<<pop.getPopulation().at(i+1)<<endl;
             } */
             
-            //file<<"CROSSOVER "<<pop.getPopulation().at(i).getFitness()<<" "<<pop.getPopulation().at(i+1).getFitness()<<" "<<newPop.getPopulation().back().getFitness() <<" "<< i << " " << i+1 << " " << endl;
+            file<<"CROSSOVER "<<pop.getPopulation().at(i).getFitness()<<" "<<pop.getPopulation().at(i+1).getFitness()<<" "<<newPop.getPopulation().back().getFitness() <<" "<< i << " " << i+1 << " " << endl;
         }
     }
 

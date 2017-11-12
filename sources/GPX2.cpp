@@ -40,7 +40,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
 
     if (obj.allPartitions.size() < 2) {
         obj.deleteAll();
-        return ((redT.getFitness() > blueT.getFitness()) ? redT : blueT);
+        return ((redT.getFitness() < blueT.getFitness()) ? redT : blueT);
     }
 
 
@@ -512,7 +512,7 @@ void GPX2::buildOffspring()
 
     fileBuild.open("logBuild.log", std::ofstream::app);
 
-    fileBuild<<"INICIAL DISTANCE: RED " << totalDistance(red) << " BLUE " << totalDistance(blue)<<endl;
+    fileBuild<<"INICIAL DISTANCE: RED " << totalDistance(red) << " BLUE " << totalDistance(blue)<< " " <<endl;
     for (auto& allP : allPartitions) {
         if (partitionsChoosen[index] == Parent::BLUE) { // se o Blue for melhor que o Red naquela partição
             for (string s : allP.second->getNodes()) {
@@ -533,7 +533,7 @@ void GPX2::buildOffspring()
                 blue.insert(make_pair(s, newNode));
             }
         }
-        fileBuild<<"FINAL DISTANCE: RED " << totalDistance(red) << " BLUE " << totalDistance(blue)<<endl;
+        fileBuild<<"FINAL DISTANCE: RED " << totalDistance(red) << " BLUE " << totalDistance(blue) << " "<<endl;
         index++;
     }
     fileBuild.flush();
