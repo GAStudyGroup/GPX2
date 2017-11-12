@@ -95,17 +95,17 @@ void GA(string name,unsigned popSize,int id){
     cout<<"gen "<<i<<" best fitness "<<pop.bestFitness()<<endl;
     cout << "========================="<<endl; */
 
-    cout<<"Antes"<<endl;
+    /* cout<<"Antes"<<endl;
     for(auto t : pop.getPopulation()){
         cout << t.getFitness() << endl;
     }
-
+ */
     pop = generateNewPopulation(pop);
 
-    cout<<"Depois"<<endl;
+    /* cout<<"Depois"<<endl;
     for(auto t : pop.getPopulation()){
         cout << t.getFitness() << endl;
-    }
+    } */
 
     fileDebug.flush();
     fileDebug.close();
@@ -156,6 +156,7 @@ Population generateNewPopulation(Population pop){
     for(unsigned i=0;i<size;i++){
         //file << "CROSSOVER: ";
         if(i==(size-1)){
+            
             newPop.addNewTour(GPX2::crossover(pop.getPopulation().at(i),pop.getPopulation().at(0)));
             /* file<<pop.getPopulation().at(i).getFitness()<<" "<<pop.getPopulation().at(0).getFitness()<<" "<<newPop.getPopulation().back().getFitness()<<endl;
             if(pop.getPopulation().at(i).getFitness() < newPop.getPopulation().back().getFitness() || pop.getPopulation().at(0).getFitness() < newPop.getPopulation().back().getFitness()){
@@ -163,7 +164,10 @@ Population generateNewPopulation(Population pop){
                 fileDebug<<"\n\n\n\n\n\n"<<endl;
                 fileDebug<<pop.getPopulation().at(0)<<endl;
             } */
+            cout<<"before RED: "<<pop.getPopulation().at(i).getFitness()<<" BLUE: "<<pop.getPopulation().at(0).getFitness()<<endl;
+            cout<<"after OFFSPRING: "<<newPop.getPopulation().back().getFitness()<<endl;
         }else{
+            
             newPop.addNewTour(GPX2::crossover(pop.getPopulation().at(i),pop.getPopulation().at(i+1)));
             /* file<<pop.getPopulation().at(i).getFitness()<<" "<<pop.getPopulation().at(i+1).getFitness()<<" "<<newPop.getPopulation().back().getFitness()<<endl;
             if(pop.getPopulation().at(i).getFitness() < newPop.getPopulation().back().getFitness() || pop.getPopulation().at(i+1).getFitness() < newPop.getPopulation().back().getFitness()){
@@ -171,6 +175,8 @@ Population generateNewPopulation(Population pop){
                 fileDebug<<"\n\n\n\n\n\n"<<endl;
                 fileDebug<<pop.getPopulation().at(i+1)<<endl;
             } */
+            cout<<"before RED: "<<pop.getPopulation().at(i).getFitness()<<" BLUE: "<<pop.getPopulation().at(i+1).getFitness()<<endl;
+            cout<<"after OFFSPRING"<<newPop.getPopulation().back().getFitness()<<endl;
         }
     }
 
