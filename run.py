@@ -8,6 +8,11 @@ population_size = 50
 tour_name = "pcb442"
 
 for i in range(1):
+    try:
+        os.remove("logBuild.log")
+    except OSError:
+        pass
+
     print(str(i)+" Generating population for problem "+tour_name+" with population size "+str(population_size)+"\n")
 
     #gerar a pop inicial
@@ -26,4 +31,4 @@ for i in range(1):
     for f in os.listdir("."): 
         if f.endswith(".dat"):  
             os.remove(f)
-    '''
+   '''

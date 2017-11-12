@@ -1,7 +1,12 @@
-file = open("log_0.txt","r")
+file = open("logRun_0.log","r")
+i=0
 for line in file:
-    if line.find("BestFitness: ")!=-1:
-        print(line.split(" ")[1])
-        #print(line)
+    i+=1
+    if line.find("CROSSOVER ")!=-1:
+        array = line.split(" ")
+        if (int(array[3]) > int(array[1])) or (int(array[3]) > int(array[2])):
+            print("ERRRRRRROOOOOOOOOOO LINHA " + str(i))
+            print(line)
+        
 
 

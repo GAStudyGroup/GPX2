@@ -7,12 +7,12 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     obj.red = obj.tourToMap(redT);
     obj.blue = obj.tourToMap(blueT);
 
-    std::ofstream file;
+    /* std::ofstream file;
     file.open("LOG_DO_HELL.log");
 
     printMap(obj.red,file);
     printMap(obj.blue,file);
-    file.close();
+    file.close(); */
     // Step 2
     obj.createGhosts();
 
@@ -28,14 +28,13 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     // Step 5
     obj.findAllPartitions();
 
-    std::ofstream file4;
+    /*std::ofstream file4;
     file4.open("LOG_DO_HELL_PARTITIONS_BEFORE_CLEAN.log");
     file4<<"size "<<obj.allPartitions.size()<<endl;
     for(auto p : obj.allPartitions){
         file4<<(*p.second)<<endl;
-    }
-    
-    file4.close();
+    } 
+    file4.close();*/
     
     obj.cleanInsideAccess();
 
@@ -48,26 +47,24 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     // Step 6
     obj.checkAllPartitions(); 
 
-    std::ofstream file3;
+    /* std::ofstream file3;
     file3.open("LOG_DO_HELL_PARTITIONS_BEFORE_FUSION.log");
     file3<<"size "<<obj.allPartitions.size()<<endl;
     for(auto p : obj.allPartitions){
         file3<<(*p.second)<<endl;
     }
-    
-    file3.close();
+    file3.close(); */
 
     // Fusion
     //obj.fusion();
 
-    std::ofstream file2;
+    /* std::ofstream file2;
     file2.open("LOG_DO_HELL_PARTITIONS.log");
     file2<<"size "<<obj.allPartitions.size()<<endl;
     for(auto p : obj.allPartitions){
         file2<<(*p.second)<<endl;
     }
-    
-    file2.close();
+    file2.close(); */
 
     // Step 7
     obj.choose();
@@ -511,7 +508,11 @@ void GPX2::choose()
 void GPX2::buildOffspring()
 {
     int index{ 0 };
+    std::ofstream fileBuild;
 
+    fileBuild.open("logBuild.log", std::ofstream::app);
+
+    fileBuild<<"INICIAL DISTANCE: RED " << totalDistance(red) << " BLUE " << totalDistance(blue)<<endl;
     for (auto& allP : allPartitions) {
         if (partitionsChoosen[index] == Parent::BLUE) { // se o Blue for melhor que o Red naquela partição
             for (string s : allP.second->getNodes()) {
@@ -532,8 +533,11 @@ void GPX2::buildOffspring()
                 blue.insert(make_pair(s, newNode));
             }
         }
+        fileBuild<<"FINAL DISTANCE: RED " << totalDistance(red) << " BLUE " << totalDistance(blue)<<endl;
         index++;
     }
+    fileBuild.flush();
+    fileBuild.close(); 
     offspringChoosen = ((totalDistance(red) < totalDistance(blue)) ? (Parent::RED) : (Parent::BLUE));
 }
 
