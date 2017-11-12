@@ -10,14 +10,11 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     // Step 2
     obj.createGhosts();
 
-
     // Step 3 
     obj.joinGraphs();
 
-
     // Step 4
     obj.cutCommonEdges();
-
 
     // Step 5
     obj.findAllPartitions();
@@ -29,12 +26,15 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
         return ((redT.getFitness() < blueT.getFitness()) ? redT : blueT);
     }
 
-
     // Step 6
+    obj.setAllEntryAndExits();
     obj.checkAllPartitions(); 
 
     // Fusion
-    obj.fusion();
+    // Precisa ter mais de uma partição unfeasible para o fusion poder acontecer
+    if(obj.unfeasiblePartitions.size() > 1){
+        obj.fusion();
+    }
 
     // Step 7
     obj.choose();
@@ -45,7 +45,6 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     Tour t;
     if (obj.offspringChoosen == Parent::RED) {
         obj.removeGhosts(obj.red);
-
         // Step 9
         t = obj.mapToTour(obj.red);
     } else {
@@ -59,13 +58,14 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     return t;
 }
 
-// STEP 1 - MAPEAR O TOUR
+// -----------------------------------------------------------------------------
 
+// STEP 1 - MAPEAR O TOUR
 GPX2::CityMap GPX2::tourToMap(Tour& t)
 { // Mapear o tour para um grafo com ligações entre os nós
 
     if (t.getRoute().empty()) {
-        exit(0);
+        exit(EXIT_FAILURE);
     }
 
     map<string, CityNode*> aux; // Mapa com as conexões dos nodes
@@ -81,19 +81,21 @@ GPX2::CityMap GPX2::tourToMap(Tour& t)
         CityNode* cn = new CityNode(to_string(cities.at(i).getId()), cities.at(i).getX(), cities.at(i).getY()); // gera um node com o segundo elemento
 
         aux.insert(make_pair(cn->getId(), cn)); // insere o node dentro do mapa
-        dist = distance(prev->getX(), prev->getY(), cn->getX(), cn->getY());
+
+        dist = distance(*prev,*cn);
+
         cn->addEdge(CityNode::node(prev->getId(), dist)); // adiciona ao node atual as arestas de conexão
 
-        dist = distance(cn->getX(), cn->getY(), prev->getX(), prev->getY());
+        dist = distance(*cn,*prev);
         prev->addEdge(CityNode::node(cn->getId(), dist)); // adiciona ao node anterior o atual como um próx (lista duplamente encadeada)
 
         prev = cn; // o anterior recebe o atual para continuar o for
     }
 
-    dist = distance(prev->getX(), prev->getY(), first->getX(), first->getY());
+    dist = distance(*prev,*first);
     first->addEdge(CityNode::node(prev->getId(), dist)); // o primeiro recebe o atual ao sair do for, completando os ligamentos das arestas
 
-    dist = distance(first->getX(), first->getY(), prev->getX(), prev->getY());
+    dist = distance(*first,*prev);
     prev->addEdge(CityNode::node(first->getId(), dist)); // o atual recebe o primeiro para completar os ligamentos
 
     return (aux); // retorna o mpaa com os nodes já instanciados e adicionados
@@ -376,15 +378,13 @@ bool GPX2::checkPartition(Partition* partition)
         return (false);
     } else {
         vector<string> nodesInPartition = partition->getNodes();
-        
-        vector<pair<string,string>> entryAndExit{getEntryAndExitList(partition)};
 
         //não possuem entrada e saida iguais nos dois pais
-        if(entryAndExit.empty()){
+        if(partition->getEntryAndExits().empty()){
             return(false);
         }else{
 
-            for(pair<string,string> nodes : entryAndExit){
+            for(pair<string,string> nodes : partition->getEntryAndExits()){
                 pair<SearchResult,vector<string>> resultRed = DFS_inside(nodes.first,nodes.second,red,partition);
 
                 pair<SearchResult,vector<string>> resultBlue = DFS_inside(nodes.first,nodes.second,blue,partition);
@@ -442,11 +442,8 @@ void GPX2::choose()
 {
     //encontrar as entradas e saídas
     for(auto p : allPartitions){
-
-        vector<pair<string,string>> entryAndExit{getEntryAndExitList(p.second)};
-
         int totalRed{0},totalBlue{0};
-        for(auto pair : entryAndExit){
+        for(auto pair : p.second->getEntryAndExits()){
             totalRed+=partialDistance(pair.first,pair.second,red,p.second);
             totalBlue+=partialDistance(pair.first,pair.second,blue,p.second);
         }
@@ -734,9 +731,9 @@ pair<GPX2::SearchResult,vector<string>> GPX2::DFS_inside(string entry, string ex
     return (make_pair((alreadyVisited.back() == exit ? SearchResult::IS_CONNECTED : SearchResult::IS_NOT_CONNECTED),alreadyVisited));
 }
 
-double GPX2::distance(double x1, double y1, double x2, double y2)
+double GPX2::distance(const CityNode &c1,const CityNode &c2)
 {
-    return (round(sqrt(pow((x1 - x2), 2) + pow((y1 - y2), 2))));
+    return (round(sqrt(pow((c1.getX() - c2.getX()), 2) + pow((c1.getY() - c2.getY()), 2))));
 }
 
 void GPX2::eraseSubVector(vector<string>& vec, vector<string>& subvec)
@@ -939,7 +936,6 @@ void GPX2::countConnectedPartitions()
 
 void GPX2::fusePartitions()
 {   // Realiza a fusão entre as partições, de acordo com as validações já realizadas
-
     vector<int> partitionsToCheck; 
     set<unfeasibleConnection, cmp> fuseWith;
     vector<int> numberOfConnections;
@@ -949,7 +945,6 @@ void GPX2::fusePartitions()
         
         pair<pair<int, int>,int> data = whichPartitionToFuseWith(unfeasiblePartitions.at(p.first));
         // Se for "-1" então ela está conectada à uma partição feasible
- 
         if (data.first.first != -1) {
             // Carrega o par de partições para fundir
             fuseWith.insert(make_pair(make_pair(p.first, data.first.first),data.second));
@@ -971,7 +966,6 @@ void GPX2::fusePartitions()
                     maxPos = i;
                 }
             }
-            
             
             tmp.erase(tmp.begin() + maxPos);
             
@@ -1050,8 +1044,11 @@ void GPX2::fusePartitions()
         */
         p1Ptr->getNodes().insert(p1Ptr->getNodes().end(), intermediariesNodes.begin(), intermediariesNodes.end());
 
-        // Coma partição gerada, os antigos AcessNodes não são mais AccesNodes, então serão apagados
+        // Os access nodes que ligavam as duas partições não serão mais access nodes, eles serão removidos
         eraseSubVector(p1Ptr->getAccessNodes(), accessNodesToRemove);
+
+        //atualizar a lista de entradas e saídas
+        p1Ptr->setEntryAndExits(getEntryAndExitList(p1Ptr));
 
         // Apagar tudo
         delete p2Ptr;
@@ -1137,7 +1134,7 @@ bool operator==(GPX2::unfeasibleConnection &uf1, GPX2::unfeasibleConnection &uf2
 vector<pair<string,string>> GPX2::getEntryAndExitList(Partition *p){ 
     vector<pair<string,string>> entryAndExit; 
         vector<string> accessVec = p->getAccessNodes();
-        for(unsigned i=0;i<accessVec.size();i++){
+        for(unsigned i=0;i<accessVec.size();i++){ 
             for(unsigned j=0;j<accessVec.size();j++){
                 if(i != j){ 
                     pair<SearchResult,vector<string>> result = DFS_inside(accessVec.at(i),accessVec.at(j),red,p);
@@ -1177,4 +1174,10 @@ bool GPX2::comparePairString(const pair<string, string> &p1, const pair<string, 
     bool first = (!(p1.first.compare(p2.first)) || !(p1.first.compare(p2.second)));
     bool second = (!(p1.second.compare(p2.first)) || !(p1.second.compare(p2.second)));
      return((first && second));
+}
+
+void GPX2::setAllEntryAndExits(){
+    for(auto p : allPartitions){
+        p.second->setEntryAndExits(getEntryAndExitList(p.second));
+    }
 }

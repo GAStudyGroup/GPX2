@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-"""Código para automatizar a geração da população inicial e inicialização do algoritmo genético"""
+"""Código para automatizar a geração da população inicial, inicialização do algoritmo genético e validação dos logs de saídas"""
 
 from subprocess import call
 import os
 
-population_size = 20
+population_size = 100
 tour_name = "pcb442"
 
 for i in range(1):
@@ -21,16 +21,20 @@ for i in range(1):
     print("\n\nStarting GA\n")
 
     #chamar o GA
-    call(["./bin/GA", tour_name, str(population_size),str(i)])
+    call(["./bin/GA", tour_name, str(population_size), str(i)])
 
 
     print("\n\nclean up\n")
 
     #apagar a pop inicial
-    
-    for f in os.listdir("."): 
-        if f.endswith(".dat"):  
+    for f in os.listdir("."):
+        if f.endswith(".dat"):
             os.remove(f)
-   
-    print("Search")
-    call(["./search.py"])
+
+    print("Validate crossover")
+    call(["./validate_crossover.py"])
+    print("end validate crossover")
+
+    print("Validate build")
+    call(["./validate_build.py"])
+    print("end validate build")

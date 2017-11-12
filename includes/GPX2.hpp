@@ -144,6 +144,8 @@ private:
     void checkAllPartitions();
     // Para as partições unfeasible será executada a tentativa de fusion (os métodos de auxílio da fusion estão explicados abaixo)
     void fusion();
+    // obtem a lista de entrada e saida de todas as partições
+    void setAllEntryAndExits();
 
     
     // -----------------------------------------------------------------------------------------------------
@@ -202,7 +204,7 @@ private:
     // Busca em profundidade dentro da partição para verificar se os AccessNodes estão conectados
     pair<SearchResult,vector<string>> DFS_inside(string, string, CityMap, Partition*);
     // Distancia entre dois pontos
-    double distance(double, double, double, double);
+    double distance(const CityNode&, const CityNode&);
     // Apagar subvetor de um vetor
     void eraseSubVector(vector<string>&, vector<string>&);
     //f Função utilizada para obter as entradas e saídas que estão conectadas de uma partição
@@ -245,7 +247,6 @@ private:
     CityMap blue;
     vector<Parent> partitionsChoosen;
     Parent offspringChoosen;
-
 };
 
 #endif

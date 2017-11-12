@@ -79,7 +79,8 @@ void GA(string name,unsigned popSize,int id){
     file.open("logRun_"+to_string(id)+".log");
     //fileDebug.open("log_"+to_string(id)+"_BUG.txt");
 
-    int i{0},firstBestFitness{pop.bestFitness()};
+    int i{1},firstBestFitness{pop.bestFitness()};
+    cout<<"First fitness "<<firstBestFitness<<endl;
     while(stop(pop)){
         //file<<"BestFitness: "<<pop.bestFitness()<<endl;
 

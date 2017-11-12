@@ -30,6 +30,7 @@ public:
     vector<string>& getAccessNodes();
     ConnectedNode& getConnectedTo();
     ConnectionPairVector& getConnections();
+    vector<pair<string,string>> getEntryAndExits();
     int getId();
 
     void setId(const int);
@@ -37,15 +38,16 @@ public:
     void setAccessNodes(vector<string>&);
     void setConnectedTo(ConnectedNode&);
     void setConnections(ConnectionPairVector);
+    void setEntryAndExits(vector<pair<string,string>>);
 
 private:
     int id;
     vector<string> nodes;
     vector<string> accessNodes;
+    vector<pair<string,string>> entryAndExits;
 
-    //connected to partition int in the node string
+    //variáveis apenas utilizadas na fusion
     ConnectedNode connectedTo;
-
     ConnectionPairVector connections;
 };
 
