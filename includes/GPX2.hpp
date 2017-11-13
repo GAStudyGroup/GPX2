@@ -32,6 +32,7 @@ class GPX2 {
 
     using CityMap = map<string, CityNode*>;
     using PartitionMap = map<int, Partition*>;
+    //id da partição 1, id da partição 2 e número de conexões 
     using unfeasibleConnection = pair<pair<int, int>, int>;
 
     enum class SearchResult { CONNECTED_TO_PARTITION,
@@ -220,18 +221,23 @@ private:
     // Fundir as partições
     void fusePartitions();
     // Retorna uma lista com todas as fusões que a partição participa
-    vector<unfeasibleConnection> fusionsWithPartition(const int, set<unfeasibleConnection, cmp>&);
+    vector<unfeasibleConnection> fusionsWithPartition(const int, vector<unfeasibleConnection>&);
+    void generateFusionPairs();
     // Verificar as partições unfeasible que estão conectadas
     bool unfeasiblePartitionsConnected();
     // Gerar uma lista com os IDs das partições que podem ser fundidas
     unfeasibleConnection whichPartitionToFuseWith(Partition*);
 
+
+    
+
     /* 
-        VARIÁVEIS UTILIZADAS
+        VARIÁVEIS
     */
     PartitionMap allPartitions;
     PartitionMap unfeasiblePartitions;
     CityMap unitedGraph;
+    vector<unfeasibleConnection> fuseWith;
 
     CityMap red;
     CityMap blue;
