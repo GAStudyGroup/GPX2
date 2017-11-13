@@ -11,5 +11,4 @@ for line in file:
         array = line.split(" ")
         if (int(array[3]) > int(array[1])) or (int(array[3]) > int(array[2])):
             print("Run_"+ str(sys.argv[1])+ " : " +str(line), file=fileLog)
-            print("ERRRRRRROOOOOOOOOOO LINHA " + str(i))
-            print(line)
+            print("Erro na linha " + str(i))

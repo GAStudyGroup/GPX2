@@ -15,15 +15,13 @@ for line in file:
         lineStr = line.split(" ")
         if (int(red) < int(lineStr[3])):
             print("Run_"+ str(sys.argv[1])+ " : " +str(line), file=fileLog)
-            print (lineStr)
-            print ("Deu merda, linha" + str(i))
+            print ("Erro na linha " + str(i))
         else:
             red = lineStr[3]
         
         if (int(blue) < int(lineStr[5])):
             print("Run_"+ str(sys.argv[1])+ " : " +str(line), file=fileLog)
-            print (lineStr)
-            print ("Deu merda, linha"+ str(i))
+            print ("Erro na linha "+ str(i))
         else:
             blue = lineStr[5]
 
