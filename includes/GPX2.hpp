@@ -6,8 +6,8 @@
 #include <iterator>
 #include <map>
 #include <set>
-#include <stack>
 #include <string>
+#include <tuple>
 
 #include <fstream>
 
@@ -22,9 +22,11 @@ using std::map;
 using std::remove;
 using std::set;
 using std::size_t;
-using std::stack;
 using std::string;
 using std::to_string;
+using std::tuple;
+using std::get;
+using std::make_tuple;
 
 class GPX2 {
 
@@ -33,7 +35,8 @@ class GPX2 {
     using CityMap = map<string, CityNode*>;
     using PartitionMap = map<int, Partition*>;
     //id da partição 1, id da partição 2 e número de conexões 
-    using unfeasibleConnection = pair<pair<int, int>, int>;
+    //using unfeasibleConnection = pair<pair<int, int>, int>;
+    using unfeasibleConnection = tuple<int, int, int>;
 
     enum class SearchResult { CONNECTED_TO_PARTITION,
         CONNECTED_TO_SELF,
@@ -42,14 +45,6 @@ class GPX2 {
     enum class Parent { RED,
         BLUE };
 
-    struct cmp {
-        bool operator()(const pair<pair<int, int>, int>& p1, const pair<pair<int, int>, int>& p2)
-        {
-            bool first = (p1.first.first == p2.first.first || p1.first.first == p2.first.second);
-            bool second = (p1.first.second == p2.first.first || p1.first.second == p2.first.second);
-            return (!(first && second));
-        }
-    };
     // -------------------------------------------------
 
     const string ghostToken = "-";
@@ -184,7 +179,7 @@ private:
     // Irá transformar um vetor de Objeto City em um vetor de Strings com os ID dos objeto
     vector<string> cityToString(vector<City>);
     //funções utilizadas para verificar se dois pares são iguais
-    bool comparePairInt(const pair<pair<int, int>, int>&, const pair<pair<int, int>, int>&);
+    bool comparePairInt(const unfeasibleConnection&, const unfeasibleConnection&);
     bool comparePairString(const pair<string, string>&, const pair<string, string>&);
     // Métodos que irão limpar os ponteiros e vetores utilizados
     void deleteAll();

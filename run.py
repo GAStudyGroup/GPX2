@@ -4,10 +4,10 @@
 from subprocess import call
 import os
 
-population_size = 5
+population_size = 10
 tour_name = "pcb442"
 
-for i in range(2):
+for i in range(1):
     try:
         os.remove("logBuild.log")
     except OSError:

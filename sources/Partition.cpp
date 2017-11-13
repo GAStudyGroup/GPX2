@@ -55,7 +55,8 @@ ostream& operator<<(ostream& output, const Partition& partition)
     }
     output << "connectedTo: \n";
     for (auto a : partition.connectedTo) {
-        output << "partition " << a.first << " by node " << a.second.first << " wity " << a.second.second << "\n";
+        //output << "partition " << a.first << " by node " << a.second.first << " wity " << a.second.second << "\n";
+        output << "partition " << get<0>(a) << " by node " << get<1>(a) << " with " << get<2>(a)<< "\n";
     }
     output << "connections: \n";
     for (auto a : partition.connections) {

@@ -156,7 +156,7 @@ Population generateNewPopulation(Population pop, int gen)
     unsigned size = pop.getPopulation().size();
     Population newPop;
 
-    std::random_shuffle(pop.getPopulation().begin(), pop.getPopulation().end());
+    //std::random_shuffle(pop.getPopulation().begin(), pop.getPopulation().end());
 
     for (unsigned i = 0; i < size; i++) {
         if (i == (size - 1)) {

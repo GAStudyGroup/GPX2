@@ -6,6 +6,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <tuple>
 
 using std::string;
 using std::vector;
@@ -13,6 +14,8 @@ using std::ostream;
 using std::endl;
 using std::pair;
 using std::set;
+using std::tuple;
+using std::get;
 
 class Partition {
 
@@ -21,7 +24,8 @@ class Partition {
 public:
     using ConnectionPairVector = vector<pair<int, int>>;
     //id da partição conectada, id do nó que liga e o id do nó que está ligado
-    using ConnectedNode = vector<pair<int, pair<string, string>>>;
+    // using ConnectedNode = vector<pair<int, pair<string, string>>>;
+    using ConnectedNode = vector<tuple<int, string, string>>;
 
     Partition();
     Partition(const int, vector<string>, vector<string>);
