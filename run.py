@@ -7,7 +7,7 @@ import os
 population_size = 10
 tour_name = "pcb442"
 
-for i in range(1):
+for i in range(2):
     try:
         os.remove("logBuild.log")
     except OSError:
@@ -32,9 +32,11 @@ for i in range(1):
             os.remove(f)
 
     print("Validate crossover")
-    call(["./validate_crossover.py"])
+    call(["./validate_crossover.py", str(i)])
     print("end validate crossover")
 
+    '''
     print("Validate build")
     call(["./validate_build.py"])
     print("end validate build")
+'''

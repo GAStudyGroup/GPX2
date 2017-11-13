@@ -17,18 +17,19 @@ using std::random_shuffle;
 using std::srand;
 using std::stoi;
 
-void GA(string, unsigned, int);
+void GA(string, unsigned);
 bool stop(Population);
-Population generateNewPopulation(Population);
+Population generateNewPopulation(Population, int);
 std::ofstream file;
 std::ofstream fileFinal;
+std::ofstream fileDebugTour;
+int id{ 0 };
 
 //primeiro argumento tour_name, segundo tamanho da pop
 int main(int argc, char* argv[])
 {
     string name{ "" };
     unsigned popSize{ 0 };
-    int id{ 0 };
 
     srand(time(NULL));
 
@@ -49,12 +50,12 @@ int main(int argc, char* argv[])
         return (0);
     }
 
-    GA(name, popSize, id);
+    GA(name, popSize);
 
     return 0;
 }
 
-void GA(string name, unsigned popSize, int id)
+void GA(string name, unsigned popSize)
 {
 
     Map map;
@@ -70,12 +71,7 @@ void GA(string name, unsigned popSize, int id)
         //pop = dataFile.importFirstPopulation(map,"log",popSize);
     }
 
-    /* for(Tour t : pop.getPopulation()){
-        cout<<t<<"\n";
-    }
-    cout.flush(); */
-
-    file.open("logRun_" + to_string(id) + ".log");
+    file.open("Logs/logRun_" + to_string(id) + ".log");
     //fileDebug.open("log_"+to_string(id)+"_BUG.txt");
 
     int i{ 1 }, firstBestFitness{ pop.bestFitness() };
@@ -83,7 +79,7 @@ void GA(string name, unsigned popSize, int id)
     while (stop(pop)) {
         //file<<"BestFitness: "<<pop.bestFitness()<<endl;
 
-        pop = generateNewPopulation(pop);
+        pop = generateNewPopulation(pop, i);
 
         if (i % 10 == 0) {
             cout << "gen " << i << " best fitness " << pop.bestFitness() << endl;
@@ -95,13 +91,15 @@ void GA(string name, unsigned popSize, int id)
     cout << "gen " << i << " best fitness " << pop.bestFitness() << endl;
     cout << "=========================" << endl;
 
-    fileFinal.open(name + "_Run" + to_string(id) + "_opt.txt");
-    
+    fileFinal.open(name + "_Run" + to_string(id) +"_FINAL"+ ".opt");
+
     pop.writeBestTour(fileFinal);
 
     fileFinal.flush();
     fileFinal.close();
 
+
+    // DEBUG AREA
     /* cout<<"before"<<endl;
     for(Tour t : pop.getPopulation()){
         cout<<t<<endl;
@@ -153,7 +151,7 @@ bool stop(Population pop)
     }
 }
 
-Population generateNewPopulation(Population pop)
+Population generateNewPopulation(Population pop, int gen)
 {
     unsigned size = pop.getPopulation().size();
     Population newPop;
@@ -164,23 +162,33 @@ Population generateNewPopulation(Population pop)
         if (i == (size - 1)) {
 
             newPop.addNewTour(GPX2::crossover(pop.getPopulation().at(i), pop.getPopulation().at(0)));
-            /* file<<pop.getPopulation().at(i).getFitness()<<" "<<pop.getPopulation().at(0).getFitness()<<" "<<newPop.getPopulation().back().getFitness()<<endl;
-            if(pop.getPopulation().at(i).getFitness() < newPop.getPopulation().back().getFitness() || pop.getPopulation().at(0).getFitness() < newPop.getPopulation().back().getFitness()){
-                fileDebug<<pop.getPopulation().at(i)<<endl;
-                fileDebug<<"\n\n\n\n\n\n"<<endl;
-                fileDebug<<pop.getPopulation().at(0)<<endl;
-            } */
+
+            if (pop.getPopulation().at(i).getFitness() < newPop.getPopulation().back().getFitness() || pop.getPopulation().at(0).getFitness() < newPop.getPopulation().back().getFitness()) {
+                fileDebugTour.open("Logs/logCrossover_Run" + to_string(id) + "_Gen" + to_string(i) + ".log");
+
+                fileDebugTour << pop.getPopulation().at(i) << endl;
+                fileDebugTour << "\n\n\n\n\n\n" << endl;
+                fileDebugTour << pop.getPopulation().at(0) << endl;
+
+                fileDebugTour.flush();
+                fileDebugTour.close();
+            }
 
             file << "CROSSOVER " << pop.getPopulation().at(i).getFitness() << " " << pop.getPopulation().at(0).getFitness() << " " << newPop.getPopulation().back().getFitness() << " " << i << " " << 0 << " " << endl;
         } else {
 
             newPop.addNewTour(GPX2::crossover(pop.getPopulation().at(i), pop.getPopulation().at(i + 1)));
-            /* file<<pop.getPopulation().at(i).getFitness()<<" "<<pop.getPopulation().at(i+1).getFitness()<<" "<<newPop.getPopulation().back().getFitness()<<endl;
-            if(pop.getPopulation().at(i).getFitness() < newPop.getPopulation().back().getFitness() || pop.getPopulation().at(i+1).getFitness() < newPop.getPopulation().back().getFitness()){
-                fileDebug<<pop.getPopulation().at(i)<<endl;
-                fileDebug<<"\n\n\n\n\n\n"<<endl;
-                fileDebug<<pop.getPopulation().at(i+1)<<endl;
-            } */
+
+            if (pop.getPopulation().at(i).getFitness() < newPop.getPopulation().back().getFitness() || pop.getPopulation().at(i + 1).getFitness() < newPop.getPopulation().back().getFitness()) {
+                fileDebugTour.open("Logs/logCrossover_Run" + to_string(id) + "_Gen" + to_string(i) + ".log");
+
+                fileDebugTour << pop.getPopulation().at(i) << endl;
+                fileDebugTour << "\n\n\n\n\n\n" << endl;
+                fileDebugTour << pop.getPopulation().at(i + 1) << endl;
+
+                fileDebugTour.flush();
+                fileDebugTour.close();
+            }
 
             file << "CROSSOVER " << pop.getPopulation().at(i).getFitness() << " " << pop.getPopulation().at(i + 1).getFitness() << " " << newPop.getPopulation().back().getFitness() << " " << i << " " << i + 1 << " " << endl;
         }
