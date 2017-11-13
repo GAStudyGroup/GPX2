@@ -7,11 +7,11 @@ Existem dois Branchs neste repositório, o Branch *master* contém a implementa�
 
 # AG TODO
 
-- [ ] Executar LKH para gerar a pop Inicial
-- [ ] Ler os arquivos e carregar como popInicial
-- [ ] Cruzar par a par para gerar nova Pop
-- [ ] Gerar log do melhor indíviduo por geração
-- [ ] Critério de parada por estagnação
+- [X] Executar LKH para gerar a pop Inicial
+- [X] Ler os arquivos e carregar como popInicial
+- [X] Cruzar par a par para gerar nova Pop
+- [X] Gerar log do melhor indíviduo por geração
+- [X] Critério de parada por estagnação
 
 # Etapas da execução do GPX
 

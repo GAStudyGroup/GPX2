@@ -234,7 +234,7 @@ private:
     /* 
         VARIÁVEIS
     */
-    PartitionMap allPartitions;
+    PartitionMap feasiblePartitions;
     PartitionMap unfeasiblePartitions;
     CityMap unitedGraph;
     vector<unfeasibleConnection> fuseWith;
