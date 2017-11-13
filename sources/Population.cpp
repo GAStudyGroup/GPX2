@@ -27,3 +27,11 @@ ostream& operator<<(ostream &output,Population &pop){  // Overload de operador p
    return(output);
 }
 
+void Population::writeBestTour(ofstream& file){
+    int fitness = bestFitness();
+    for(Tour t : population){
+        if(t.getFitness() == fitness){
+            file<<t<<endl;
+        }
+    }
+}

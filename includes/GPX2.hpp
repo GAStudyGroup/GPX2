@@ -229,7 +229,7 @@ private:
     /* 
         VARIÁVEIS UTILIZADAS
     */
-    PartitionMap allPartitions;
+    PartitionMap feasiblePartitions;
     PartitionMap unfeasiblePartitions;
     CityMap unitedGraph;
 

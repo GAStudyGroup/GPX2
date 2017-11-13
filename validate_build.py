@@ -22,4 +22,3 @@ for line in file:
         else:
             blue = lineStr[5]
 
-print("FIM DA BUSCA")

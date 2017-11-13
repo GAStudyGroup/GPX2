@@ -9,8 +9,6 @@ for line in file:
             print("ERRRRRRROOOOOOOOOOO LINHA " + str(i))
             print(line)
 
-
-print("FIM DA BUSCA")
         
 
 

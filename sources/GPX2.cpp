@@ -21,7 +21,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     obj.cleanInsideAccess();
 
     // se houver menos de 2 partições o GPX não consegue recombina-las
-    if (obj.allPartitions.size() < 2) {
+    if (obj.feasiblePartitions.size() < 2) {
         obj.deleteAll();
         return ((redT.getFitness() < blueT.getFitness()) ? redT : blueT);
     }
@@ -314,7 +314,7 @@ void GPX2::findAllPartitions()
                     accessNodes.push_back(idN);
                 }
             }
-            allPartitions.insert(make_pair(id, new Partition(id, vi, accessNodes)));
+            feasiblePartitions.insert(make_pair(id, new Partition(id, vi, accessNodes)));
             id++;
         }
     }
@@ -324,13 +324,13 @@ void GPX2::cleanInsideAccess()
 { // Irá retirar as flags Access dos vértices que se ligam internos a partição
 
     // Percorre a partição
-    for (auto& p : allPartitions) {
+    for (auto& p : feasiblePartitions) {
         vector<string> tmp;
 
         vector<string> accessNodes = p.second->getAccessNodes();
         for (auto it = accessNodes.begin(); it != accessNodes.end(); it++) {
             // Verificar se o vértice está ligado a outras partições
-            pair<SearchResult, vector<string>> result = DFS_outside((*it), allPartitions);
+            pair<SearchResult, vector<string>> result = DFS_outside((*it), feasiblePartitions);
 
             if (result.first == SearchResult::CONNECTED_TO_PARTITION) {
                 tmp.push_back((*it));
@@ -357,11 +357,11 @@ void GPX2::cleanInsideAccess()
 void GPX2::checkAllPartitions()
 {
 
-    for (auto it = allPartitions.begin(); it != allPartitions.end();) {
+    for (auto it = feasiblePartitions.begin(); it != feasiblePartitions.end();) {
         //se não for uma partição recombinante ele deleta da lista de partições
         if (!checkPartition((*it).second)) {
             unfeasiblePartitions.insert(make_pair((*it).first, (*it).second));
-            it = allPartitions.erase(it);
+            it = feasiblePartitions.erase(it);
         } else {
             it++;
         }
@@ -429,7 +429,7 @@ void GPX2::fusion()
             part.second->getConnections().clear();
         }
 
-        // Irá verificar se a fusão gerou uma partição feasible, caso aconteça ela será colocada nas partições feasible (allPartitions)
+        // Irá verificar se a fusão gerou uma partição feasible, caso aconteça ela será colocada nas partições feasible (feasiblePartitions)
         checkUnfeasiblePartitions();
     }
 }
@@ -441,7 +441,7 @@ void GPX2::fusion()
 void GPX2::choose()
 {
     //encontrar as entradas e saídas
-    for (auto p : allPartitions) {
+    for (auto p : feasiblePartitions) {
         int totalRed{ 0 }, totalBlue{ 0 };
         for (auto pair : p.second->getEntryAndExits()) {
             totalRed += partialDistance(pair.first, pair.second, red, p.second);
@@ -467,7 +467,7 @@ void GPX2::buildOffspring()
     fileBuild.open("logBuild.log", std::ofstream::app);
 
     fileBuild << "INICIAL DISTANCE: RED " << totalDistance(red) << " BLUE " << totalDistance(blue) << " " << endl;
-    for (auto& allP : allPartitions) {
+    for (auto& allP : feasiblePartitions) {
         if (partitionsChoosen[index] == Parent::BLUE) { // se o Blue for melhor que o Red naquela partição
             for (string s : allP.second->getNodes()) {
                 delete red.at(s);
@@ -620,10 +620,10 @@ void GPX2::deleteAll()
     deleteCityMap(red);
     deleteCityMap(blue);
     deleteCityMap(unitedGraph);
-    deletePartitionMap(allPartitions);
+    deletePartitionMap(feasiblePartitions);
     deletePartitionMap(unfeasiblePartitions);
     partitionsChoosen.clear();
-    allPartitions.clear();
+    feasiblePartitions.clear();
 }
 
 void GPX2::deleteCityMap(CityMap& m)
@@ -883,9 +883,9 @@ int GPX2::totalDistance(CityMap& graph)
     return totalDistance;
 }
 
-int GPX2::whichPartition(const string id, PartitionMap allPartitions)
+int GPX2::whichPartition(const string id, PartitionMap feasiblePartitions)
 { // Procura em qual partição está a cidade procurada, retorna o ID da partição
-    for (auto& p : allPartitions) {
+    for (auto& p : feasiblePartitions) {
         if (find(p.second->getNodes().begin(), p.second->getNodes().end(), id) != p.second->getNodes().end()) {
             return (p.first);
         }
@@ -903,7 +903,7 @@ void GPX2::checkUnfeasiblePartitions()
     for (auto it = unfeasiblePartitions.begin(); it != unfeasiblePartitions.end();) {
         if (checkPartition((*it).second)) { // Checar se é feasible
             // se for irá ser retirada das partições unfeasible e colocada nas partições feasible
-            allPartitions.insert(make_pair((*it).first, (*it).second));
+            feasiblePartitions.insert(make_pair((*it).first, (*it).second));
             it = unfeasiblePartitions.erase(it);
         } else {
             it++;
@@ -1181,7 +1181,7 @@ bool GPX2::comparePairString(const pair<string, string>& p1, const pair<string, 
 
 void GPX2::setAllEntryAndExits()
 {
-    for (auto p : allPartitions) {
+    for (auto p : feasiblePartitions) {
         p.second->setEntryAndExits(getEntryAndExitList(p.second));
     }
 }
