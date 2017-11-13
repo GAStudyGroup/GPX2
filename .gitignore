@@ -1,8 +1,12 @@
 *.d
 
+
+Logs/*.log
 sources/*.o
 bin/
 
 *.txt
+*.log
+*.opt
 
-.vscode/
+.vscode/*
