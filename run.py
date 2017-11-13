@@ -4,7 +4,7 @@
 from subprocess import call
 import os
 
-population_size = 10
+population_size = 5
 tour_name = "pcb442"
 
 for i in range(2):
@@ -35,8 +35,6 @@ for i in range(2):
     call(["./validate_crossover.py", str(i)])
     print("end validate crossover")
 
-    '''
     print("Validate build")
-    call(["./validate_build.py"])
+    call(["./validate_build.py", str(i)])
     print("end validate build")
-'''

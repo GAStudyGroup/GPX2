@@ -463,10 +463,11 @@ void GPX2::choose()
 
 void GPX2::buildOffspring()
 {
+    extern int id;
     int index{ 0 };
     std::ofstream fileBuild;
 
-    fileBuild.open("logBuild.log", std::ofstream::app);
+    fileBuild.open("Logs/logBuild_"+ to_string(id) +".log", std::ofstream::app);
 
     fileBuild << "INICIAL DISTANCE: RED " << totalDistance(red) << " BLUE " << totalDistance(blue) << " " << endl;
     for (auto& allP : feasiblePartitions) {
@@ -941,7 +942,7 @@ void GPX2::fusePartitions()
     // Início da execução da fusão em si
     //for (auto p : fuseWith) {
     for (auto it=fuseWith.begin();it!=fuseWith.end();) {
-        cout<<"fusing "<<(*it).first.first<<" with "<<(*it).first.second<<" because they are connected "<<(*it).second<<" times"<<endl;
+        
         // Não precisa mudar o custo pois a checkPartition não verifica isso
         Partition* p1Ptr = unfeasiblePartitions.at((*it).first.first);
         Partition* p2Ptr = unfeasiblePartitions.at((*it).first.second);

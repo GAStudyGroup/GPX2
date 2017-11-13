@@ -17,6 +17,7 @@ DIST_OUT := bin/dist
 SOURCES := $(shell find $(SRC_FOLDER) -type f -name *.cpp)
 
 all: $(EXE_OUT)
+	@mkdir -p Logs
 
 $(EXE_OUT): $(SOURCES:.cpp=.o)
 	$(CC) -o $@ $^ $(CFLAGS)
