@@ -22,7 +22,6 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
 
     // se houver menos de 2 partições o GPX não consegue recombina-las
     if (obj.feasiblePartitions.size() < 2) {
-        obj.deleteAll();
         return ((redT.getFitness() < blueT.getFitness()) ? redT : blueT);
     }
 
@@ -54,7 +53,6 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     }
 
     // Deletar as coisas
-    obj.deleteAll();
     return t;
 }
 
@@ -595,17 +593,6 @@ bool GPX2::comparePairString(const pair<string, string>& p1, const pair<string, 
     return ((first && second));
 }
 
-void GPX2::deleteAll()
-{
-    deleteCityMap(red);
-    deleteCityMap(blue);
-    deleteCityMap(unitedGraph);
-    deletePartitionMap(feasiblePartitions);
-    deletePartitionMap(unfeasiblePartitions);
-    partitionsChoosen.clear();
-    feasiblePartitions.clear();
-}
-
 void GPX2::deleteCityMap(CityMap& m)
 { // deletar o mapa completamente,
     // desalocando os ponteiros tb
@@ -1029,19 +1016,31 @@ vector<GPX2::UnfeasibleConnection> GPX2::fusionsWithPartition(const int id, vect
 }
 
 void GPX2::generateFusionPairs()
-{
+{   // Percorre o mapa com as partições unfeasible para gerar a lista com fusões a serem feitas
+    
     for (auto uF : unfeasiblePartitions) {
+
+        // Pega o retorno da função, IDs das partições e número de conexões entre elas, e salva na estrutura
         UnfeasibleConnection data = whichPartitionToFuseWith(unfeasiblePartitions[uF.first]);
 
+        // Caso seja -1 ele está ligado a uma partição feasible, logo é ignorado
         if (data.partitionId1 != -1) {
             // Carrega o par de partições para fundir
             fuseWith.push_back(UnfeasibleConnection(uF.first, data.partitionId1, data.numberOfConnections));
         }
     }
 
+    /* 
+        Irá percorrer a lista fuseWith retirando as entradas iguais
+
+        Ex: 1,2 e 2,1
+            É uma situação de igualdade na qual é retirada, sobrando apenas uma
+    */
     for (auto itOut = fuseWith.begin(); itOut != fuseWith.end(); itOut++) {
         for (auto itIn = fuseWith.begin(); itIn != fuseWith.end();) {
             if (itOut != itIn) {
+
+                // Método para comparação, caso ocorra a igualdade então é retirado da lista
                 if (comparePairInt(*itOut, *itIn)) {
                     itIn = fuseWith.erase(itIn);
                 } else {
@@ -1053,11 +1052,17 @@ void GPX2::generateFusionPairs()
         }
     }
 
+
     for (const auto& p : unfeasiblePartitions) {
+        // Pega o retorno do método, todas as possíveis fusões daquela partição
         vector<UnfeasibleConnection> tmp = fusionsWithPartition(p.first, fuseWith);
+
+        // Se for menor que 2, logo não é possível que ela seja utilizada em mais de uma fusão.
         if (fuseWith.size() < 2) {
             break;
         }
+
+        // Bloco para validação em caso de "melhor" fusão, compara entre as possíveis fusões e irá manter apenas a com maior número de conexões entre as partições.
         if (!tmp.empty()) {
             int maxCon{ -1 }, maxPos{ -1 };
             for (unsigned i = 0; i < tmp.size(); i++) {
@@ -1146,4 +1151,14 @@ bool operator==(const GPX2::UnfeasibleConnection& uf1, const GPX2::UnfeasibleCon
     bool second = ((uf1.partitionId2 == uf2.partitionId1) || (uf1.partitionId2 == uf2.partitionId2));
 
     return (first && second);
+}
+
+GPX2::~GPX2(){
+    deleteCityMap(red);
+    deleteCityMap(blue);
+    deleteCityMap(unitedGraph);
+    deletePartitionMap(feasiblePartitions);
+    deletePartitionMap(unfeasiblePartitions);
+    partitionsChoosen.clear();
+    feasiblePartitions.clear();
 }

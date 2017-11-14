@@ -25,6 +25,13 @@ public:
     // ID da partição conectada e o total de conexões entre elas
     using PartitionConnected = pair<int, int>;
 
+    /*
+        Estrutura para guardar as informações de conexão entre a partição do objeto e uma outra
+
+        connectedPartition: ID da partição conectada
+        node: nó da partição do objeto que se conecta
+        connectedNode: nó da outra partição que está conectada
+    */
     using ConnectionNode = struct ConnectionNode{
         int connectedPartition;
         string node;

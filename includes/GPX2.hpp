@@ -33,6 +33,13 @@ class GPX2 {
 
     using PartitionMap = map<int, Partition*>;
 
+    /*
+        Estrutura para guardar informações das conexões entre partições unfeasible
+        
+        partitionId1: id da partição 1
+        partitionId2: id da partição 2
+        numberOfConnections: número de conexões entre as duas partições
+    */
     using UnfeasibleConnection = struct UnfeasibleConnection{
         int partitionId1;
         int partitionId2;
@@ -42,12 +49,13 @@ class GPX2 {
 
     };
 
-
+    // Enum utilizado para definir o retorno da busca em profundidade
     enum class SearchResult { CONNECTED_TO_PARTITION,
         CONNECTED_TO_SELF,
         IS_CONNECTED,
         IS_NOT_CONNECTED };
 
+    // Enum para simbolizar os pais
     enum class Parent { RED,
         BLUE };
 
@@ -63,6 +71,8 @@ public:
         Todos os passos executados pelo GPX são executados durante sua execução.
     */
     Tour static crossover(Tour, Tour);
+
+    ~GPX2();
 
 private:
     /*  
@@ -182,11 +192,10 @@ private:
 
         Métodos utilizados para dar suporte aos passos que compõem o GPX.
     */
-    //funções utilizadas para verificar se dois pares são iguais
+    // Funções utilizadas para verificar se dois pares são iguais
     bool comparePairInt(const UnfeasibleConnection&, const UnfeasibleConnection&);
     bool comparePairString(const pair<string, string>&, const pair<string, string>&);
     // Métodos que irão limpar os ponteiros e vetores utilizados
-    void deleteAll();
     void static deleteCityMap(CityMap&);
     void static deletePartitionMap(PartitionMap&);
     // Busca em profundidade fora da partição para encontrar conexões entre partições
@@ -221,14 +230,12 @@ private:
     void fusePartitions();
     // Retorna uma lista com todas as fusões que a partição participa
     vector<UnfeasibleConnection> fusionsWithPartition(const int, vector<UnfeasibleConnection>&);
+    // Irá gerar uma lista com as fusões a serem realizadas, já executando as validações necessárias
     void generateFusionPairs();
     // Verificar as partições unfeasible que estão conectadas
     bool unfeasiblePartitionsConnected();
     // Gerar uma lista com os IDs das partições que podem ser fundidas
     UnfeasibleConnection whichPartitionToFuseWith(Partition*);
-
-
-    
 
     /* 
         VARIÁVEIS
