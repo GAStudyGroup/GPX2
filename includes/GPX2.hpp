@@ -7,7 +7,6 @@
 #include <map>
 #include <set>
 #include <string>
-#include <tuple>
 
 #include <fstream>
 
@@ -24,31 +23,36 @@ using std::set;
 using std::size_t;
 using std::string;
 using std::to_string;
-using std::tuple;
-using std::get;
-using std::make_tuple;
 
 class GPX2 {
 
     // Definições das principais estruturas utilizadas
-
     using CityMap = map<string, CityNode*>;
+
     using PartitionMap = map<int, Partition*>;
-    //id da partição 1, id da partição 2 e número de conexões 
-    //using unfeasibleConnection = pair<pair<int, int>, int>;
-    using unfeasibleConnection = tuple<int, int, int>;
+
+    using UnfeasibleConnection = struct UnfeasibleConnection{
+        int partitionId1;
+        int partitionId2;
+        int numberOfConnections;
+
+        UnfeasibleConnection(int id1, int id2, int number):partitionId1(id1), partitionId2(id2), numberOfConnections(number){}
+
+    };
+
 
     enum class SearchResult { CONNECTED_TO_PARTITION,
         CONNECTED_TO_SELF,
         IS_CONNECTED,
         IS_NOT_CONNECTED };
+
     enum class Parent { RED,
         BLUE };
 
     // -------------------------------------------------
 
     const string ghostToken = "-";
-    friend bool operator==(unfeasibleConnection&, unfeasibleConnection&);
+    friend bool operator==(const UnfeasibleConnection&, const UnfeasibleConnection&);
 
 public:
     /*  
@@ -179,7 +183,7 @@ private:
     // Irá transformar um vetor de Objeto City em um vetor de Strings com os ID dos objeto
     vector<string> cityToString(vector<City>);
     //funções utilizadas para verificar se dois pares são iguais
-    bool comparePairInt(const unfeasibleConnection&, const unfeasibleConnection&);
+    bool comparePairInt(const UnfeasibleConnection&, const UnfeasibleConnection&);
     bool comparePairString(const pair<string, string>&, const pair<string, string>&);
     // Métodos que irão limpar os ponteiros e vetores utilizados
     void deleteAll();
@@ -216,12 +220,12 @@ private:
     // Fundir as partições
     void fusePartitions();
     // Retorna uma lista com todas as fusões que a partição participa
-    vector<unfeasibleConnection> fusionsWithPartition(const int, vector<unfeasibleConnection>&);
+    vector<UnfeasibleConnection> fusionsWithPartition(const int, vector<UnfeasibleConnection>&);
     void generateFusionPairs();
     // Verificar as partições unfeasible que estão conectadas
     bool unfeasiblePartitionsConnected();
     // Gerar uma lista com os IDs das partições que podem ser fundidas
-    unfeasibleConnection whichPartitionToFuseWith(Partition*);
+    UnfeasibleConnection whichPartitionToFuseWith(Partition*);
 
 
     
@@ -232,7 +236,7 @@ private:
     PartitionMap feasiblePartitions;
     PartitionMap unfeasiblePartitions;
     CityMap unitedGraph;
-    vector<unfeasibleConnection> fuseWith;
+    vector<UnfeasibleConnection> fuseWith;
 
     CityMap red;
     CityMap blue;

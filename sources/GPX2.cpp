@@ -694,7 +694,7 @@ pair<GPX2::SearchResult, vector<string>> GPX2::DFS_outside(string id, PartitionM
         return make_pair(SearchResult::CONNECTED_TO_SELF, alreadyVisited);
     } else {
         if (unfeasible) {
-            partitions[idPartition]->getConnectedTo().push_back(make_tuple(partitionConnected, id, alreadyVisited.back()));
+            partitions[idPartition]->getConnectedTo().push_back(Partition::ConnectionNode(partitionConnected, id, alreadyVisited.back()));
         }
         return make_pair(SearchResult::CONNECTED_TO_PARTITION, alreadyVisited);
     }
@@ -922,11 +922,11 @@ void GPX2::countConnectedPartitions()
         for (auto node : p.second->getConnectedTo()) {
 
             // Tenta inserir uma nova partição que está conectada
-            auto result = countConnected.insert(make_pair(get<0>(node) , 1));
+            auto result = countConnected.insert(make_pair(node.connectedPartition, 1));
 
             // Caso a inserção falhar, a partição já está na lista de conectadas, sendo assim o total de ligações será aumentado
             if (!result.second) {
-                countConnected.at(get<0>(node))++;
+                countConnected.at(node.connectedPartition)++;
             }
         }
 
@@ -944,20 +944,20 @@ void GPX2::fusePartitions()
     for (auto it=fuseWith.begin();it!=fuseWith.end();) {
         
         // Não precisa mudar o custo pois a checkPartition não verifica isso
-        Partition* p1Ptr = unfeasiblePartitions.at(get<0>(*it));
-        Partition* p2Ptr = unfeasiblePartitions.at(get<1>(*it));
+        Partition* p1Ptr = unfeasiblePartitions.at((*it).partitionId1);
+        Partition* p2Ptr = unfeasiblePartitions.at((*it).partitionId2);
         vector<string> intermediariesNodes, accessNodesToRemove;
 
         // Deletar as entradas de conexões (connectTo) diferentes da partição que será fundida
         for (auto itIn = p1Ptr->getConnectedTo().begin(); itIn != p1Ptr->getConnectedTo().end();) {
-            if (get<0>(*itIn) != get<1>(*it)) {
+            if ((*itIn).connectedPartition != (*it).partitionId2) {
                 p1Ptr->getConnectedTo().erase(itIn);
             } else {
                 itIn++;
             }
         }
         for (auto itIn = p2Ptr->getConnectedTo().begin(); itIn != p2Ptr->getConnectedTo().end();) {
-            if (get<0>(*itIn) != get<0>(*it)) {
+            if ((*itIn).connectedPartition != (*it).partitionId1) {
                 p2Ptr->getConnectedTo().erase(itIn);
             } else {
                 itIn++;
@@ -975,11 +975,11 @@ void GPX2::fusePartitions()
         for (auto connectedNode : p2Ptr->getConnectedTo()) {
 
             // Pegar os nós intermediários (o "caminho" da conexão)
-            pair<SearchResult, vector<string>> tmp = DFS_outside(get<1>(connectedNode), unfeasiblePartitions);
+            pair<SearchResult, vector<string>> tmp = DFS_outside(connectedNode.node, unfeasiblePartitions);
 
             // Apagar os access nodes da lista da partição
-            accessNodesToRemove.push_back(get<1>(connectedNode));
-            accessNodesToRemove.push_back(get<2>(connectedNode));
+            accessNodesToRemove.push_back(connectedNode.node);
+            accessNodesToRemove.push_back(connectedNode.connectedNode);
 
             // Apagar o primeiro pois é o nó access que da origem a busca
             if (!tmp.second.empty()) {
@@ -1010,19 +1010,19 @@ void GPX2::fusePartitions()
 
         // Apagar tudo
         delete p2Ptr;
-        unfeasiblePartitions.erase(get<1>(*it));
+        unfeasiblePartitions.erase((*it).partitionId2);
 
         //apaga a entrada na fuseWith pois a fusão já foi realizada
         it = fuseWith.erase(it);
     }
 }
 
-vector<GPX2::unfeasibleConnection> GPX2::fusionsWithPartition(const int id, vector<GPX2::unfeasibleConnection>& connections)
+vector<GPX2::UnfeasibleConnection> GPX2::fusionsWithPartition(const int id, vector<GPX2::UnfeasibleConnection>& connections)
 {
-    vector<GPX2::unfeasibleConnection> instances;
+    vector<GPX2::UnfeasibleConnection> instances;
 
     for (const auto& con : connections) {
-        if (get<0>(con) == id || get<1>(con) == id) {
+        if (con.partitionId1 == id || con.partitionId2 == id) {
             instances.push_back(con);
         }
     }
@@ -1051,17 +1051,17 @@ bool GPX2::unfeasiblePartitionsConnected()
         int idPartition = whichPartition((*it), unfeasiblePartitions);
 
         // Verifica qual partição está conectada
-        int connectedPartition = get<0>(unfeasiblePartitions.at(idPartition)->getConnectedTo().back());
+        int connectedPartition = unfeasiblePartitions.at(idPartition)->getConnectedTo().back().connectedPartition;
 
         // Verifica o ID do nó na qual ela está conectada
-        string connectedId = get<2>(unfeasiblePartitions.at(idPartition)->getConnectedTo().back());
+        string connectedId = unfeasiblePartitions.at(idPartition)->getConnectedTo().back().connectedNode;
 
         // Caso ele esteja conectado a outra partição unfeasible, caso não seja "-1" (conectado com uma partição feasible)
         if (connectedPartition != -1) {
             atLeastOneConnected = true;
 
             // Insere no vetor de conexões
-            unfeasiblePartitions.at(connectedPartition)->getConnectedTo().push_back(make_tuple(idPartition, connectedId, (*it)));
+            unfeasiblePartitions.at(connectedPartition)->getConnectedTo().push_back(Partition::ConnectionNode(idPartition, connectedId, (*it)));
 
             // Não precisa verificar os nós que já foram ligados
             nodesToCheck.erase(remove(nodesToCheck.begin(), nodesToCheck.end(), connectedId), nodesToCheck.end());
@@ -1073,7 +1073,7 @@ bool GPX2::unfeasiblePartitionsConnected()
     return (atLeastOneConnected);
 }
 
-GPX2::unfeasibleConnection GPX2::whichPartitionToFuseWith(Partition* partition)
+GPX2::UnfeasibleConnection GPX2::whichPartitionToFuseWith(Partition* partition)
 { // Retorna um par com a partição que contém mais conexões e o total de conexões
 
     int partitionId{ -1 }, max{ -1 };
@@ -1083,13 +1083,13 @@ GPX2::unfeasibleConnection GPX2::whichPartitionToFuseWith(Partition* partition)
             partitionId = p.first;
         }
     }
-    return (make_tuple(partitionId, max, max));
+    return (UnfeasibleConnection(partitionId, max, max));
 }
 
-bool operator==(GPX2::unfeasibleConnection& uf1, GPX2::unfeasibleConnection& uf2)
-{
-    bool first = ((get<0>(uf1) == get<0>(uf2)) || (get<0>(uf1)== get<1>(uf2)));
-    bool second = ((get<1>(uf1)== get<0>(uf2)) || (get<1>(uf1) == get<1>(uf2)));
+bool operator==(const GPX2::UnfeasibleConnection& uf1, const GPX2::UnfeasibleConnection& uf2)
+{ 
+    bool first = ((uf1.partitionId1 == uf2.partitionId1) || (uf1.partitionId1 == uf2.partitionId2));
+    bool second = ((uf1.partitionId2 == uf2.partitionId1) || (uf1.partitionId2 == uf2.partitionId2));
 
     return (first && second);
 }
@@ -1130,11 +1130,11 @@ vector<pair<string, string>> GPX2::getEntryAndExitList(Partition* p)
 void GPX2::generateFusionPairs() 
 { 
     for(auto uF : unfeasiblePartitions){
-        unfeasibleConnection data = whichPartitionToFuseWith(unfeasiblePartitions.at(uF.first));
+        UnfeasibleConnection data = whichPartitionToFuseWith(unfeasiblePartitions.at(uF.first));
 
-        if (get<0>(data) != -1) {
+        if (data.partitionId1 != -1) {
             // Carrega o par de partições para fundir
-            fuseWith.push_back(make_tuple(uF.first, get<0>(data), get<2>(data)));
+            fuseWith.push_back(UnfeasibleConnection(uF.first, data.partitionId1, data.numberOfConnections));
         }
     }
 
@@ -1154,22 +1154,22 @@ void GPX2::generateFusionPairs()
 
 
     for (const auto& p : unfeasiblePartitions) {
-        vector<unfeasibleConnection> tmp = fusionsWithPartition(p.first, fuseWith);
+        vector<UnfeasibleConnection> tmp = fusionsWithPartition(p.first, fuseWith);
         if (fuseWith.size() < 2) {
             break;
         }
         if (!tmp.empty()) {
             int maxCon{ -1 }, maxPos{ -1 };
             for (unsigned i = 0; i < tmp.size(); i++) {
-                if (get<2>(tmp[i]) > maxCon) {
-                    maxCon = get<2>(tmp[i]);
+                if (tmp[i].numberOfConnections > maxCon) {
+                    maxCon = tmp[i].numberOfConnections;
                     maxPos = i;
                 }
             }
 
             tmp.erase(tmp.begin() + maxPos);
 
-            for (const auto& unfCon : tmp) {
+            for (auto& unfCon : tmp) {
                 for (auto it = fuseWith.begin(); it != fuseWith.end();) {
 
                     if (unfCon == (*it)) {
@@ -1184,11 +1184,11 @@ void GPX2::generateFusionPairs()
     }
 }
 
-bool GPX2::comparePairInt(const unfeasibleConnection& p1, const unfeasibleConnection& p2)
+bool GPX2::comparePairInt(const UnfeasibleConnection& p1, const UnfeasibleConnection& p2)
 {
-    bool first = get<0>(p1) == get<0>(p2) || get<0>(p1) == get<1>(p2);
-
-    bool second = get<1>(p1) == get<0>(p2) || get<1>(p1) == get<1>(p2);
+    bool first = p1.partitionId1 == p2.partitionId1 || p1.partitionId1 == p2.partitionId2;
+    bool second = p1.partitionId2 == p2.partitionId1 || p1.partitionId2 == p2.partitionId2;
+    
     return ((first && second));
 }
 

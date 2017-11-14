@@ -8,11 +8,11 @@ Partition::Partition(const int id, vector<string> nodes, vector<string> accessNo
 
 vector<string>& Partition::getNodes() { return (nodes); }
 vector<string>& Partition::getAccessNodes() { return (accessNodes); }
-Partition::ConnectionPairVector& Partition::getConnections() { return (connections); }
+vector<Partition::PartitionConnected>& Partition::getConnections() { return (connections); }
 vector<pair<string, string>> Partition::getEntryAndExits() { return (entryAndExits); }
 int Partition::getId() { return (id); }
 
-Partition::ConnectedNode& Partition::getConnectedTo() { return connectedTo; }
+vector<Partition::ConnectionNode>& Partition::getConnectedTo() { return connectedTo; }
 
 void Partition::setId(const int id)
 {
@@ -29,12 +29,12 @@ void Partition::setAccessNodes(vector<string>& accessNodes)
     this->accessNodes = accessNodes;
 }
 
-void Partition::setConnections(ConnectionPairVector connections)
+void Partition::setConnections(vector<Partition::PartitionConnected> connections)
 {
     this->connections = connections;
 }
 
-void Partition::setConnectedTo(ConnectedNode& connectedTo) { this->connectedTo = connectedTo; }
+void Partition::setConnectedTo(vector<ConnectionNode>& connectedTo) { this->connectedTo = connectedTo; }
 
 void Partition::setEntryAndExits(vector<pair<string, string>> entryAndExits)
 {
@@ -56,7 +56,7 @@ ostream& operator<<(ostream& output, const Partition& partition)
     output << "connectedTo: \n";
     for (auto a : partition.connectedTo) {
         //output << "partition " << a.first << " by node " << a.second.first << " wity " << a.second.second << "\n";
-        output << "partition " << get<0>(a) << " by node " << get<1>(a) << " with " << get<2>(a)<< "\n";
+        output << "partition " << a.connectedPartition << " by node " << a.node << " with " << a.connectedNode << "\n";
     }
     output << "connections: \n";
     for (auto a : partition.connections) {

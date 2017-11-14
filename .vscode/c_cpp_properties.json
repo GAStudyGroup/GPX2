@@ -36,12 +36,6 @@
                 "${workspaceRoot}/includes",
                 "/usr/include/c++/7.2.0",
                 "/usr/include/c++/7.2.0/x86_64-pc-linux-gnu",
-                "/usr/include/linux",
-                "/usr/include/linux",
-                "/usr/include/linux",
-                "/usr/include/linux",
-                "/usr/include/linux",
-                "/usr/include/linux",
                 "/usr/include/linux"
             ],
             "defines": [],
