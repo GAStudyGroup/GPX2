@@ -182,8 +182,6 @@ private:
 
         Métodos utilizados para dar suporte aos passos que compõem o GPX.
     */
-    // Irá transformar um vetor de Objeto City em um vetor de Strings com os ID dos objeto
-    vector<string> cityToString(vector<City>);
     //funções utilizadas para verificar se dois pares são iguais
     bool comparePairInt(const UnfeasibleConnection&, const UnfeasibleConnection&);
     bool comparePairString(const pair<string, string>&, const pair<string, string>&);
