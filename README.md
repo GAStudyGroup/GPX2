@@ -7,11 +7,7 @@ Existem dois Branchs neste repositório, o Branch *master* contém a implementa�
 
 # AG TODO
 
-- [X] Executar LKH para gerar a pop Inicial
-- [X] Ler os arquivos e carregar como popInicial
-- [X] Cruzar par a par para gerar nova Pop
-- [X] Gerar log do melhor indíviduo por geração
-- [X] Critério de parada por estagnação
+Validar qual combinação de partições seria melhor para fusão, no caso, em situações onde existem 2 ou mais combinações diferentes de possíveis fusões, nas quais uma das partições estejam em todas as combinações, será verificado qual combinação irá gerar uma "partição melhor", maior número ou menor número.
 
 # Etapas da execução do GPX
 
