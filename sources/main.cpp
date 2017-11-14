@@ -23,11 +23,11 @@ std::ofstream file;
 std::ofstream fileFinal;
 std::ofstream fileDebugTour;
 int id{ 0 };
+string name{ "" };
 
 //primeiro argumento tour_name, segundo tamanho da pop
 int main(int argc, char* argv[])
 {
-    string name{ "" };
     unsigned popSize{ 0 };
 
     srand(time(NULL));
@@ -69,7 +69,8 @@ void GA(string name, unsigned popSize)
         pop = dataFile.importFirstPopulation(map, name, popSize);
     }
 
-    file.open("Logs/logRun_" + to_string(id) + ".log");
+    //file.open("Logs/logRun_" + to_string(id) + ".log");
+    file.open("Logs/logRun_"+ name + "_" + to_string(id) + ".log");
 
     int i{ 1 }, firstBestFitness{ pop.bestFitness() };
     cout << "First fitness " << firstBestFitness << endl;

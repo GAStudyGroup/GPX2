@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 import sys
 
-file = open("Logs/logBuild_"+ str(sys.argv[1]) +".log", "r")
-fileLog = open("Logs/1_LOGPython_validateBuild.log", "a")
+try:
+    file = open("Logs/logBuild_"+ str(sys.argv[2]) + "_" + str(sys.argv[1]) +".log", "r")
+    fileLog = open("Logs/1_LOGPython_validateBuild_" + str(sys.argv[2]) + ".log", "a")
+except OSError:
+    pass
 
 i = 0
 for line in file:

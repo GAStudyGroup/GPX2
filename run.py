@@ -5,36 +5,36 @@ from subprocess import call
 import os
 
 population_size = 10
-tour_name = "pcb442"
 
-for i in range(1):
-    try:
-        os.remove("logBuild.log")
-    except OSError:
-        pass
+tours = ["pcb442", "kroB100"]
 
-    print(str(i)+" Generating population for problem "+tour_name+" with population size "+str(population_size)+"\n")
+#tour_name = "pcb442"
 
-    #gerar a pop inicial
-    call(["./bin/linkern","-Q" ,"-S"+tour_name, "-R"+str(population_size), tour_name+".tsp"])
+for tour_name in tours:
+    for i in range(2):
 
-    print("\n\nStarting GA\n")
+        print(str(i)+" Generating population for problem "+tour_name+" with population size "+str(population_size)+"\n")
 
-    #chamar o GA
-    call(["./bin/GA", tour_name, str(population_size), str(i)])
+        #gerar a pop inicial
+        call(["./bin/linkern","-Q" ,"-S"+tour_name, "-R"+str(population_size), tour_name+".tsp"])
+
+        print("\n\nStarting GA\n")
+
+        #chamar o GA
+        call(["./bin/GA", tour_name, str(population_size), str(i)])
 
 
-    print("\n\nclean up\n")
-    
-    #apagar a pop inicial
-    for f in os.listdir("."):
-        if f.endswith(".dat"):
-            os.remove(f)
+        print("\n\nclean up\n")
+        
+        #apagar a pop inicial
+        for f in os.listdir("."):
+            if f.endswith(".dat"):
+                os.remove(f)
 
-    print("Validate crossover")
-    call(["./validate_crossover.py", str(i)])
-    print("end validate crossover")
+        print("Validate crossover")
+        call(["./validate_crossover.py", str(i), str(tour_name)])
+        print("end validate crossover")
 
-    print("Validate build")
-    call(["./validate_build.py", str(i)])
-    print("end validate build")
+        print("Validate build")
+        call(["./validate_build.py", str(i), str(tour_name)])
+        print("end validate build")

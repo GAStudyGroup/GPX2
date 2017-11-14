@@ -435,10 +435,12 @@ void GPX2::choose()
 void GPX2::buildOffspring()
 {
     extern int id;
+    extern string name;
     int index{ 0 };
 
     std::ofstream fileBuild;
-    fileBuild.open("Logs/logBuild_" + to_string(id) + ".log", std::ofstream::app);
+    fileBuild.open("Logs/logBuild_"+ name + "_" + to_string(id) + ".log", std::ofstream::app);
+    //fileBuild.open("Logs/logBuild_" + to_string(id) + ".log", std::ofstream::app);
     fileBuild << "INICIAL DISTANCE: RED " << totalDistance(red) << " BLUE " << totalDistance(blue) << " " << endl;
 
     for (auto& allP : feasiblePartitions) {
