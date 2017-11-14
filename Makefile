@@ -5,7 +5,7 @@
 #	Makefile configs
 #
 
-CC := g++ -std=gnu++17
+CC := g++ -std=gnu++17 -pthread
 CFLAGS := -fsanitize=leak -fsanitize=address -Wall -O3
 INC_FOLDER := -I includes
 SRC_FOLDER := sources

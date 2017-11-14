@@ -438,11 +438,6 @@ void GPX2::buildOffspring()
     extern string name;
     int index{ 0 };
 
-    std::ofstream fileBuild;
-    fileBuild.open("Logs/logBuild_"+ name + "_" + to_string(id) + ".log", std::ofstream::app);
-    //fileBuild.open("Logs/logBuild_" + to_string(id) + ".log", std::ofstream::app);
-    fileBuild << "INICIAL DISTANCE: RED " << totalDistance(red) << " BLUE " << totalDistance(blue) << " " << endl;
-
     for (auto& allP : feasiblePartitions) {
         if (partitionsChoosen[index] == Parent::BLUE) { // se o Blue for melhor que o Red naquela partição
             for (string s : allP.second->getNodes()) {
@@ -463,14 +458,8 @@ void GPX2::buildOffspring()
                 blue.insert(make_pair(s, newNode));
             }
         }
-
-        fileBuild << "FINAL DISTANCE: RED " << totalDistance(red) << " BLUE " << totalDistance(blue) << " " << endl;
-
         index++;
     }
-
-    fileBuild.flush();
-    fileBuild.close();
 
     offspringChoosen = ((totalDistance(red) < totalDistance(blue)) ? (Parent::RED) : (Parent::BLUE));
 }

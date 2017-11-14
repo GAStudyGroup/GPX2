@@ -4,14 +4,14 @@
 from subprocess import call
 import os
 
-population_size = 10
+population_size = 50
 
-tours = ["pcb442", "kroB100"]
+tours = ["pcb442"]
 
 #tour_name = "pcb442"
 
 for tour_name in tours:
-    for i in range(2):
+    for i in range(1):
 
         print(str(i)+" Generating population for problem "+tour_name+" with population size "+str(population_size)+"\n")
 
@@ -21,7 +21,7 @@ for tour_name in tours:
         print("\n\nStarting GA\n")
 
         #chamar o GA
-        call(["./bin/GA", tour_name, str(population_size), str(i)])
+        call(["./bin/GA", tour_name, str(population_size), str(i),str(2)])
 
 
         print("\n\nclean up\n")
@@ -30,7 +30,7 @@ for tour_name in tours:
         for f in os.listdir("."):
             if f.endswith(".dat"):
                 os.remove(f)
-
+        '''
         print("Validate crossover")
         call(["./validate_crossover.py", str(i), str(tour_name)])
         print("end validate crossover")
@@ -38,3 +38,4 @@ for tour_name in tours:
         print("Validate build")
         call(["./validate_build.py", str(i), str(tour_name)])
         print("end validate build")
+        '''
