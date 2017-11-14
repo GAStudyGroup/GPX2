@@ -162,8 +162,11 @@ Population generateNewPopulation(Population pop, int gen)
     for (unsigned i = 0; i < size; i++) {
         if (i == (size - 1)) {
 
+            std::clock_t time; 
+            time = std::clock();
             newPop.addNewTour(GPX2::crossover(pop.getPopulation().at(i), pop.getPopulation().at(0)));
-
+            time = std::clock() - time;
+            cout<<"used "<<(time)<<" cycles, "<<(((float)time)/CLOCKS_PER_SEC)<<endl;
             if (pop.getPopulation().at(i).getFitness() < newPop.getPopulation().back().getFitness() || pop.getPopulation().at(0).getFitness() < newPop.getPopulation().back().getFitness()) {
                 fileDebugTour.open("Logs/logCrossover_Run" + to_string(id) + "_Gen" + to_string(i) + ".log");
 
@@ -177,8 +180,11 @@ Population generateNewPopulation(Population pop, int gen)
 
             file << "CROSSOVER " << pop.getPopulation().at(i).getFitness() << " " << pop.getPopulation().at(0).getFitness() << " " << newPop.getPopulation().back().getFitness() << " " << i << " " << 0 << " " << endl;
         } else {
-
+            std::clock_t time; 
+            time = std::clock();
             newPop.addNewTour(GPX2::crossover(pop.getPopulation().at(i), pop.getPopulation().at(i + 1)));
+            time = std::clock() - time;
+            cout<<"used "<<(time)<<" cycles, "<<(((float)time)/CLOCKS_PER_SEC)<<endl;
 
             if (pop.getPopulation().at(i).getFitness() < newPop.getPopulation().back().getFitness() || pop.getPopulation().at(i + 1).getFitness() < newPop.getPopulation().back().getFitness()) {
                 fileDebugTour.open("Logs/logCrossover_Run" + to_string(id) + "_Gen" + to_string(i) + ".log");

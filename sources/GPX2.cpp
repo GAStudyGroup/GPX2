@@ -197,11 +197,8 @@ void GPX2::cutCommonEdges()
 { // executa o processo de "cortar" as arestas iguais
     // entre os pais, a partir do grafo da união,
     // gerando o Gu'
-    std::clock_t time; 
-    time = std::clock();
     /* for (CityMap::iterator it = unitedGraph.begin();
          it != unitedGraph.end(); it++) { // percorre todas as entradas do Gu
-
         vector<CityNode::node>& vec = it->second->getEdges(); // Carrega o vetor com as arestas contidas
         // naquela entrada do mapa
 
@@ -231,32 +228,22 @@ void GPX2::cutCommonEdges()
             }
         }
     } */
-
     for (auto cityNode : unitedGraph) { // percorre todas as entradas do Gu
         set<string> edges;
-
-        for (auto it=cityNode.second->getEdges().begin();it!=cityNode.second->getEdges().end();) { // percorre o vetor de arestas
+        vector<CityNode::node> &nodeEdges = cityNode.second->getEdges();
+        for (auto it=nodeEdges.begin();it!=nodeEdges.end();) { // percorre o vetor de arestas
             auto result = edges.insert(it->first);
             // se falhar no insert esta ligação está duplicada
             if(!result.second){
-                auto nodeToCut = find_if(cityNode.second->getEdges().begin(),cityNode.second->getEdges().end(),[&it](const CityNode::node &node){return(!node.first.compare(it->first));});
-
-                it = cityNode.second->getEdges().erase(it);
-
+                auto nodeToCut = find_if(nodeEdges.begin(),nodeEdges.end(),[&it](const CityNode::node &node){return(!node.first.compare(it->first));});
+                it = nodeEdges.erase(it);
                 nodeToCut->second = 0;
-
                 cityNode.second->setAccess(true);
             }else{
                 it++;
             }
         }
-
     }
-
-    
-
-    time = std::clock() - time;
-    cout<<"used "<<(time)<<" cycles, "<<(((float)time)/CLOCKS_PER_SEC)<<endl;
 }
 
 // -----------------------------------------------------------------------------
@@ -495,7 +482,7 @@ void GPX2::buildOffspring()
     int index{ 0 };
     std::ofstream fileBuild;
 
-    fileBuild.open("Logs/logBuild_"+ to_string(id) +".log", std::ofstream::app);
+    fileBuild.open("Logs/logBuild_" + to_string(id) + ".log", std::ofstream::app);
 
     fileBuild << "INICIAL DISTANCE: RED " << totalDistance(red) << " BLUE " << totalDistance(blue) << " " << endl;
     for (auto& allP : feasiblePartitions) {
@@ -969,8 +956,8 @@ void GPX2::fusePartitions()
 { // Realiza a fusão entre as partições, de acordo com as validações já realizadas
     // Início da execução da fusão em si
     //for (auto p : fuseWith) {
-    for (auto it=fuseWith.begin();it!=fuseWith.end();) {
-        
+    for (auto it = fuseWith.begin(); it != fuseWith.end();) {
+
         // Não precisa mudar o custo pois a checkPartition não verifica isso
         Partition* p1Ptr = unfeasiblePartitions.at((*it).partitionId1);
         Partition* p2Ptr = unfeasiblePartitions.at((*it).partitionId2);
@@ -1115,7 +1102,7 @@ GPX2::UnfeasibleConnection GPX2::whichPartitionToFuseWith(Partition* partition)
 }
 
 bool operator==(const GPX2::UnfeasibleConnection& uf1, const GPX2::UnfeasibleConnection& uf2)
-{ 
+{
     bool first = ((uf1.partitionId1 == uf2.partitionId1) || (uf1.partitionId1 == uf2.partitionId2));
     bool second = ((uf1.partitionId2 == uf2.partitionId1) || (uf1.partitionId2 == uf2.partitionId2));
 
@@ -1155,9 +1142,9 @@ vector<pair<string, string>> GPX2::getEntryAndExitList(Partition* p)
     return (entryAndExit);
 }
 
-void GPX2::generateFusionPairs() 
-{ 
-    for(auto uF : unfeasiblePartitions){
+void GPX2::generateFusionPairs()
+{
+    for (auto uF : unfeasiblePartitions) {
         UnfeasibleConnection data = whichPartitionToFuseWith(unfeasiblePartitions.at(uF.first));
 
         if (data.partitionId1 != -1) {
@@ -1179,7 +1166,6 @@ void GPX2::generateFusionPairs()
             }
         }
     }
-
 
     for (const auto& p : unfeasiblePartitions) {
         vector<UnfeasibleConnection> tmp = fusionsWithPartition(p.first, fuseWith);
@@ -1216,7 +1202,7 @@ bool GPX2::comparePairInt(const UnfeasibleConnection& p1, const UnfeasibleConnec
 {
     bool first = p1.partitionId1 == p2.partitionId1 || p1.partitionId1 == p2.partitionId2;
     bool second = p1.partitionId2 == p2.partitionId1 || p1.partitionId2 == p2.partitionId2;
-    
+
     return ((first && second));
 }
 
