@@ -156,15 +156,34 @@ Population ImportData::importFirstPopulation(Map map, string name, unsigned popS
 
         Tour newT;
         newT.getRoute().reserve(popSize);
-        while (file >> word) {
-            newT.getRoute().push_back(map.getCityById(stoi(word)));
+        auto ss = std::ostringstream{};
+        ss <<file.rdbuf();
+        auto cities = explode(ss.str(),'\n');
+        //while (file >> word) {
+        for(auto wordaux : cities){
+            newT.getRoute().push_back(map.getCityById(stoi(wordaux)));
         }
+        //}
         file.close();
 
         pop.addNewTour(newT);
     }
     return (pop);
 }
+
+std::vector<std::string> ImportData::explode(std::string const & s, char delim)
+{
+    std::vector<std::string> result;
+    std::istringstream iss(s);
+
+    for (std::string token; std::getline(iss, token, delim); )
+    {
+        result.push_back(std::move(token));
+    }
+
+    return result;
+}
+
 
 /* Population ImportData::importFirstPopulation(Map map,string name,unsigned popSize){
     ifstream file;

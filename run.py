@@ -30,7 +30,7 @@ for tour_name in tours:
         for f in os.listdir("."):
             if f.endswith(".dat"):
                 os.remove(f)
-
+        '''
         print("Validate crossover")
         call(["./validate_crossover.py", str(i), str(tour_name)])
         print("end validate crossover")
@@ -38,3 +38,4 @@ for tour_name in tours:
         print("Validate build")
         call(["./validate_build.py", str(i), str(tour_name)])
         print("end validate build")
+        '''

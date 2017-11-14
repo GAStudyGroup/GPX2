@@ -49,6 +49,7 @@ private:
     void regexManager(string);
     bool findIgnoredWords(string);
     void reader(string, string);
+    std::vector<std::string> explode(std::string const & s, char delim);
 };
 
 #endif
