@@ -33,7 +33,7 @@ void CityNode::deleteEdge(unsigned i)
     if (i <= edges.size()) {
         edges.erase(edges.begin() + i);
     } else {
-        cout << "ta apagando fora do limite pratinha" << endl;
+        exit(EXIT_FAILURE);
     }
 }
 

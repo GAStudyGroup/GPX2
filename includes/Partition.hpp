@@ -1,21 +1,15 @@
 #ifndef PARTITION_H
 #define PARTITION_H
 
-#include <set>
 #include <ostream>
 #include <string>
 #include <utility>
 #include <vector>
-#include <tuple>
 
+using std::ostream;
+using std::pair;
 using std::string;
 using std::vector;
-using std::ostream;
-using std::endl;
-using std::pair;
-using std::set;
-using std::tuple;
-using std::get;
 
 class Partition {
 
@@ -32,12 +26,17 @@ public:
         node: nó da partição do objeto que se conecta
         connectedNode: nó da outra partição que está conectada
     */
-    using ConnectionNode = struct ConnectionNode{
+    using ConnectionNode = struct ConnectionNode {
         int connectedPartition;
         string node;
         string connectedNode;
 
-        ConnectionNode(int cpart, string node, string cnode):connectedPartition(cpart), node(node), connectedNode(cnode){}
+        ConnectionNode(int cpart, string node, string cnode)
+            : connectedPartition(cpart)
+            , node(node)
+            , connectedNode(cnode)
+        {
+        }
     };
 
     Partition();
@@ -47,7 +46,7 @@ public:
     vector<string>& getAccessNodes();
     vector<ConnectionNode>& getConnectedTo();
     vector<PartitionConnected>& getConnections();
-    vector<pair<string,string>> getEntryAndExits();
+    vector<pair<string, string>> getEntryAndExits();
     int getId();
 
     void setId(const int);
@@ -55,13 +54,13 @@ public:
     void setAccessNodes(vector<string>&);
     void setConnectedTo(vector<ConnectionNode>&);
     void setConnections(vector<PartitionConnected>);
-    void setEntryAndExits(vector<pair<string,string>>);
+    void setEntryAndExits(vector<pair<string, string>>);
 
 private:
     int id;
     vector<string> nodes;
     vector<string> accessNodes;
-    vector<pair<string,string>> entryAndExits;
+    vector<pair<string, string>> entryAndExits;
 
     //variáveis apenas utilizadas na fusion
     vector<ConnectionNode> connectedTo;

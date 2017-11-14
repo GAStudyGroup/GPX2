@@ -2,19 +2,17 @@
 #define TOUR_HPP
 
 #include <cmath>
-#include <iostream>
 #include <vector>
+
 #include "City.hpp"
 
-using std::vector;
 using std::ostream;
-using std::setfill;
-using std::setw;
 using std::round;
+using std::vector;
 
 class Tour {
 
-    friend ostream& operator<<(ostream&,Tour &);    
+    friend ostream& operator<<(ostream&, Tour&);
 
 public:
     Tour();

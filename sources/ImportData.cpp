@@ -4,18 +4,16 @@ ImportData::ImportData(string nome)
 {
     string input;
     cout << "Importando Arquivo \n";
-    myfile.open(nome+".tsp");
-    if(!myfile.is_open()){
-        cout <<"Falha na leitura do arquivo" <<endl;
+    myfile.open(nome + ".tsp");
+    if (!myfile.is_open()) {
+        cout << "Falha na leitura do arquivo" << endl;
         exit(EXIT_FAILURE);
     }
     myfile >> input;
     regexManager(input);
-    while (myfile >> input)
-    {
+    while (myfile >> input) {
         regexManager(input);
-        if (findIgnoredWords(input))
-        {
+        if (findIgnoredWords(input)) {
             reader(flag, input);
         }
     }
@@ -23,7 +21,7 @@ ImportData::ImportData(string nome)
 
 void ImportData::regexManager(string input)
 {
-    //|[[:digit:]]+?=[\\.]?=[[:digit:]]+ 
+    //|[[:digit:]]+?=[\\.]?=[[:digit:]]+
     regex number("[[:digit:]]+");
     regex name("NAME(.*)");
     regex type("TYPE(.*)");
@@ -31,34 +29,21 @@ void ImportData::regexManager(string input)
     regex dimension("DIMENSION(.*)");
     regex edge_type("EDGE(.*)");
     regex node_comment("NODE(.*)");
-    if (regex_match(input, name))
-    {
+    if (regex_match(input, name)) {
         flag = "name";
         //cout << "Nome\n";
-    }
-    else if (regex_match(input, type))
-    {
+    } else if (regex_match(input, type)) {
         flag = "type";
         //cout << "Tipo\n";
-    }
-    else if (regex_match(input, comment))
-    {
+    } else if (regex_match(input, comment)) {
         flag = "comment";
-    }
-    else if (regex_match(input, dimension))
-    {
+    } else if (regex_match(input, dimension)) {
         flag = "dimension";
-    }
-    else if (regex_match(input, edge_type))
-    {
+    } else if (regex_match(input, edge_type)) {
         flag = "edge_type";
-    }
-    else if (regex_match(input, node_comment))
-    {
+    } else if (regex_match(input, node_comment)) {
         flag = "node_comment";
-    }
-    else if (regex_match(input, number) && flagaux == "wait for number")
-    {
+    } else if (regex_match(input, number) && flagaux == "wait for number") {
         flag = "number";
     }
 }
@@ -66,8 +51,7 @@ void ImportData::regexManager(string input)
 bool ImportData::findIgnoredWords(string input)
 {
     regex ignore(":|NAME(.*)|TYPE(.*)|COMMENT(.*)|DIMENSION(.*)|EDGE(.*)|EOF");
-    if (regex_match(input, ignore))
-    {
+    if (regex_match(input, ignore)) {
         return false;
     }
     //  cout << input;
@@ -76,114 +60,110 @@ bool ImportData::findIgnoredWords(string input)
 
 void ImportData::reader(string flag, string input)
 {
-    if (flag == "name")
-    {
-        tspName=input;
+    if (flag == "name") {
+        tspName = input;
         //cout << input << " is a name! \n";
-    }
-    else if (flag == "type")
-    {
-        type=input;
+    } else if (flag == "type") {
+        type = input;
         //cout << input << " is a type! \n";
-    }
-    else if (flag == "comment")
-    {
-        comment+=(input +" ");
+    } else if (flag == "comment") {
+        comment += (input + " ");
         //cout << input << " is a comment! \n";
-    }
-    else if (flag == "dimension")
-    {
+    } else if (flag == "dimension") {
         //cout << input << " is a dimension! \n";
         citiescoord.reserve(std::stoi(input));
         flagaux = "wait for number";
-    }
-    else if (flag == "edge_type")
-    {
-        edge_type=input;
+    } else if (flag == "edge_type") {
+        edge_type = input;
         //cout << input << " is an edge_type! \n";
-    }
-    else if (flag == "node_comment")
-    {
-        node_comment=input;
+    } else if (flag == "node_comment") {
+        node_comment = input;
         //cout << input << " is an node_comment! \n";
-    }
-    else if (flag == "number" && flagaux == "wait for number")
-    {
+    } else if (flag == "number" && flagaux == "wait for number") {
         int id = std::stod(input);
-            //cout << "I: " << input;
+        //cout << "I: " << input;
         myfile >> input;
         double x = std::stod(input);
-            //cout << "\t X: " << input;
+        //cout << "\t X: " << input;
         myfile >> input;
         double y = std::stod(input);
-            //cout << "\t Y: " << input << "\n";
-        citiescoord.push_back(City(id,x,y));
+        //cout << "\t Y: " << input << "\n";
+        citiescoord.push_back(City(id, x, y));
     }
 }
-void ImportData::printInfos(){
-    cout <<"Nome: " << gettspName() <<endl;
-    cout<< "Tipo: " <<getType()<<endl;
-    cout<< "Comentário: "<<getcomment()<<endl;
-    cout<< "Tipo do Vértice: "<< getedge_type()<<endl;
-    cout<< "Comentário do tipo de node: "<<getnode_comment()<<endl;
+void ImportData::printInfos()
+{
+    cout << "Nome: " << gettspName() << endl;
+    cout << "Tipo: " << getType() << endl;
+    cout << "Comentário: " << getcomment() << endl;
+    cout << "Tipo do Vértice: " << getedge_type() << endl;
+    cout << "Comentário do tipo de node: " << getnode_comment() << endl;
 }
-string ImportData::getInfos(){
+string ImportData::getInfos()
+{
     string input;
     cout << "BATATA";
-    input ="Nome: " + gettspName()+"\n";
-    input=input+"Tipo: " +getType()+"\n";
-    input=input+"Comentário: "+getcomment()+"\n";
-    input=input+"Tipo do Vértice: "+getedge_type()+"\n";
-    input=input+"Comentário do tipo de node: "+getnode_comment()+"\n";
-    cout<< input;
+    input = "Nome: " + gettspName() + "\n";
+    input = input + "Tipo: " + getType() + "\n";
+    input = input + "Comentário: " + getcomment() + "\n";
+    input = input + "Tipo do Vértice: " + getedge_type() + "\n";
+    input = input + "Comentário do tipo de node: " + getnode_comment() + "\n";
+    cout << input;
     return input;
 }
 
-vector<City> ImportData::getCitiesCoord(){
+vector<City> ImportData::getCitiesCoord()
+{
     return citiescoord;
 }
-string ImportData::gettspName(){
+string ImportData::gettspName()
+{
     return tspName;
 }
-string ImportData::getType(){
+string ImportData::getType()
+{
     return type;
 }
-string ImportData::getedge_type(){
+string ImportData::getedge_type()
+{
     return edge_type;
 }
-string ImportData::getnode_comment(){
+string ImportData::getnode_comment()
+{
     return node_comment;
 }
-string ImportData:: getcomment(){
-    if(comment==""){
+string ImportData::getcomment()
+{
+    if (comment == "") {
         return "N/A";
-    }else{
+    } else {
         return comment;
     }
 }
 
-Population ImportData::importFirstPopulation(Map map,string name,unsigned popSize){
+Population ImportData::importFirstPopulation(Map map, string name, unsigned popSize)
+{
     ifstream file;
-    string word{""};
+    string word{ "" };
     Population pop;
-    for(unsigned i=1;i<=popSize;i++){
-        string fileName{name+"_exec_1_sol_"+to_string(i)+"_"+to_string(popSize)+".dat"};
+    for (unsigned i = 1; i <= popSize; i++) {
+        string fileName{ name + "_exec_1_sol_" + to_string(i) + "_" + to_string(popSize) + ".dat" };
         file.open(fileName);
-        if(!file.is_open()){
-            cout<<"error reading file"<<endl;
+        if (!file.is_open()) {
+            cout << "error reading file" << endl;
             exit(EXIT_FAILURE);
         }
 
         Tour newT;
         newT.getRoute().reserve(popSize);
-        while(file>>word){
+        while (file >> word) {
             newT.getRoute().push_back(map.getCityById(stoi(word)));
         }
         file.close();
 
         pop.addNewTour(newT);
     }
-    return(pop);
+    return (pop);
 }
 
 /* Population ImportData::importFirstPopulation(Map map,string name,unsigned popSize){

@@ -43,12 +43,12 @@ void Partition::setEntryAndExits(vector<pair<string, string>> entryAndExits)
 
 ostream& operator<<(ostream& output, const Partition& partition)
 {
-    output << "Partition " << partition.id << endl;
+    output << "Partition " << partition.id << "\n";
     output << "Nodes: ";
     for (string i : partition.nodes) {
         output << i << " ";
     }
-    output << endl;
+    output << "\n";
     output << "Access List: ";
     for (string i : partition.accessNodes) {
         output << i << " ";

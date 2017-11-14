@@ -1,8 +1,6 @@
 #ifndef CITYNODE_HPP
 #define CITYNODE_HPP
 
-#include <algorithm>
-#include <iostream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -10,11 +8,8 @@
 #include "City.hpp"
 #include "Tour.hpp"
 
-using std::remove;
-using std::cout;
-using std::endl;
-using std::string;
 using std::pair;
+using std::string;
 using std::vector;
 
 class CityNode {

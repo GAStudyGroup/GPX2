@@ -3,14 +3,11 @@
 
 #include <algorithm>
 #include <deque>
+#include <fstream>
 #include <iterator>
 #include <map>
 #include <set>
 #include <string>
-
-#include <ctime>
-
-#include <fstream>
 
 #include "City.hpp"
 #include "CityNode.hpp"
@@ -40,13 +37,17 @@ class GPX2 {
         partitionId2: id da partição 2
         numberOfConnections: número de conexões entre as duas partições
     */
-    using UnfeasibleConnection = struct UnfeasibleConnection{
+    using UnfeasibleConnection = struct UnfeasibleConnection {
         int partitionId1;
         int partitionId2;
         int numberOfConnections;
 
-        UnfeasibleConnection(int id1, int id2, int number):partitionId1(id1), partitionId2(id2), numberOfConnections(number){}
-
+        UnfeasibleConnection(int id1, int id2, int number)
+            : partitionId1(id1)
+            , partitionId2(id2)
+            , numberOfConnections(number)
+        {
+        }
     };
 
     // Enum utilizado para definir o retorno da busca em profundidade
@@ -72,9 +73,10 @@ public:
     */
     Tour static crossover(Tour, Tour);
 
+private:
+    GPX2();
     ~GPX2();
 
-private:
     /*  
         STEP 1 - Mapeamento do Tour
 

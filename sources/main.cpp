@@ -1,9 +1,8 @@
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
-#include <iostream>
-
 #include <fstream>
+#include <iostream>
 
 #include "GPX2.hpp"
 #include "ImportData.hpp"
@@ -68,16 +67,13 @@ void GA(string name, unsigned popSize)
 
         //carrega a primeira população
         pop = dataFile.importFirstPopulation(map, name, popSize);
-        //pop = dataFile.importFirstPopulation(map,"log",popSize);
     }
 
     file.open("Logs/logRun_" + to_string(id) + ".log");
-    //fileDebug.open("log_"+to_string(id)+"_BUG.txt");
 
     int i{ 1 }, firstBestFitness{ pop.bestFitness() };
     cout << "First fitness " << firstBestFitness << endl;
     while (stop(pop)) {
-        //file<<"BestFitness: "<<pop.bestFitness()<<endl;
 
         pop = generateNewPopulation(pop, i);
 
@@ -91,29 +87,12 @@ void GA(string name, unsigned popSize)
     cout << "gen " << i << " best fitness " << pop.bestFitness() << endl;
     cout << "=========================" << endl;
 
-    fileFinal.open(name + "_Run" + to_string(id) +"_FINAL"+ ".opt");
+    fileFinal.open(name + "_Run" + to_string(id) + "_FINAL" + ".opt");
 
     pop.writeBestTour(fileFinal);
 
     fileFinal.flush();
     fileFinal.close();
-
-
-    // DEBUG AREA
-    /* cout<<"before"<<endl;
-    for(Tour t : pop.getPopulation()){
-        cout<<t<<endl;
-    }
-
-    pop = generateNewPopulation(pop);
-
-    cout<<"after"<<endl;
-    for(Tour t : pop.getPopulation()){
-        cout<<t<<endl;
-    } */
-
-    /* fileDebug.flush();
-    fileDebug.close(); */
     file.flush();
     file.close();
 }
@@ -135,14 +114,11 @@ bool stop(Population pop)
     if (bestFitness > currentFitness) {
         bestFitness = currentFitness;
         generationsWithoutChange = 0;
-        //cout<<"new best fitness: "<<bestFitness<<endl;
     } else if (totalCon == pop.getPopulation().size()) {
-        //cout<<"all the tours are the same"<<endl;
         return (false);
     } else {
         generationsWithoutChange++;
     }
-    //cout<<"tours that are the same "<<totalCon<<endl;
     file << "SameTours: " << totalCon << endl;
     if (generationsWithoutChange == 100) {
         return (false);
@@ -156,7 +132,7 @@ Population generateNewPopulation(Population pop, int gen)
     unsigned size = pop.getPopulation().size();
     Population newPop;
 
-    //std::random_shuffle(pop.getPopulation().begin(), pop.getPopulation().end());
+    std::random_shuffle(pop.getPopulation().begin(), pop.getPopulation().end());
 
     for (unsigned i = 0; i < size; i++) {
         if (i == (size - 1)) {
@@ -166,7 +142,8 @@ Population generateNewPopulation(Population pop, int gen)
                 fileDebugTour.open("Logs/logCrossover_Run" + to_string(id) + "_Gen" + to_string(i) + ".log");
 
                 fileDebugTour << pop.getPopulation().at(i) << endl;
-                fileDebugTour << "\n\n\n\n\n\n" << endl;
+                fileDebugTour << "\n\n\n\n\n\n"
+                              << endl;
                 fileDebugTour << pop.getPopulation().at(0) << endl;
 
                 fileDebugTour.flush();
@@ -181,7 +158,8 @@ Population generateNewPopulation(Population pop, int gen)
                 fileDebugTour.open("Logs/logCrossover_Run" + to_string(id) + "_Gen" + to_string(i) + ".log");
 
                 fileDebugTour << pop.getPopulation().at(i) << endl;
-                fileDebugTour << "\n\n\n\n\n\n" << endl;
+                fileDebugTour << "\n\n\n\n\n\n"
+                              << endl;
                 fileDebugTour << pop.getPopulation().at(i + 1) << endl;
 
                 fileDebugTour.flush();

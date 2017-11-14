@@ -1,20 +1,16 @@
 #ifndef POPULATION_H
 #define POPULATION_H
 
-#include "Tour.hpp"
-#include <iostream>
+#include <fstream>
 #include <limits>
 #include <vector>
-#include <fstream>
 
-using std::cout;
-using std::endl;
+#include "Tour.hpp"
+
 using std::numeric_limits;
-using std::ostream;
-using std::setfill;
-using std::setw;
-using std::vector;
 using std::ofstream;
+using std::ostream;
+using std::vector;
 
 class Population {
 

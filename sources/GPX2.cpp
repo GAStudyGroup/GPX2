@@ -1016,8 +1016,8 @@ vector<GPX2::UnfeasibleConnection> GPX2::fusionsWithPartition(const int id, vect
 }
 
 void GPX2::generateFusionPairs()
-{   // Percorre o mapa com as partições unfeasible para gerar a lista com fusões a serem feitas
-    
+{ // Percorre o mapa com as partições unfeasible para gerar a lista com fusões a serem feitas
+
     for (auto uF : unfeasiblePartitions) {
 
         // Pega o retorno da função, IDs das partições e número de conexões entre elas, e salva na estrutura
@@ -1051,7 +1051,6 @@ void GPX2::generateFusionPairs()
             }
         }
     }
-
 
     for (const auto& p : unfeasiblePartitions) {
         // Pega o retorno do método, todas as possíveis fusões daquela partição
@@ -1153,7 +1152,10 @@ bool operator==(const GPX2::UnfeasibleConnection& uf1, const GPX2::UnfeasibleCon
     return (first && second);
 }
 
-GPX2::~GPX2(){
+GPX2::GPX2() {}
+
+GPX2::~GPX2()
+{
     deleteCityMap(red);
     deleteCityMap(blue);
     deleteCityMap(unitedGraph);
