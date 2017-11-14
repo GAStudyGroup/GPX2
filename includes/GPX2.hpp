@@ -8,6 +8,8 @@
 #include <set>
 #include <string>
 
+#include <ctime>
+
 #include <fstream>
 
 #include "City.hpp"

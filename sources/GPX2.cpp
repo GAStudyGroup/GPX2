@@ -197,7 +197,9 @@ void GPX2::cutCommonEdges()
 { // executa o processo de "cortar" as arestas iguais
     // entre os pais, a partir do grafo da união,
     // gerando o Gu'
-    for (CityMap::iterator it = unitedGraph.begin();
+    std::clock_t time; 
+    time = std::clock();
+    /* for (CityMap::iterator it = unitedGraph.begin();
          it != unitedGraph.end(); it++) { // percorre todas as entradas do Gu
 
         vector<CityNode::node>& vec = it->second->getEdges(); // Carrega o vetor com as arestas contidas
@@ -228,7 +230,33 @@ void GPX2::cutCommonEdges()
                 }
             }
         }
+    } */
+
+    for (auto cityNode : unitedGraph) { // percorre todas as entradas do Gu
+        set<string> edges;
+
+        for (auto it=cityNode.second->getEdges().begin();it!=cityNode.second->getEdges().end();) { // percorre o vetor de arestas
+            auto result = edges.insert(it->first);
+            // se falhar no insert esta ligação está duplicada
+            if(!result.second){
+                auto nodeToCut = find_if(cityNode.second->getEdges().begin(),cityNode.second->getEdges().end(),[&it](const CityNode::node &node){return(!node.first.compare(it->first));});
+
+                it = cityNode.second->getEdges().erase(it);
+
+                nodeToCut->second = 0;
+
+                cityNode.second->setAccess(true);
+            }else{
+                it++;
+            }
+        }
+
     }
+
+    
+
+    time = std::clock() - time;
+    cout<<"used "<<(time)<<" cycles, "<<(((float)time)/CLOCKS_PER_SEC)<<endl;
 }
 
 // -----------------------------------------------------------------------------

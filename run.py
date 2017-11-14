@@ -4,7 +4,7 @@
 from subprocess import call
 import os
 
-population_size = 30
+population_size = 2
 tour_name = "pcb442"
 
 for i in range(1):
@@ -16,7 +16,7 @@ for i in range(1):
     print(str(i)+" Generating population for problem "+tour_name+" with population size "+str(population_size)+"\n")
 
     #gerar a pop inicial
-    call(["./bin/linkern","-Q" ,"-S"+tour_name, "-R"+str(population_size), tour_name+".tsp"])
+    #call(["./bin/linkern","-Q" ,"-S"+tour_name, "-R"+str(population_size), tour_name+".tsp"])
 
     print("\n\nStarting GA\n")
 
@@ -25,12 +25,12 @@ for i in range(1):
 
 
     print("\n\nclean up\n")
-
+    '''
     #apagar a pop inicial
     for f in os.listdir("."):
         if f.endswith(".dat"):
             os.remove(f)
-
+    '''
     print("Validate crossover")
     call(["./validate_crossover.py", str(i)])
     print("end validate crossover")

@@ -84,6 +84,7 @@ void GA(string name, unsigned popSize)
         if (i % 10 == 0) {
             cout << "gen " << i << " best fitness " << pop.bestFitness() << endl;
         }
+        break;
         i++;
     }
     cout << "THE END" << endl;
