@@ -1064,6 +1064,48 @@ void GPX2::generateFusionPairs()
 
             tmp.erase(tmp.begin() + maxPos);
 
+            
+            /*vector<UnfeasibleConnection> sameCon;
+            int maxCon{ -1 }, maxPos{ -1 };
+            for (unsigned i = 0; i < tmp.size(); i++) {
+                if (tmp[i].numberOfConnections > maxCon) {
+                    sameCon.clear();
+                    maxCon = tmp[i].numberOfConnections;
+                    maxPos = i;
+                    sameCon.push_back(tmp[i]);
+                }else if(tmp[i].numberOfConnections == maxCon){
+                    sameCon.push_back(tmp[i]);
+                }
+            }
+
+            if(sameCon.size()!=1){
+                
+                unsigned numberOfNodes{999999};
+                unsigned numberOfNodes{0}; 
+                UnfeasibleConnection best{0,0,0};
+                for(UnfeasibleConnection uC : sameCon){
+                    unsigned p1Nodes{unfeasiblePartitions[uC.partitionId1]->getNodes().size()},p2Nodes{unfeasiblePartitions[uC.partitionId2]->getNodes().size()};
+                    unsigned sum{p1Nodes+p2Nodes};
+                    //fusão que produzi o maior numero de nodes
+                    if(sum>numberOfNodes){
+                        numberOfNodes=sum;
+                        best = uC;
+                    } 
+
+                    //fusão que produzi o maior numero de nodes
+                    if(sum<numberOfNodes){
+                        numberOfNodes=sum;
+                        best = uC;
+                    }
+                }
+                std::cout<<"escolheu a fusion com mais nodes "<<numberOfNodes<<endl; 
+                std::cout<<"escolheu a fusion com menos nodes "<<numberOfNodes<<endl;
+                tmp.erase(find_if(tmp.begin(),tmp.end(),[&best](UnfeasibleConnection const &uC){return((uC.partitionId1==best.partitionId1) && (uC.partitionId2==best.partitionId2));}));
+
+            }else{
+                tmp.erase(tmp.begin() + maxPos);
+            } */
+
             for (auto& unfCon : tmp) {
                 for (auto it = fuseWith.begin(); it != fuseWith.end();) {
 

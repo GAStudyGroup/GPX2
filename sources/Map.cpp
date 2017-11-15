@@ -7,7 +7,7 @@ Map::Map(vector<City> data)
 {
 }
 
-vector<City>& Map::getCityList()
+vector<City> Map::getCityList()
 {
     return (cityList);
 }

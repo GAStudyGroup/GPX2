@@ -15,7 +15,7 @@ class Map {
 public:
     Map();
     Map(vector<City>);
-    vector<City>& getCityList();
+    vector<City> getCityList();
     void setCityList(vector<City>);
     City getCityById(const int);
 
