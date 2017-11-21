@@ -9,6 +9,12 @@ Existem dois Branchs neste repositório, o Branch *master* contém a implementa�
 
 Validar qual combinação de partições seria melhor para fusão, no caso, em situações onde existem 2 ou mais combinações diferentes de possíveis fusões, nas quais uma das partições estejam em todas as combinações, será verificado qual combinação irá gerar uma "partição melhor", maior número ou menor número.
 
+Novas alterações.
+
+Colocar uma matriz de distâncias após ler o arquivo, salvar apenas o ID invés da posição XY, sem ObjCity, tirar XY do CityNode.
+Refazer a build offspring e retirar a choose. Guardar os pontos do objeto partição na própria partição, ligar direto entrada e saída(nas feasible).
+
+
 # Etapas da execução do GPX
 
 ## STEP 1 - Mapeamento do Tour
