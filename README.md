@@ -11,7 +11,8 @@ Validar qual combinação de partições seria melhor para fusão, no caso, em s
 
 Novas alterações.
 
-Colocar uma matriz de distâncias após ler o arquivo, salvar apenas o ID invés da posição XY, sem ObjCity, tirar XY do CityNode.
+"OBJETO CITY"
+
 Refazer a build offspring e retirar a choose. Guardar os pontos do objeto partição na própria partição, ligar direto entrada e saída(nas feasible).
 
 
