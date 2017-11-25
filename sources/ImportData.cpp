@@ -1,6 +1,6 @@
 #include "ImportData.hpp"
 
-ImportData::ImportData(string nome)
+ImportData::ImportData(string nome,unordered_map<int,pair<double,double>> &map):map(map)
 {
     string input;
     cout << "Importando Arquivo \n";
@@ -71,7 +71,7 @@ void ImportData::reader(string flag, string input)
         //cout << input << " is a comment! \n";
     } else if (flag == "dimension") {
         //cout << input << " is a dimension! \n";
-        citiescoord.reserve(std::stoi(input));
+        //citiescoord.reserve(std::stoi(input));
         flagaux = "wait for number";
     } else if (flag == "edge_type") {
         edge_type = input;
@@ -88,7 +88,8 @@ void ImportData::reader(string flag, string input)
         myfile >> input;
         double y = std::stod(input);
         //cout << "\t Y: " << input << "\n";
-        citiescoord.push_back(City(id, x, y));
+        //citiescoord.push_back(City(id, x, y));
+        map.insert({id,std::make_pair(x,y)});
     }
 }
 void ImportData::printInfos()
@@ -112,10 +113,10 @@ string ImportData::getInfos()
     return input;
 }
 
-vector<City> ImportData::getCitiesCoord()
+/* vector<City> ImportData::getCitiesCoord()
 {
     return citiescoord;
-}
+} */
 string ImportData::gettspName()
 {
     return tspName;
@@ -141,33 +142,32 @@ string ImportData::getcomment()
     }
 }
 
-Population ImportData::importFirstPopulation(Map map, string name, unsigned popSize)
+Population ImportData::importFirstPopulation(unordered_map<int,pair<double,double>> &map, string name, unsigned popSize)
 {
     ifstream file;
     string word{ "" };
     Population pop;
     for (unsigned i = 1; i <= popSize; i++) {
-        //string fileName{ name + "_exec_1_sol_" + to_string(i) + "_" + to_string(popSize) + ".dat" };
-        string fileName{ name + to_string(i) + ".dat2" };
+        string fileName{ name + "_exec_1_sol_" + to_string(i) + "_" + to_string(popSize) + ".dat" };
         file.open(fileName);
         if (!file.is_open()) {
             cout << "error reading file" << endl;
             exit(EXIT_FAILURE);
         }
 
-        Tour newT;
-        newT.getRoute().reserve(popSize);
+        vector<int> t;
+        t.reserve(map.size());
         auto ss = std::ostringstream{};
         ss <<file.rdbuf();
-        auto cities = explode(ss.str(),'\n');
+        vector<string> cities = explode(ss.str(),'\n');
         //while (file >> word) {
-        for(auto wordaux : cities){
-            newT.getRoute().push_back(map.getCityById(stoi(wordaux)));
+        for(string wordaux : cities){
+            t.push_back(stoi(wordaux));
         }
         //}
         file.close();
 
-        pop.addNewTour(newT);
+        pop.getPopulation().push_back(t);
     }
     return (pop);
 }

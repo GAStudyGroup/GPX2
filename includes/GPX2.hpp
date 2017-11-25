@@ -8,29 +8,31 @@
 #include <map>
 #include <set>
 #include <string>
+#include <unordered_map>
 
 #include <iostream>
 
-#include "City.hpp"
 #include "CityNode.hpp"
 #include "Partition.hpp"
+#include "Utils.hpp"
 
 using std::deque;
 using std::find;
 using std::make_pair;
-using std::map;
 using std::remove;
 using std::set;
+using std::endl;
 using std::size_t;
 using std::string;
 using std::to_string;
+using std::unordered_map;
 
 class GPX2 {
 
     // Definições das principais estruturas utilizadas
-    using CityMap = map<string, CityNode*>;
+    using CityMap = std::map<string, CityNode*>;
 
-    using PartitionMap = map<int, Partition*>;
+    using PartitionMap = std::map<int, Partition*>;
 
     /*
         Estrutura para guardar informações das conexões entre partições unfeasible
@@ -73,10 +75,10 @@ public:
         Recebe duas estruturas Tour, que serão os pais, e retorna um novo Tour que será o filho gerado.
         Todos os passos executados pelo GPX são executados durante sua execução.
     */
-    Tour static crossover(Tour, Tour);
+    vector<int> static crossover(vector<int>, vector<int>, unordered_map<int,pair<double,double>>&);
 
 private:
-    GPX2();
+    GPX2(unordered_map<int,pair<double,double>>&);
     ~GPX2();
 
     /*  
@@ -87,7 +89,7 @@ private:
 
         O método recebe o Tour como parâmetro e gera um Grafo do mesmo.
     */
-    CityMap tourToMap(Tour&);
+    CityMap tourToMap(vector<int>&);
 
     // -----------------------------------------------------------------------------------------------------
     /*  
@@ -187,7 +189,7 @@ private:
 
         Após terminado, o GPX irá retornar o Grafo filho ao estado original dos pais, forma de um Tour.
     */
-    Tour mapToTour(CityMap&);
+    vector<int> mapToTour(CityMap&);
 
     /*  
     -------------------------------------------------------------------------------------------------------------
@@ -206,8 +208,6 @@ private:
     pair<SearchResult, vector<string>> DFS_outside(string, PartitionMap, bool = false);
     // Busca em profundidade dentro da partição para verificar se os AccessNodes estão conectados
     pair<SearchResult, vector<string>> DFS_inside(string, string, CityMap, Partition*);
-    // Distancia entre dois pontos
-    double distance(const CityNode&, const CityNode&);
     // Apagar subvetor de um vetor
     void eraseSubVector(vector<string>&, vector<string>&);
     //f Função utilizada para obter as entradas e saídas que estão conectadas de uma partição
@@ -253,6 +253,8 @@ private:
     CityMap blue;
     vector<Parent> partitionsChoosen;
     Parent offspringChoosen;
+
+    unordered_map<int,pair<double,double>> &map;
 };
 
 #endif

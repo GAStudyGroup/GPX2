@@ -39,3 +39,4 @@ for tour_name in tours:
         call(["./validate_build.py", str(i), str(tour_name)])
         print("end validate build")
         '''
+        

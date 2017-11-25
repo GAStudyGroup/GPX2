@@ -5,11 +5,12 @@
 #include <iostream>
 #include <mutex>
 #include <thread>
+#include <unordered_map>
 
 #include "GPX2.hpp"
 #include "ImportData.hpp"
-#include "Map.hpp"
 #include "Population.hpp"
+#include "Utils.hpp"
 
 using std::cout;
 using std::endl;
@@ -21,11 +22,12 @@ using std::mutex;
 using std::lock_guard;
 using std::thread;
 using std::ref;
+using std::unordered_map;
 
 void GA(string, unsigned);
 bool stop(Population);
 Population generateNewPopulation(Population, int);
-void addNewTourToPopulation(Population &, Tour t);
+void addNewTourToPopulation(Population &, vector<int> t);
 void cross(unsigned,unsigned,Population &, Population &);
 
 int id{ 0 };
@@ -33,6 +35,7 @@ string name{ "" };
 mutex muLock;
 unsigned number_of_threads;
 
+unordered_map<int,pair<double,double>> map;
 
 //primeiro argumento tour_name, segundo tamanho da pop
 int main(int argc, char* argv[])
@@ -77,19 +80,19 @@ int main(int argc, char* argv[])
 void GA(string name, unsigned popSize)
 {
 
-    Map map;
+    //Map map;
     Population pop;
 
     {
-        ImportData dataFile(name);
+        ImportData dataFile(name,map);
         //carrega o mapa
-        map.setCityList(dataFile.getCitiesCoord());
+        //map.setCityList(dataFile.getCitiesCoord());
 
         //carrega a primeira população
         pop = dataFile.importFirstPopulation(map, name, popSize);
     }
 
-    int i{ 1 }, firstBestFitness{ pop.bestFitness() };
+    int i{ 1 }, firstBestFitness{ pop.bestFitness(map) };
     cout << "First fitness " << firstBestFitness << endl;
     while (stop(pop)) {
 
@@ -98,12 +101,12 @@ void GA(string name, unsigned popSize)
         /* if (i % 10 == 0) {
             cout << "gen " << i << " best fitness " << pop.bestFitness() << endl;
         } */
-        cout << "gen " << i << " best fitness " << pop.bestFitness() << endl;
+        cout << "gen " << i << " best fitness " << pop.bestFitness(map) << endl;
         i++;
     }
     cout << "THE END" << endl;
     cout << "first best fitness: " << firstBestFitness << endl;
-    cout << "gen " << i << " best fitness " << pop.bestFitness() << endl;
+    cout << "gen " << i << " best fitness " << pop.bestFitness(map) << endl;
     cout << "=========================" << endl;
 }
 
@@ -111,12 +114,12 @@ bool stop(Population pop)
 {
 
     int static generationsWithoutChange{ 0 };
-    int static bestFitness{ pop.bestFitness() };
-    int currentFitness{ pop.bestFitness() };
+    int static bestFitness{ pop.bestFitness(map) };
+    int currentFitness{ pop.bestFitness(map) };
 
     unsigned totalCon{ 0 };
-    for (Tour t : pop.getPopulation()) {
-        if (t.getFitness() == bestFitness) {
+    for (vector<int> t : pop.getPopulation()) {
+        if (getFitness(t,map) == bestFitness) {
             totalCon++;
         }
     }
@@ -137,7 +140,7 @@ bool stop(Population pop)
 }
 
 Population generateNewPopulation(Population pop, int gen)
-{
+{ 
     unsigned size = pop.getPopulation().size();
     Population newPop;
 
@@ -161,19 +164,19 @@ Population generateNewPopulation(Population pop, int gen)
 }
 
 void cross(unsigned begin,unsigned end,Population &oldPop, Population &newPop){
-    Tour t;
+    vector<int> t;
     for(unsigned i=begin;i<end;i++){
         if (i == (end - 1)) {
-            t = (GPX2::crossover(oldPop.getPopulation().at(i), oldPop.getPopulation().at(begin)));
+            t = (GPX2::crossover(oldPop.getPopulation().at(i), oldPop.getPopulation().at(begin),map));
         } else {
-            t = (GPX2::crossover(oldPop.getPopulation().at(i), oldPop.getPopulation().at(i + 1)));
+            t = (GPX2::crossover(oldPop.getPopulation().at(i), oldPop.getPopulation().at(i + 1),map));
         }
         addNewTourToPopulation(newPop,t);
     }
 }
 
 
-void addNewTourToPopulation(Population &newPop, Tour t){
+void addNewTourToPopulation(Population &newPop, vector<int> t){
     lock_guard<mutex> lock(muLock);
-    newPop.addNewTour(t);
+    newPop.getPopulation().push_back(t);
 }

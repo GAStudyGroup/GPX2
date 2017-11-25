@@ -5,7 +5,7 @@
 #include <limits>
 #include <vector>
 
-#include "Tour.hpp"
+#include "Utils.hpp"
 
 using std::numeric_limits;
 using std::ofstream;
@@ -19,16 +19,12 @@ class Population {
 public:
     Population();
 
-    vector<Tour>& getPopulation();
+    vector<vector<int>>& getPopulation();
 
-    void addNewTour(Tour);
-
-    int bestFitness();
-
-    void writeBestTour(ofstream&);
+    int bestFitness(unordered_map<int,pair<double,double>>&);
 
 private:
-    vector<Tour> population;
+    vector<vector<int>> population;
 };
 
 #endif

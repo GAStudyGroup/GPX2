@@ -8,9 +8,9 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
+#include <unordered_map>
+#include <utility>
 
-#include "City.hpp"
-#include "Map.hpp"
 #include "Population.hpp"
 
 using std::cout;
@@ -20,11 +20,14 @@ using std::regex;
 using std::string;
 using std::to_string;
 using std::vector;
+using std::unordered_map;
+using std::pair;
+using std::endl;
 
 class ImportData {
 public:
-    ImportData(string);
-    vector<City> getCitiesCoord();
+    ImportData(string,unordered_map<int,pair<double,double>>&);
+    //vector<City> getCitiesCoord();
     string gettspName();
     string getType();
     string getedge_type();
@@ -33,7 +36,7 @@ public:
     void printInfos();
     string getInfos();
 
-    Population importFirstPopulation(Map, string, unsigned);
+    Population importFirstPopulation(unordered_map<int,pair<double,double>>&, string, unsigned);
 
 private:
     string tspName = "N/A";
@@ -44,11 +47,12 @@ private:
     string flag;
     string flagaux;
     ifstream myfile;
-    vector<City> citiescoord;
+    //vector<City> citiescoord;
     int dimension;
     void regexManager(string);
     bool findIgnoredWords(string);
     void reader(string, string);
+    unordered_map<int,pair<double,double>> &map;
     std::vector<std::string> explode(std::string const & s, char delim);
 };
 
