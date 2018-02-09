@@ -36,7 +36,9 @@
                 "${workspaceRoot}/includes",
                 "/usr/include/c++/7.2.0",
                 "/usr/include/c++/7.2.0/x86_64-pc-linux-gnu",
-                "/usr/include/linux"
+                "/usr/include/linux",
+                "/usr/include/c++/7.2.1",
+                "/usr/include/c++/7.2.1/x86_64-pc-linux-gnu"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",

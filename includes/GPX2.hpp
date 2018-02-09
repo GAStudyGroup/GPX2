@@ -11,6 +11,7 @@
 
 #include <iostream>
 
+#include "CityMap.hpp"
 #include "City.hpp"
 #include "CityNode.hpp"
 #include "Partition.hpp"
@@ -28,8 +29,6 @@ using std::to_string;
 class GPX2 {
 
     // Definições das principais estruturas utilizadas
-    using CityMap = map<string, CityNode*>;
-
     using PartitionMap = map<int, Partition*>;
 
     /*
@@ -87,7 +86,7 @@ private:
 
         O método recebe o Tour como parâmetro e gera um Grafo do mesmo.
     */
-    CityMap tourToMap(Tour&);
+    
 
     // -----------------------------------------------------------------------------------------------------
     /*  
@@ -187,7 +186,7 @@ private:
 
         Após terminado, o GPX irá retornar o Grafo filho ao estado original dos pais, forma de um Tour.
     */
-    Tour mapToTour(CityMap&);
+    
 
     /*  
     -------------------------------------------------------------------------------------------------------------
@@ -200,14 +199,12 @@ private:
     bool comparePairInt(const UnfeasibleConnection&, const UnfeasibleConnection&);
     bool comparePairString(const pair<string, string>&, const pair<string, string>&);
     // Métodos que irão limpar os ponteiros e vetores utilizados
-    void static deleteCityMap(CityMap&);
     void static deletePartitionMap(PartitionMap&);
     // Busca em profundidade fora da partição para encontrar conexões entre partições
     pair<SearchResult, vector<string>> DFS_outside(string, PartitionMap, bool = false);
     // Busca em profundidade dentro da partição para verificar se os AccessNodes estão conectados
     pair<SearchResult, vector<string>> DFS_inside(string, string, CityMap, Partition*);
     // Distancia entre dois pontos
-    double distance(const CityNode&, const CityNode&);
     // Apagar subvetor de um vetor
     void eraseSubVector(vector<string>&, vector<string>&);
     //f Função utilizada para obter as entradas e saídas que estão conectadas de uma partição
@@ -215,7 +212,7 @@ private:
     // Distância parcial, usado para medir o melhor pai em cada partição
     int partialDistance(string, string, CityMap, Partition*);
     // Imprimir o mapa
-    void static printMap(CityMap&, std::ostream&);
+    
     // Retorna a distância necessária para percorrer todo o grafo
     int totalDistance(CityMap&);
     // Retorna o ID da partição que a cidade está contida

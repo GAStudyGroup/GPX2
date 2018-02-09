@@ -31,7 +31,7 @@ int Tour::getFitness()
 }
 
 double Tour::distance(const int a, const int b)
-{ // Retorno da distancia entre duas cidades adjacentes
+{ // Retorno da distancia entre duas cidades
     return (round(sqrt(pow(((route)[a].getX()) - ((route)[b].getX()), 2) + pow(((route)[a].getY()) - ((route)[b].getY()), 2))));
 }
 

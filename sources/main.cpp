@@ -10,6 +10,7 @@
 #include "ImportData.hpp"
 #include "Map.hpp"
 #include "Population.hpp"
+#include "Opt.hpp"
 
 using std::cout;
 using std::endl;
@@ -37,6 +38,7 @@ unsigned number_of_threads;
 //primeiro argumento tour_name, segundo tamanho da pop
 int main(int argc, char* argv[])
 {
+    
     unsigned popSize{ 0 };
 
     srand(time(NULL));
@@ -72,6 +74,39 @@ int main(int argc, char* argv[])
     GA(name, popSize);
 
     return 0;
+
+   
+
+    /* srand(time(NULL));
+
+    vector<City> vec,vec2;
+    vec.push_back(City(0,0,0));
+    vec.push_back(City(1,10,0));
+    vec.push_back(City(2,10,10));
+    vec.push_back(City(3,0,20));
+    vec.push_back(City(4,0,30));
+    vec.push_back(City(5,10,30));
+    vec.push_back(City(6,10,20));
+    vec.push_back(City(7,0,10));
+
+
+    Tour t(vec);
+
+
+    cout<<"fitness before "<<t.getFitness()<<endl;
+    t = Opt::optimize(t);
+    cout<<"fitness after "<<t.getFitness()<<endl;
+    return 0; */
+} 
+
+void fillPopulation(Map &map, Population &pop, int popSize){
+    for(int i=0;i<(popSize*0.9);i++){
+        vector<City> newTour{map.getCityList()};
+        std::random_shuffle(newTour.begin(),newTour.end());
+        Tour t(newTour);
+        t = Opt::optimize(t);
+        pop.getPopulation().push_back(t);
+    }
 }
 
 void GA(string name, unsigned popSize)
@@ -84,9 +119,14 @@ void GA(string name, unsigned popSize)
         ImportData dataFile(name);
         //carrega o mapa
         map.setCityList(dataFile.getCitiesCoord());
+        cout<<"importou map"<<endl;
 
         //carrega a primeira população
-        pop = dataFile.importFirstPopulation(map, name, popSize);
+        pop = dataFile.importFirstPopulation(map, name, popSize*0.1);
+        fillPopulation(map,pop,popSize);
+
+        cout<<"gerou pop"<<endl;
+        cout<<"pop size "<<pop.getPopulation().size()<<endl;
     }
 
     int i{ 1 }, firstBestFitness{ pop.bestFitness() };
@@ -120,7 +160,7 @@ bool stop(Population pop)
             totalCon++;
         }
     }
-
+    cout<<"totalCon: "<<totalCon<<endl;
     if (bestFitness > currentFitness) {
         bestFitness = currentFitness;
         generationsWithoutChange = 0;

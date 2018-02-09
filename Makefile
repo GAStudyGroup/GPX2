@@ -18,9 +18,10 @@ SOURCES := $(shell find $(SRC_FOLDER) -type f -name *.cpp)
 
 all: $(EXE_OUT)
 	@mkdir -p Logs
+	@mkdir -p bin
 
 $(EXE_OUT): $(SOURCES:.cpp=.o)
-	$(CC) -o $@ $^ $(CFLAGS)
+	$(CC) -o $@ $^ $(CFLAGS) 
 
 %.o: %.cpp
 	$(CC) -c $< $(INC_FOLDER) -o $@ $(CFLAGS)

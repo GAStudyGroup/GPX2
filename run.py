@@ -4,7 +4,7 @@
 from subprocess import call
 import os
 
-population_size = 50
+population_size = 100
 
 tours = ["pcb442"]
 
@@ -16,12 +16,12 @@ for tour_name in tours:
         print(str(i)+" Generating population for problem "+tour_name+" with population size "+str(population_size)+"\n")
 
         #gerar a pop inicial
-        call(["./bin/linkern","-Q" ,"-S"+tour_name, "-R"+str(population_size), tour_name+".tsp"])
+        call(["./bin/linkern","-Q" ,"-S"+tour_name, "-R"+str(population_size*0.1), tour_name+".tsp"])
 
         print("\n\nStarting GA\n")
 
         #chamar o GA
-        call(["./bin/GA", tour_name, str(population_size), str(i),str(2)])
+        call(["./bin/GA", tour_name, str(population_size), str(i),str(6)])
 
 
         print("\n\nclean up\n")

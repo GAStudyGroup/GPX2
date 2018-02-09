@@ -15,7 +15,7 @@ class Tour {
     friend ostream& operator<<(ostream&, Tour&);
 
 public:
-    Tour();
+    Tour(); 
     Tour(vector<City>);
 
     void setRoute(vector<City>);

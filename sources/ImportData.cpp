@@ -147,8 +147,8 @@ Population ImportData::importFirstPopulation(Map map, string name, unsigned popS
     string word{ "" };
     Population pop;
     for (unsigned i = 1; i <= popSize; i++) {
-        //string fileName{ name + "_exec_1_sol_" + to_string(i) + "_" + to_string(popSize) + ".dat" };
-        string fileName{ name + to_string(i) + ".dat2" };
+        string fileName{ name + "_exec_1_sol_" + to_string(i) + "_" + to_string(popSize) + ".dat" };
+        /* string fileName{ name + to_string(i) + ".dat2" }; */
         file.open(fileName);
         if (!file.is_open()) {
             cout << "error reading file" << endl;
