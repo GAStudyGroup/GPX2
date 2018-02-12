@@ -17,8 +17,8 @@ Tour Opt::optimize(Tour &tour){
 
     bool run{false};
     long unsigned int routeSize{tour.getRoute().size()};
-    
-    do{
+    std::cout<<"=========================\nin "<<tour.getFitness()<<endl;
+    /* do{
         run = false;
         for(unsigned i=0;i<routeSize;i++){
             edge baseEdge(i,((i+1)%routeSize));
@@ -29,11 +29,28 @@ Tour Opt::optimize(Tour &tour){
                 if(!obj.adjacent(baseEdge,comparingEdge)){
                     
                     if(obj.isBetter(baseEdge,comparingEdge,tour)){
-                        /* std::cout<<"--------------------------------------\nbase edge: "<<baseEdge.first<<"->"<<baseEdge.second<<std::endl;
-                        std::cout<<"\tcomparing edge: "<<comparingEdge.first<<"->"<<comparingEdge.second<<std::endl;
+                        reverse(tour.getRoute().begin()+baseEdge.second,tour.getRoute().begin()+comparingEdge.first+1);
+                        run = true;
+                        break;
+                    }
+                }
+            }
+            if(run){
+                break;
+            }
+        }
+    }while(run); */
+    do{
+        run = false;
+        for(unsigned i=1;i<routeSize-2;i++){
+            edge baseEdge(i-1,i);
+
+            for(unsigned j=i+1;j<routeSize-1;j++){
+                edge comparingEdge(j,j+1);
+
+                if(!obj.adjacent(baseEdge,comparingEdge)){
                     
-                        std::cout<<"better"<<std::endl; */
-                        /* reverse(find(tour.getRoute().begin(),tour.getRoute().end(),tour.getRoute()[comparingEdge.first]),find(tour.getRoute().begin(),tour.getRoute().end(),baseEdge.second)); */
+                    if(obj.isBetter(baseEdge,comparingEdge,tour)){
                         reverse(tour.getRoute().begin()+baseEdge.second,tour.getRoute().begin()+comparingEdge.first+1);
                         run = true;
                         break;
@@ -45,7 +62,7 @@ Tour Opt::optimize(Tour &tour){
             }
         }
     }while(run);
-
+    std::cout<<"out "<<tour.getFitness()<<endl;
     return(tour);
 
     /* bool run{false};
