@@ -4,7 +4,7 @@
 from subprocess import call
 import os
 
-population_size = 25
+population_size = 50
 
 tours = ["pcb442"]
 

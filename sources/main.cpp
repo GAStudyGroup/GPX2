@@ -165,7 +165,7 @@ bool stop(Population pop)
             totalCon++;
         }
     }
-    cout<<"totalCon: "<<totalCon<<endl;
+    cout<<"totalCon: "<<totalCon<<", pop size "<<pop.getPopulation().size()<<endl;
     if (bestFitness > currentFitness) {
         bestFitness = currentFitness;
         generationsWithoutChange = 0;
@@ -196,23 +196,28 @@ Population generateNewPopulation(Population pop, int gen)
             return(right.second>left.second);});
 
     for(unsigned i=0;i<3;i++){
-        cout<<"begining work in "<<(i+1)<<" best"<<endl;
         Tour bestTour{pop.getPopulation()[tourList[i].first]}, savedTour{bestTour};
+        cout<<"begining work in "<<(i+1)<<" best "<<savedTour.getFitness()<<endl;
         for(unsigned j=0;j<size;j++){
             if(i!=j){
-                Tour t = GPX2::crossover(pop.getPopulation()[j],savedTour);
+                Tour t = GPX2::crossover(pop.getPopulation()[j],bestTour);
                 if(t.getFitness()<bestTour.getFitness()){
-                    bestTour = t;
+                    cout<<"crossed GPX2: "<<bestTour.getFitness()<<" with "<<pop.getPopulation()[j].getFitness()<<endl;
                     cout<<"new best tour "<<t.getFitness()<<endl;
+                    bestTour = t;
                 }
             }
         }
 
-        newPop.getPopulation().push_back(savedTour);
-        newPop.getPopulation().push_back(bestTour);
+
+        cout<<"inserting in new Pop: "<<endl;
 
         cout<<"saved tour "<<savedTour.getFitness()<<endl;
         cout<<"best tour "<<bestTour.getFitness()<<endl;
+
+        newPop.getPopulation().push_back(savedTour);
+        newPop.getPopulation().push_back(bestTour);
+
     }
 
     {
@@ -227,17 +232,13 @@ Population generateNewPopulation(Population pop, int gen)
                 newPop.getPopulation().push_back(Opt::optimize(tmp));
                 cout<<"offspring "<<newPop.getPopulation().back().getFitness()<<endl;
             }else{
-                newPop.getPopulation().push_back(pop.getPopulation()[choosen]);
+                newPop.getPopulation().push_back(Opt::optimize(pop.getPopulation()[choosen]));
             }
         }
-        for(unsigned i=0;i<(size-alreadyChoosen);i++){
+        /* for(unsigned i=0;i<(size-alreadyChoosen);i++){
             choosen = rand()%size;
             newPop.getPopulation().push_back(pop.getPopulation()[choosen]);
-        }
-
-        for(unsigned i=0;i<newPop.getPopulation().size();i++){
-            newPop.getPopulation()[i] = Opt::optimize(newPop.getPopulation()[i]);
-        }
+        } */
     }
 
     /* for(unsigned i=0;i<size;i++){
