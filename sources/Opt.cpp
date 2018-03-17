@@ -17,7 +17,7 @@ Tour Opt::optimize(Tour &tour){
 
     bool run{false};
     long unsigned int routeSize{tour.getRoute().size()};
-    std::cout<<"=========================\nin "<<tour.getFitness()<<endl;
+    // std::cout<<"=========================\nin "<<tour.getFitness()<<endl;
     /* do{
         run = false;
         for(unsigned i=0;i<routeSize;i++){
@@ -62,7 +62,7 @@ Tour Opt::optimize(Tour &tour){
             }
         }
     }while(run);
-    std::cout<<"out "<<tour.getFitness()<<endl;
+    // std::cout<<"out "<<tour.getFitness()<<endl;
     return(tour);
 
     /* bool run{false};

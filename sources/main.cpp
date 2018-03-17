@@ -27,20 +27,16 @@ using std::sort;
 
 void GA(string, unsigned);
 bool stop(Population);
-Population generateNewPopulation(Population, int);
+Population generateNewPopulation(Map&,Population, int);
 void addNewTourToPopulation(Population &, Tour t);
 void cross(unsigned,unsigned,Population &, Population &);
 vector<City> nearestNeighbor(Map &);
 double distance(const City &, const City &);
-void swap(Tour&, const int, const int);
-int findElement(Tour&, const int);
-Tour crossover(Tour& parent1, Tour& parent2);
+void fillPopulation(Map &, Population &, int);
 
 double LKpop{0.2};
 int id{ 0 };
 string name{ "" };
-/* mutex muLock;
-unsigned number_of_threads; */
 
 
 //primeiro argumento tour_name, segundo tamanho da pop
@@ -86,7 +82,10 @@ int main(int argc, char* argv[])
 
 void fillPopulation(Map &map, Population &pop, int popSize){
     for(int i=0;i<popSize;i++){
-        Tour t(nearestNeighbor(map));
+        vector<City> tmpMap = map.getCityList();
+        random_shuffle(tmpMap.begin(),tmpMap.end());
+        Tour t(tmpMap);
+        // Tour t(nearestNeighbor(map));
         t = Opt::optimize(t);
         pop.getPopulation().push_back(t);
     }
@@ -127,9 +126,7 @@ void GA(string name, unsigned popSize)
         cout<<"importou map"<<endl;
 
         //carrega a primeira população
-        pop = dataFile.importFirstPopulation(map, name, popSize*LKpop);
-        cout<<"filling population"<<endl;
-        fillPopulation(map,pop,popSize*(1-LKpop));
+        fillPopulation(map,pop,popSize);
 
         cout<<"gerou pop"<<endl;
         cout<<"pop size "<<pop.getPopulation().size()<<endl;
@@ -139,11 +136,8 @@ void GA(string name, unsigned popSize)
     cout << "First fitness " << firstBestFitness << endl;
     do{
 
-        pop = generateNewPopulation(pop, i);
+        pop = generateNewPopulation(map,pop, i);
 
-        /* if (i % 10 == 0) {
-            cout << "gen " << i << " best fitness " << pop.bestFitness() << endl;
-        } */
         cout << "gen " << i << " best fitness " << pop.bestFitness() << endl;
         i++;
     }while (stop(pop));
@@ -181,145 +175,57 @@ bool stop(Population pop)
     }
 }
 
-Population generateNewPopulation(Population pop, int gen)
+Population generateNewPopulation(Map &map, Population pop, int gen)
 {
     unsigned size = pop.getPopulation().size();
     Population newPop;
-    //std::random_shuffle(pop.getPopulation().begin(), pop.getPopulation().end());
-
-    vector<pair<int,int>> tourList;
-    for(unsigned i=0;i<size;i++){
-        tourList.push_back(make_pair(i,pop.getPopulation()[i].getFitness()));
+    Tour currentTour;
+    
+    /* currentTour = pop.getPopulation()[0];;
+    for(unsigned i=1;i<size;i++){
+        Tour t = GPX2::crossover(currentTour,pop.getPopulation()[i]);
+        currentTour = t;
     }
+    ;
 
-    sort(tourList.begin(),tourList.end(),[](auto &left,auto &right){
-            return(right.second>left.second);});
+    newPop.getPopulation().push_back(currentTour);
 
-    for(unsigned i=0;i<3;i++){
-        Tour bestTour{pop.getPopulation()[tourList[i].first]}, savedTour{bestTour};
-        cout<<"begining work in "<<(i+1)<<" best "<<savedTour.getFitness()<<endl;
+    fillPopulation(map,newPop,size-1); */
+
+    for(unsigned i=0;i<size;i++){
+        currentTour = pop.getPopulation()[i];
+        int currentFitness = currentTour.getFitness();
+        // cout<<"begining work in "<<(i+1)<<", fitness: "<<currentFitness<<endl;
         for(unsigned j=0;j<size;j++){
             if(i!=j){
-                Tour t = GPX2::crossover(pop.getPopulation()[j],bestTour);
-                if(t.getFitness()<bestTour.getFitness()){
-                    cout<<"crossed GPX2: "<<bestTour.getFitness()<<" with "<<pop.getPopulation()[j].getFitness()<<endl;
-                    cout<<"new best tour "<<t.getFitness()<<endl;
-                    bestTour = t;
+                Tour t = GPX2::crossover(pop.getPopulation()[j],currentTour);
+                if(t.getFitness()<currentTour.getFitness()){
+                    // cout<<"crossed GPX2: "<<currentTour.getFitness()<<" with "<<pop.getPopulation()[j].getFitness()<<endl;
+                    // cout<<"new best tour "<<t.getFitness()<<endl;
+                    currentTour = t;
                 }
             }
         }
 
 
-        cout<<"inserting in new Pop: "<<endl;
+        // cout<<"inserting in new Pop: "<<endl;
 
-        cout<<"saved tour "<<savedTour.getFitness()<<endl;
-        cout<<"best tour "<<bestTour.getFitness()<<endl;
+        // cout<<"new Tour "<<currentTour.getFitness()<<endl;
+        // cout<<"Applying 2-opt..."<<endl;
+        currentTour = Opt::optimize(currentTour);
+        // cout<<"new fitness: "<<currentTour.getFitness()<<endl;
 
-        newPop.getPopulation().push_back(savedTour);
-        newPop.getPopulation().push_back(bestTour);
+        // std::cin.get();
+
+        newPop.getPopulation().push_back(currentTour);
 
     }
-
-    {
-        unsigned choosen;
-        long unsigned alreadyChoosen{newPop.getPopulation().size()};
-        for(unsigned i=0;i<(size-alreadyChoosen);i++){
-            choosen = rand()%size;
-            if(rand()%100 < 30){
-                unsigned crossWith = rand()%size;
-                cout<<"=========================//========================\nvai fazer cross:\n\t1: "<<pop.getPopulation()[choosen].getFitness()<<"\n\t2: "<<pop.getPopulation()[crossWith].getFitness()<<endl;
-                Tour tmp{crossover(pop.getPopulation()[choosen],pop.getPopulation()[crossWith])};
-                newPop.getPopulation().push_back(Opt::optimize(tmp));
-                cout<<"offspring "<<newPop.getPopulation().back().getFitness()<<endl;
-            }else{
-                newPop.getPopulation().push_back(Opt::optimize(pop.getPopulation()[choosen]));
-            }
-        }
-        /* for(unsigned i=0;i<(size-alreadyChoosen);i++){
-            choosen = rand()%size;
-            newPop.getPopulation().push_back(pop.getPopulation()[choosen]);
-        } */
-    }
-
-    /* for(unsigned i=0;i<size;i++){
-        newPop.getPopulation().push_back(GPX2::crossover(pop.getPopulation()[i],pop.getPopulation()[(i+1)%size]));
-        cout<<"crossover "<<i<<" over"<<endl;
-    }
- */
-    /* std::random_shuffle(pop.getPopulation().begin(), pop.getPopulation().end());
-    vector<thread> threads;
-    threads.reserve(number_of_threads);
-    unsigned entrysPerThread = size/number_of_threads; */
-
-    /* for(unsigned i=0;i<number_of_threads;i++){
-        if(i==(number_of_threads-1)){
-            threads.emplace_back(thread(cross,(entrysPerThread*i),(size),ref(pop),ref(newPop)));
-        }else{
-            threads.emplace_back(thread(cross,(entrysPerThread*i),(entrysPerThread*(i+1)),ref(pop),ref(newPop)));
-        }
-    }
-    for(thread &t : threads){
-        t.join();
-    } */
 
     return newPop;
 }
 
-/* void cross(unsigned begin,unsigned end,Population &oldPop, Population &newPop){
-    Tour t;
-    for(unsigned i=begin;i<end;i++){
-        if (i == (end - 1)) {
-            t = (GPX2::crossover(oldPop.getPopulation().at(i), oldPop.getPopulation().at(begin)));
-        } else {
-            t = (GPX2::crossover(oldPop.getPopulation().at(i), oldPop.getPopulation().at(i + 1)));
-        }
-        addNewTourToPopulation(newPop,t);
-    }
-} */
-
-
-/* void addNewTourToPopulation(Population &newPop, Tour t){
-    lock_guard<mutex> lock(muLock);
-    newPop.addNewTour(t);
-} */
 
 double distance(const City &a, const City &b)
 { // Retorno da distancia entre duas cidades
     return (std::round(sqrt(pow(a.getX()-b.getX(),2) + pow((a.getY()) - (b.getY()), 2)))); 
-}
-
-
-void swap(Tour& vector, const int a, const int b){
-    City tmp = vector.getRoute()[a];
-    vector.getRoute()[a]=vector.getRoute()[b];
-    vector.getRoute()[b]=tmp;
-}
-
-int findElement(Tour& vector, const int element){
-    for(unsigned i=0; i<vector.getRoute().size(); i++){
-        if(vector.getRoute()[i].getId() == element) return (i);
-    }
-    return(-1);
-}
-
-Tour crossover(Tour& parent1, Tour& parent2){
-    Tour tmp1{parent1}, tmp2{parent2};
-    long unsigned cutPoint{parent1.getRoute().size()/2},infLimit{parent1.getRoute().size()};
-
-        cutPoint = ((parent1.getRoute().size() + parent2.getRoute().size())/4);
-        if(parent1.getRoute().size() > parent2.getRoute().size()){
-            infLimit = parent2.getRoute().size();
-        }
-        if(infLimit < cutPoint){
-            cutPoint = infLimit;
-        }
-    
-
-    for(unsigned i=cutPoint; i<infLimit; i++){
-        swap(tmp1, i, findElement(tmp1, parent2.getRoute()[i].getId()));
-        tmp1.getRoute()[i] = parent2.getRoute()[i];
-        swap(tmp2, i, findElement(tmp2, parent1.getRoute()[i].getId()));
-        tmp2.getRoute()[i] = parent1.getRoute()[i];
-    }
-    return((tmp1.getFitness()<tmp2.getFitness())?(tmp1):(tmp2));   
 }

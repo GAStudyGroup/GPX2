@@ -396,7 +396,6 @@ void GPX2::choose()
 
 void GPX2::buildOffspring()
 {
-    extern int id;
     extern string name;
     int index{ 0 };
 

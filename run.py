@@ -4,19 +4,19 @@
 from subprocess import call
 import os
 
-population_size = 50
+population_size = 100
 
-tours = ["pcb442"]
+tours = ["eil101"]
 
 #tour_name = "pcb442"
 
 for tour_name in tours:
     for i in range(1):
 
-        print(str(i)+" Generating population for problem "+tour_name+" with population size "+str(population_size)+"\n")
+        """ print(str(i)+" Generating population for problem "+tour_name+" with population size "+str(population_size)+"\n")
 
         #gerar a pop inicial
-        call(["./bin/linkern","-Q" ,"-S"+tour_name, "-R"+str(population_size*0.2), tour_name+".tsp"])
+        call(["./bin/linkern","-Q" ,"-S"+tour_name, "-R"+str(population_size*0.2), tour_name+".tsp"]) """
 
         print("\n\nStarting GA\n")
 
