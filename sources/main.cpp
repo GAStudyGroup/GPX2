@@ -174,7 +174,7 @@ bool stop(Population pop)
     } else {
         generationsWithoutChange++;
     }
-    if (generationsWithoutChange == 5) {
+    if (generationsWithoutChange == 10) {
         return (false);
     } else {
         return (true);
@@ -201,11 +201,12 @@ Population generateNewPopulation(Population pop, int gen)
         for(unsigned j=0;j<size;j++){
             if(i!=j){
                 Tour t = GPX2::crossover(pop.getPopulation()[j],bestTour);
-                if(t.getFitness()<bestTour.getFitness()){
+                /* if(t.getFitness()<bestTour.getFitness()){
                     cout<<"crossed GPX2: "<<bestTour.getFitness()<<" with "<<pop.getPopulation()[j].getFitness()<<endl;
                     cout<<"new best tour "<<t.getFitness()<<endl;
                     bestTour = t;
-                }
+                } */
+                bestTour = t;
             }
         }
 

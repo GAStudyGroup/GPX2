@@ -4,9 +4,9 @@
 from subprocess import call
 import os
 
-population_size = 50
+population_size = 100
 
-tours = ["pcb442"]
+tours = ["att48"]
 
 #tour_name = "pcb442"
 
