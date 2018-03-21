@@ -24,7 +24,7 @@ public:
 
     int getFitness();
 
-    double distance(const int, const int);
+    int distance(const int, const int);
 
 private:
     vector<City> route;

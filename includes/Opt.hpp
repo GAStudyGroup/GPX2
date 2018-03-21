@@ -2,7 +2,6 @@
 #define OPT_HPP
 
 #include "Tour.hpp"
-#include "CityMap.hpp"
 #include "CityNode.hpp"
 #include <utility>
 

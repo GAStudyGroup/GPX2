@@ -6,9 +6,7 @@ import os
 
 population_size = 100
 
-tours = ["att48"]
-
-#tour_name = "pcb442"
+tours = ["berlin52"]
 
 for tour_name in tours:
     for i in range(1):
@@ -16,12 +14,12 @@ for tour_name in tours:
         print(str(i)+" Generating population for problem "+tour_name+" with population size "+str(population_size)+"\n")
 
         #gerar a pop inicial
-        call(["./bin/linkern","-Q" ,"-S"+tour_name, "-R"+str(population_size*0.2), tour_name+".tsp"])
+        # call(["./bin/linkern","-Q" ,"-S"+tour_name, "-R"+str(population_size*0.2), tour_name+".tsp"])
 
         print("\n\nStarting GA\n")
 
         #chamar o GA
-        call(["./bin/GA", tour_name, str(population_size), str(i),str(6)])
+        call(["./bin/GA", tour_name, str(population_size), str(i)])
 
 
         print("\n\nclean up\n")

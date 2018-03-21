@@ -11,10 +11,10 @@
 
 #include <iostream>
 
-#include "CityMap.hpp"
 #include "City.hpp"
 #include "CityNode.hpp"
 #include "Partition.hpp"
+#include "Utils.hpp"
 
 using std::deque;
 using std::find;
@@ -30,6 +30,7 @@ class GPX2 {
 
     // Definições das principais estruturas utilizadas
     using PartitionMap = map<int, Partition*>;
+    using CityMap = map<string, CityNode*>;
 
     /*
         Estrutura para guardar informações das conexões entre partições unfeasible
@@ -86,7 +87,7 @@ private:
 
         O método recebe o Tour como parâmetro e gera um Grafo do mesmo.
     */
-    
+    CityMap tourToMap(Tour&);
 
     // -----------------------------------------------------------------------------------------------------
     /*  
@@ -186,7 +187,7 @@ private:
 
         Após terminado, o GPX irá retornar o Grafo filho ao estado original dos pais, forma de um Tour.
     */
-    
+    Tour mapToTour(CityMap&);
 
     /*  
     -------------------------------------------------------------------------------------------------------------
@@ -204,7 +205,6 @@ private:
     pair<SearchResult, vector<string>> DFS_outside(string, PartitionMap, bool = false);
     // Busca em profundidade dentro da partição para verificar se os AccessNodes estão conectados
     pair<SearchResult, vector<string>> DFS_inside(string, string, CityMap, Partition*);
-    // Distancia entre dois pontos
     // Apagar subvetor de um vetor
     void eraseSubVector(vector<string>&, vector<string>&);
     //f Função utilizada para obter as entradas e saídas que estão conectadas de uma partição
@@ -212,7 +212,7 @@ private:
     // Distância parcial, usado para medir o melhor pai em cada partição
     int partialDistance(string, string, CityMap, Partition*);
     // Imprimir o mapa
-    
+    void printMap(CityMap&, std::ostream&);
     // Retorna a distância necessária para percorrer todo o grafo
     int totalDistance(CityMap&);
     // Retorna o ID da partição que a cidade está contida
@@ -237,6 +237,7 @@ private:
     bool unfeasiblePartitionsConnected();
     // Gerar uma lista com os IDs das partições que podem ser fundidas
     UnfeasibleConnection whichPartitionToFuseWith(Partition*);
+    void deleteCityMap(CityMap&);
 
     /* 
         VARIÁVEIS
