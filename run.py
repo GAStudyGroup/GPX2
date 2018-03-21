@@ -6,7 +6,8 @@ import os
 
 population_size = 100
 
-tours = ["berlin52"]
+# tours = ["eil101","berlin52","a280","att48","pcb442","pbd984"]
+tours = ["burma14"]
 
 for tour_name in tours:
     for i in range(1):

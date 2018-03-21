@@ -80,20 +80,20 @@ GPX2::CityMap GPX2::tourToMap(Tour& t)
 
         aux.insert(make_pair(cn->getId(), cn)); // insere o node dentro do mapa
 
-        dist = distance(*prev, *cn);
+        dist = distance(make_pair(prev->getX(),prev->getY()),make_pair(cn->getX(),cn->getY()));
 
         cn->addEdge(CityNode::node(prev->getId(), dist)); // adiciona ao node atual as arestas de conexão
 
-        dist = distance(*cn, *prev);
+        dist = distance(make_pair(cn->getX(),cn->getY()),make_pair(prev->getX(),prev->getY()));
         prev->addEdge(CityNode::node(cn->getId(), dist)); // adiciona ao node anterior o atual como um próx (lista duplamente encadeada)
 
         prev = cn; // o anterior recebe o atual para continuar o for
     }
 
-    dist = distance(*prev, *first);
+    dist = distance(make_pair(prev->getX(),prev->getY()),make_pair(first->getX(),first->getY()));
     first->addEdge(CityNode::node(prev->getId(), dist)); // o primeiro recebe o atual ao sair do for, completando os ligamentos das arestas
 
-    dist = distance(*first, *prev);
+    dist = distance(make_pair(first->getX(),first->getY()),make_pair(prev->getX(),prev->getY()));
     prev->addEdge(CityNode::node(first->getId(), dist)); // o atual recebe o primeiro para completar os ligamentos
 
     return (aux); // retorna o mpaa com os nodes já instanciados e adicionados

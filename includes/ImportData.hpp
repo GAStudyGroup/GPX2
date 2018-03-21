@@ -33,6 +33,8 @@ public:
     void printInfos();
     string getInfos();
 
+    void setEdge_Type(string);
+
     Population importFirstPopulation(Map, string, unsigned);
 
 private:

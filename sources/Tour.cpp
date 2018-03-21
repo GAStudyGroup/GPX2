@@ -22,17 +22,14 @@ int Tour::getFitness()
     int sum{ 0 };
     for (unsigned i = 0; i < (route).size(); i++) {
         if ((i + 1) == (route).size()) {
-            sum += distance(i, 0);
+            pair<double,double> p1(route[i].getX(),route[i].getY()),p2(route[0].getX(),route[0].getY());
+            sum += distance(p1,p2);
         } else {
-            sum += distance(i, i + 1);
+            pair<double,double> p1(route[i].getX(),route[i].getY()),p2(route[i+1].getX(),route[i+1].getY());
+            sum += distance(p1,p2);
         }
     }
     return (sum);
-}
-
-int Tour::distance(const int a, const int b)
-{ // Retorno da distancia entre duas cidades
-    return (round(sqrt(pow(((route)[a].getX()) - ((route)[b].getX()), 2) + pow(((route)[a].getY()) - ((route)[b].getY()), 2))));
 }
 
 ostream& operator<<(ostream& output, Tour& t)

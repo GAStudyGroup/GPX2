@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "City.hpp"
+#include "Utils.hpp"
 
 using std::ostream;
 using std::round;
@@ -23,9 +24,6 @@ public:
     vector<City>& getRoute();
 
     int getFitness();
-
-    int distance(const int, const int);
-
 private:
     vector<City> route;
 };

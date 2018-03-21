@@ -1,4 +1,7 @@
 #include "ImportData.hpp"
+#include "Config.hpp"
+
+extern Config::type TYPE;
 
 ImportData::ImportData(string nome)
 {
@@ -75,6 +78,7 @@ void ImportData::reader(string flag, string input)
         flagaux = "wait for number";
     } else if (flag == "edge_type") {
         edge_type = input;
+        setEdge_Type(input);
         //cout << input << " is an edge_type! \n";
     } else if (flag == "node_comment") {
         node_comment = input;
@@ -139,6 +143,21 @@ string ImportData::getcomment()
     } else {
         return comment;
     }
+}
+
+void ImportData::setEdge_Type(string type){
+    cout<<"type: "<<type<<endl;
+    if(!type.compare("EUC_2D")){
+        TYPE = Config::EUC_2D;
+    }else if(!type.compare("GEO")){
+        TYPE = Config::GEO;
+    }else if(!type.compare("ATT")){
+        TYPE = Config::ATT;
+    }else{
+        cout<<"Tipo de distancia desconhecido"<<endl;
+        exit(0);
+    }
+
 }
 
 Population ImportData::importFirstPopulation(Map map, string name, unsigned popSize)
