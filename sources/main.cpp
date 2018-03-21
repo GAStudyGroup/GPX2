@@ -21,6 +21,7 @@ using std::ref;
 using std::sort;
 using std::srand;
 using std::stoi;
+using std::stof;
 
 // inicia o algoritmo genético
 void GA(unsigned);
@@ -35,14 +36,16 @@ Population generateNewPopulation(Map, Population);
 vector<City> nearestNeighbor(Map &);
 
 void fillPopulation(Map &, Population &, int);
-
 Population crossAllxAllwithReset(Map, Population);
-
 Population crossAllxAllwith2opt(Population);
 
+//argumentos do algoritmo
 int ID{0};
 string NAME{""};
+
+//Global utilizada para controlar o tipo de distancia utilizado pelo dataset
 Config::type TYPE = Config::type::EUC_2D;
+double LK_PERCENTAGE{0};
 
 // primeiro argumento tour_name, segundo tamanho da pop, terceiro ID da
 // run(usado para log)  ex: GA berlin52 100 0
@@ -51,20 +54,12 @@ int main(int argc, char *argv[]) {
 
     srand(time(NULL));
 
-    if (argc == 4) {
+    if (argc == 5) {
         try {
             NAME = argv[1];
             popSize = stoi(argv[2]);
             ID = stoi(argv[3]);
-        } catch (invalid_argument &i_a) {
-            cout << "Invalid population size! " << i_a.what() << endl;
-            return (0);
-        }
-    } else if (argc == 5) {
-        try {
-            NAME = argv[1];
-            popSize = stoi(argv[2]);
-            ID = stoi(argv[3]);
+            LK_PERCENTAGE = stof(argv[4]);
         } catch (invalid_argument &i_a) {
             cout << "Invalid population size! " << i_a.what() << endl;
             return (0);
@@ -128,18 +123,18 @@ void GA(unsigned popSize) {
         map.setCityList(dataFile.getCitiesCoord());
         cout << "importou map" << endl;
 
-        Tour t(map.getCityList());
-
-        /* // carrega a primeira população
-        // pop = dataFile.importFirstPopulation(map, name, popSize*LKpop);
+        // carrega a primeira população
+        if(LK_PERCENTAGE > 0){
+            pop = dataFile.importFirstPopulation(map, NAME, popSize*LK_PERCENTAGE);
+        }
         cout << "filling population" << endl;
-        fillPopulation(map, pop, popSize * (1 - Config::LK_PERCENTAGE));
+        fillPopulation(map, pop, popSize * (1 - LK_PERCENTAGE));
 
         cout << "gerou pop" << endl;
-        cout << "pop size " << pop.getPopulation().size() << endl; */
+        cout << "pop size " << pop.getPopulation().size() << endl;
     }
 
-    /* int i{1}, firstBestFitness{pop.bestFitness()};
+    int i{1}, firstBestFitness{pop.bestFitness()};
     cout << "First fitness " << firstBestFitness << endl;
     do {
         pop = generateNewPopulation(map, pop);
@@ -150,7 +145,7 @@ void GA(unsigned popSize) {
     cout << "THE END" << endl;
     cout << "first best fitness: " << firstBestFitness << endl;
     cout << "gen " << i << " best fitness " << pop.bestFitness() << endl;
-    cout << "=========================" << endl; */
+    cout << "=========================" << endl;
 }
 
 bool stop(Population pop) {
@@ -158,7 +153,7 @@ bool stop(Population pop) {
     int static bestFitness{pop.bestFitness()};
     int currentFitness{pop.bestFitness()};
 
-    unsigned totalCon{0};
+    unsigned totalCon{1};
     // conta quantas rotas estão com a fitness igual a da melhor rota, para
     // determinar estagnação
     for (Tour t : pop.getPopulation()) {

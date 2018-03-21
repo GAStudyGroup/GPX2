@@ -18,17 +18,14 @@ Tour Opt::optimize(Tour &tour){
 
     bool run{false};
     long unsigned int routeSize{tour.getRoute().size()};
-    
+    // std::cout<<"In "<<tour.getFitness()<<std::endl;
     do{
         run = false;
         for(unsigned i=1;i<routeSize-2;i++){
             edge baseEdge(i-1,i);
-
             for(unsigned j=i+1;j<routeSize-1;j++){
                 edge comparingEdge(j,j+1);
-
                 if(!obj.adjacent(baseEdge,comparingEdge)){
-                    
                     if(obj.isBetter(baseEdge,comparingEdge,tour)){
                         reverse(tour.getRoute().begin()+baseEdge.second,tour.getRoute().begin()+comparingEdge.first+1);
                         run = true;
@@ -41,6 +38,7 @@ Tour Opt::optimize(Tour &tour){
             }
         }
     }while(run);
+    // std::cout<<"Out "<<tour.getFitness()<<std::endl;
     return(tour);
 }
 

@@ -4,10 +4,11 @@
 from subprocess import call
 import os
 
-population_size = 100
+population_size = 50
+LK_PERCENTAGE = 0.2
 
 # tours = ["eil101","berlin52","a280","att48","pcb442","pbd984"]
-tours = ["burma14"]
+tours = ["ch150"]
 
 for tour_name in tours:
     for i in range(1):
@@ -15,12 +16,13 @@ for tour_name in tours:
         print(str(i)+" Generating population for problem "+tour_name+" with population size "+str(population_size)+"\n")
 
         #gerar a pop inicial
-        # call(["./bin/linkern","-Q" ,"-S"+tour_name, "-R"+str(population_size*0.2), tour_name+".tsp"])
+        if(LK_PERCENTAGE>0):
+            call(["./bin/linkern","-Q" ,"-S"+tour_name, "-R "+str(population_size*LK_PERCENTAGE), tour_name+".tsp"])
 
         print("\n\nStarting GA\n")
 
         #chamar o GA
-        call(["./bin/GA", tour_name, str(population_size), str(i)])
+        call(["./bin/GA", tour_name, str(population_size), str(i), str(LK_PERCENTAGE)])
 
 
         print("\n\nclean up\n")

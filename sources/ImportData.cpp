@@ -146,7 +146,6 @@ string ImportData::getcomment()
 }
 
 void ImportData::setEdge_Type(string type){
-    cout<<"type: "<<type<<endl;
     if(!type.compare("EUC_2D")){
         TYPE = Config::EUC_2D;
     }else if(!type.compare("GEO")){
