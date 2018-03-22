@@ -1,17 +1,17 @@
-#include <algorithm> 
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
 #include <iostream>
 
+#include "Config.hpp"
 #include "GPX2.hpp"
 #include "ImportData.hpp"
 #include "Map.hpp"
 #include "Opt.hpp"
 #include "Population.hpp"
 #include "Utils.hpp"
-#include "Config.hpp"
 
 using std::cout;
 using std::endl;
@@ -20,8 +20,8 @@ using std::random_shuffle;
 using std::ref;
 using std::sort;
 using std::srand;
-using std::stoi;
 using std::stof;
+using std::stoi;
 
 // inicia o algoritmo genético
 void GA(unsigned);
@@ -36,40 +36,44 @@ Population generateNewPopulation(Map, Population);
 vector<City> nearestNeighbor(Map &);
 
 void fillPopulation(Map &, Population &, int);
-Population crossAllxAllwithReset(Map, Population);
+Population crossNBestxAllwithReset(Map, Population);
 Population crossAllxAllwith2opt(Population);
 
-//argumentos do algoritmo
+// argumentos do algoritmo
 int ID{0};
 string NAME{""};
+string LIB_PATH{""};
+unsigned NEW_POP_TYPE{0};
 
-//Global utilizada para controlar o tipo de distancia utilizado pelo dataset
+// Global utilizada para controlar o tipo de distancia utilizado pelo dataset
 Config::type TYPE = Config::type::EUC_2D;
 double LK_PERCENTAGE{0};
 
-// primeiro argumento tour_name, segundo tamanho da pop, terceiro ID da
-// run(usado para log)  ex: GA berlin52 100 0
+//1 argumento tour_name, 
+//2 caminho para o .tsp, 
+//3 tamanho da pop, 4 ID da run(usado para log)
+//5 porcentagem de população inicial gerado pelo LK
+//6 tipo de geração da nova poop
+// ex: GA berlin52 lib/ 100 0.1 0
 int main(int argc, char *argv[]) {
     unsigned popSize{0};
 
     srand(time(NULL));
 
-    if (argc == 5) {
+    if (argc == 7) {
         try {
             NAME = argv[1];
-            popSize = stoi(argv[2]);
-            ID = stoi(argv[3]);
-            LK_PERCENTAGE = stof(argv[4]);
+            LIB_PATH = argv[2];
+            popSize = stoi(argv[3]);
+            ID = stoi(argv[4]);
+            LK_PERCENTAGE = stof(argv[5]);
+            NEW_POP_TYPE = stoi(argv[6]);
         } catch (invalid_argument &i_a) {
-            cout << "Invalid population size! " << i_a.what() << endl;
+            cout << "Invalid argument!" << i_a.what() << endl;
             return (0);
         }
-    } else if (argc == 0) {
-        cout << "Please specify the arguments: tour name and population size."
-             << endl;
-        return (0);
     } else {
-        cout << "Invalid argument number. Expecting two or tree arguments."
+        cout << "Invalid argument number."
              << endl;
         return (0);
     }
@@ -100,7 +104,9 @@ vector<City> nearestNeighbor(Map &map) {
     cityList.erase(cityList.begin() + choosenCity);
     while (!cityList.empty()) {
         for (unsigned i = 0; i < cityList.size(); i++) {
-            pair<double,double> p1(cityList[i].second.getX(),cityList[i].second.getY()),p2(tour.back().getX(),tour.back().getY());
+            pair<double, double> p1(cityList[i].second.getX(),
+                                    cityList[i].second.getY()),
+            p2(tour.back().getX(), tour.back().getY());
 
             cityList[i].first = distance(p1, p2);
         }
@@ -118,14 +124,15 @@ void GA(unsigned popSize) {
     Population pop;
 
     {
-        ImportData dataFile(NAME);
+        ImportData dataFile(LIB_PATH+NAME);
         // carrega o mapa
         map.setCityList(dataFile.getCitiesCoord());
         cout << "importou map" << endl;
 
         // carrega a primeira população
-        if(LK_PERCENTAGE > 0){
-            pop = dataFile.importFirstPopulation(map, NAME, popSize*LK_PERCENTAGE);
+        if (LK_PERCENTAGE > 0) {
+            pop = dataFile.importFirstPopulation(map, NAME,
+                                                 popSize * LK_PERCENTAGE);
         }
         cout << "filling population" << endl;
         fillPopulation(map, pop, popSize * (1 - LK_PERCENTAGE));
@@ -183,7 +190,11 @@ bool stop(Population pop) {
 }
 
 Population generateNewPopulation(Map map, Population pop) {
-    return crossAllxAllwithReset(map, pop);
+    if(NEW_POP_TYPE==0){
+        return crossAllxAllwith2opt(pop);
+    }else{
+        return crossNBestxAllwithReset(map, pop);
+    }
 }
 
 Population crossAllxAllwith2opt(Population pop) {
@@ -209,7 +220,7 @@ Population crossAllxAllwith2opt(Population pop) {
     return newPop;
 }
 
-Population crossAllxAllwithReset(Map map, Population pop) {
+Population crossNBestxAllwithReset(Map map, Population pop) {
     Population newPop;
     // dar sort na pop
     sort(pop.getPopulation().begin(), pop.getPopulation().end(),
