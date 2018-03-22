@@ -7,9 +7,9 @@ import os
 LIBS_PATH = "./lib/"
 BIN_PATH = "bin/"
 
-population_size = 50
-LK_PERCENTAGE = 0.1
-NEW_POP_TYPE = 1
+POP_SIZE = 20
+LK_PERCENTAGE = 0
+NEW_POP_TYPE = 2
 
 # tours = ["eil101","berlin52","a280","att48","pcb442","pbd984"]
 tours = ["att48"]
@@ -17,21 +17,22 @@ tours = ["att48"]
 for tour_name in tours:
     for i in range(1):
 
-        print(str(i)+" Generating population for problem "+tour_name+" with population size "+str(population_size)+", using "+str(LK_PERCENTAGE*100)+"% of LK generated tours and using:")
+        print(str(i)+" Generating population for problem "+tour_name+" with population size "+str(POP_SIZE)+", using "+str(LK_PERCENTAGE*100)+"% of LK generated tours and using:")
         
         if(NEW_POP_TYPE==0):
             print("All vs All GPX2 crossover\n")
-        else:
+        elif(NEW_POP_TYPE==1):
             print("N best vs All GPX2 crossover and reset population\n")
-
+        else:
+            print("All vs ALL with N best saved to the next population and the rest reseted\n");
         #gerar a pop inicial
         if(LK_PERCENTAGE>0):
-            call(["./"+BIN_PATH+"linkern","-Q" ,"-S"+tour_name, "-R "+str(population_size*LK_PERCENTAGE), LIBS_PATH+tour_name+".tsp"])
+            call(["./"+BIN_PATH+"linkern","-Q" ,"-S"+tour_name, "-R "+str(POP_SIZE*LK_PERCENTAGE), LIBS_PATH+tour_name+".tsp"])
 
         print("\n\nStarting GA\n")
 
         #chamar o GA
-        call(["./"+BIN_PATH+"GA", tour_name, LIBS_PATH, str(population_size), str(i), str(LK_PERCENTAGE), str(NEW_POP_TYPE)])
+        call(["./"+BIN_PATH+"GA", tour_name, LIBS_PATH, str(POP_SIZE), str(i), str(LK_PERCENTAGE), str(NEW_POP_TYPE)])
 
 
         print("\n\nclean up\n")

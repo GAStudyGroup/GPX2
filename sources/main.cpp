@@ -24,7 +24,7 @@ using std::stof;
 using std::stoi;
 
 // inicia o algoritmo genético
-void GA(unsigned);
+void GA();
 
 // avalia a população para decidir se as condições de parada foram satisfeitas
 bool stop(Population);
@@ -35,19 +35,20 @@ Population generateNewPopulation(Map, Population);
 // Gera um tour utilizando Nearest Neighbor
 vector<City> nearestNeighbor(Map &);
 
-void fillPopulation(Map &, Population &, int);
+void fillPopulation(Map &, Population &, unsigned);
 Population crossNBestxAllwithReset(Map, Population);
 Population crossAllxAllwith2opt(Population);
+Population crossAllxAllwithNBestAndReset(Map, Population);
 
-// argumentos do algoritmo
+
+// Definição das variáveis globais
+/* Config::type TYPE = Config::type::EUC_2D;
 int ID{0};
 string NAME{""};
 string LIB_PATH{""};
 unsigned NEW_POP_TYPE{0};
-
-// Global utilizada para controlar o tipo de distancia utilizado pelo dataset
-Config::type TYPE = Config::type::EUC_2D;
 double LK_PERCENTAGE{0};
+unsigned POP_SIZE{0}; */
 
 //1 argumento tour_name, 
 //2 caminho para o .tsp, 
@@ -56,18 +57,18 @@ double LK_PERCENTAGE{0};
 //6 tipo de geração da nova poop
 // ex: GA berlin52 lib/ 100 0.1 0
 int main(int argc, char *argv[]) {
-    unsigned popSize{0};
+    
 
     srand(time(NULL)); 
 
     if (argc == 7) {
         try {
-            NAME = argv[1];
-            LIB_PATH = argv[2];
-            popSize = stoi(argv[3]);
-            ID = stoi(argv[4]);
-            LK_PERCENTAGE = stof(argv[5]);
-            NEW_POP_TYPE = stoi(argv[6]);
+            Config::NAME = argv[1];
+            Config::LIB_PATH = argv[2];
+            Config::POP_SIZE = stoi(argv[3]);
+            Config::ID = stoi(argv[4]);
+            Config::LK_PERCENTAGE = stof(argv[5]);
+            Config::NEW_POP_TYPE = stoi(argv[6]);
         } catch (invalid_argument &i_a) {
             cout << "Invalid argument!" << i_a.what() << endl;
             return (0);
@@ -78,13 +79,13 @@ int main(int argc, char *argv[]) {
         return (0);
     }
 
-    GA(popSize);
+    GA();
 
     return 0;
 }
 
-void fillPopulation(Map &map, Population &pop, int popToFill) {
-    for (int i = 0; i < popToFill; i++) {
+void fillPopulation(Map &map, Population &pop, unsigned popToFill) {
+    for (unsigned i = 0; i < popToFill; i++) {
         // Tour t(nearestNeighbor(map));
         Tour t(map.getCityList());
         random_shuffle(t.getRoute().begin(), t.getRoute().end());
@@ -119,26 +120,22 @@ vector<City> nearestNeighbor(Map &map) {
     return (tour);
 }
 
-void GA(unsigned popSize) {
+void GA() {
     Map map;
     Population pop;
 
     {
-        ImportData dataFile(LIB_PATH+NAME);
+        ImportData dataFile(Config::LIB_PATH+Config::NAME);
         // carrega o mapa
         map.setCityList(dataFile.getCitiesCoord());
-        cout << "importou map" << endl;
-
+        unsigned lkPop = Config::POP_SIZE * Config::LK_PERCENTAGE;
+        unsigned fillPop = Config::POP_SIZE - lkPop;
         // carrega a primeira população
-        if (LK_PERCENTAGE > 0) {
-            pop = dataFile.importFirstPopulation(map, NAME,
-                                                 popSize * LK_PERCENTAGE);
+        if (Config::LK_PERCENTAGE > 0) {
+            pop = dataFile.importFirstPopulation(map, Config::NAME,
+                                                 lkPop);
         }
-        cout << "filling population" << endl;
-        fillPopulation(map, pop, popSize * (1 - LK_PERCENTAGE));
-
-        cout << "gerou pop" << endl;
-        cout << "pop size " << pop.getPopulation().size() << endl;
+        fillPopulation(map, pop, fillPop);
     }
 
     int i{1}, firstBestFitness{pop.bestFitness()};
@@ -160,22 +157,22 @@ bool stop(Population pop) {
     int static bestFitness{pop.bestFitness()};
     int currentFitness{pop.bestFitness()};
 
-    unsigned totalCon{1};
+    unsigned totalEqual{1};
     // conta quantas rotas estão com a fitness igual a da melhor rota, para
     // determinar estagnação
     for (Tour t : pop.getPopulation()) {
         if (t.getFitness() == bestFitness) {
-            totalCon++;
+            totalEqual++;
         }
     }
-    cout << "totalCon: " << totalCon << ", pop size "
-         << pop.getPopulation().size() << endl;
+    cout << "total equal: " << totalEqual << ", pop size "
+         << Config::POP_SIZE << endl;
     // zera o contador de gerações sem mudança se for encontrado uma fitness
     // melhor
     if (bestFitness > currentFitness) {
         bestFitness = currentFitness;
         generationsWithoutChange = 0;
-    } else if (totalCon == pop.getPopulation().size()) {
+    } else if (totalEqual == Config::POP_SIZE) {
         // se todos os elementos foram iguais termina o GA
         return (false);
     } else {
@@ -190,21 +187,22 @@ bool stop(Population pop) {
 }
 
 Population generateNewPopulation(Map map, Population pop) {
-    if(NEW_POP_TYPE==0){
+    if(Config::NEW_POP_TYPE==0){
         return crossAllxAllwith2opt(pop);
-    }else{
+    }else if(Config::NEW_POP_TYPE==1){
         return crossNBestxAllwithReset(map, pop);
+    }else{
+        return crossAllxAllwithNBestAndReset(map, pop);
     }
 }
 
 Population crossAllxAllwith2opt(Population pop) {
-    unsigned size = pop.getPopulation().size();
     Population newPop;
     Tour currentTour;
 
-    for (unsigned i = 0; i < size; i++) {
+    for (unsigned i = 0; i < Config::POP_SIZE; i++) {
         currentTour = pop.getPopulation()[i];
-        for (unsigned j = 0; j < size; j++) {
+        for (unsigned j = 0; j < Config::POP_SIZE; j++) {
             if (i != j) {
                 Tour t = GPX2::crossover(pop.getPopulation()[j], currentTour);
                 if (t.getFitness() < currentTour.getFitness()) {
@@ -237,6 +235,36 @@ Population crossNBestxAllwithReset(Map map, Population pop) {
     }
 
     // preencher o resto da pop com novos tours gerados com NN e 2opt
-    fillPopulation(map, newPop, pop.getPopulation().size() - Config::N_BEST);
+    fillPopulation(map, newPop, Config::POP_SIZE - Config::N_BEST);
     return (newPop);
+}
+
+Population crossAllxAllwithNBestAndReset(Map map, Population pop){
+    Population tmpPop, newPop;
+    Tour currentTour;
+
+    for (unsigned i = 0; i < Config::POP_SIZE; i++) {
+        currentTour = pop.getPopulation()[i];
+        for (unsigned j = 0; j < Config::POP_SIZE; j++) {
+            if (i != j) {
+                Tour t = GPX2::crossover(pop.getPopulation()[j], currentTour);
+                if (t.getFitness() < currentTour.getFitness()) {
+                    currentTour = t;
+                }
+            }
+        }
+        currentTour = Opt::optimize(currentTour);
+
+        tmpPop.getPopulation().push_back(currentTour);
+    }
+
+    sort(tmpPop.getPopulation().begin(), tmpPop.getPopulation().end(),
+         [](Tour &a, Tour &b) { return a.getFitness() < b.getFitness(); });
+
+    for(unsigned i=0;i<Config::N_BEST;i++){
+        newPop.getPopulation().push_back(tmpPop.getPopulation()[i]);
+    }
+
+    fillPopulation(map, newPop, Config::POP_SIZE - Config::N_BEST);
+    return newPop;
 }
