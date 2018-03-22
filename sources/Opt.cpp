@@ -24,9 +24,9 @@ Tour Opt::optimize(Tour &tour){
     do{
         run = false;
         for(unsigned i=1;i<routeSize-2;i++){
-            edge baseEdge(tour.getRoute()[i-1],tour.getRoute()[i]);
+            edge baseEdge(i-1,i);
             for(unsigned j=i+1;j<routeSize-1;j++){
-                edge comparingEdge(tour.getRoute()[j],tour.getRoute()[j+1]);
+                edge comparingEdge(j,j+1);
                 if(!obj.adjacent(baseEdge,comparingEdge)){
                     if(obj.isBetter(baseEdge,comparingEdge,tour)){
                         reverse(tour.getRoute().begin()+baseEdge.second,tour.getRoute().begin()+comparingEdge.first+1);
@@ -53,14 +53,14 @@ bool Opt::adjacent(edge &e1, edge &e2){
 }
 
 bool Opt::isBetter(edge &e1, edge &e2, Tour &t){
-    double e1_first_x{Config::map.getCityById(e1.first).getX()},
-            e1_first_y{Config::map.getCityById(e1.first).getY()},
-            e1_second_x{Config::map.getCityById(e1.second).getX()},
-            e1_second_y{Config::map.getCityById(e1.second).getY()},
-            e2_first_x{Config::map.getCityById(e2.first).getX()},
-            e2_first_y{Config::map.getCityById(e2.first).getY()},
-            e2_second_x{Config::map.getCityById(e2.second).getX()},
-            e2_second_y{Config::map.getCityById(e2.second).getY()};
+    double e1_first_x{Config::map.getCityById(t.getRoute()[e1.first]).getX()},
+            e1_first_y{Config::map.getCityById(t.getRoute()[e1.first]).getY()},
+            e1_second_x{Config::map.getCityById(t.getRoute()[e1.second]).getX()},
+            e1_second_y{Config::map.getCityById(t.getRoute()[e1.second]).getY()},
+            e2_first_x{Config::map.getCityById(t.getRoute()[e2.first]).getX()},
+            e2_first_y{Config::map.getCityById(t.getRoute()[e2.first]).getY()},
+            e2_second_x{Config::map.getCityById(t.getRoute()[e2.second]).getX()},
+            e2_second_y{Config::map.getCityById(t.getRoute()[e2.second]).getY()};
 
     int oldDistance = distance(std::make_pair(e1_first_x,e1_first_y),std::make_pair(e1_second_x,e1_second_y))
         +
@@ -69,7 +69,6 @@ bool Opt::isBetter(edge &e1, edge &e2, Tour &t){
     int newDistance = distance(std::make_pair(e1_first_x,e1_first_y),std::make_pair(e2_first_x,e2_first_y))
         +
         distance(std::make_pair(e1_second_x,e1_second_y),std::make_pair(e2_second_x,e2_second_y));
-
     if(oldDistance>newDistance){
         return(true);
     }else{

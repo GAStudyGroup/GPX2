@@ -87,7 +87,6 @@ GPX2::CityMap GPX2::tourToMap(Tour& t)
 
         cn->addEdge(CityNode::node(prev->getId(), dist)); // adiciona ao node atual as arestas de conexão
 
-        dist = distance(make_pair(cnX, cnY), make_pair(prevX, prevY));  /// VERIFICAR SAMERDA DEPOIS -----------------------------------------------
         prev->addEdge(CityNode::node(cn->getId(), dist)); // adiciona ao node anterior o atual como um próx (lista duplamente encadeada)
 
         prev = cn; // o anterior recebe o atual para continuar o for
@@ -98,7 +97,6 @@ GPX2::CityMap GPX2::tourToMap(Tour& t)
     dist = distance(make_pair(prevX, prevY), make_pair(firstX, firstY));
     first->addEdge(CityNode::node(prev->getId(), dist)); // o primeiro recebe o atual ao sair do for, completando os ligamentos das arestas
 
-    dist = distance(make_pair(firstX, firstY), make_pair(prevX, prevY));
     prev->addEdge(CityNode::node(first->getId(), dist)); // o atual recebe o primeiro para completar os ligamentos
 
     return (aux); // retorna o mpaa com os nodes já instanciados e adicionados

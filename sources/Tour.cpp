@@ -28,7 +28,7 @@ int Tour::getFitness()
     int sum{0};
     unsigned size{route.size()};
     for(unsigned i=0; i<size; i++){
-        pair<double,double> p1(Config::map.getCityById(i).getX(), Config::map.getCityById(i).getY()), p2(Config::map.getCityById((i+1)%size).getX(), Config::map.getCityById((i+1)%size).getY());
+        pair<double,double> p1(Config::map.getCityById(route[i]).getX(), Config::map.getCityById(route[i]).getY()), p2(Config::map.getCityById(route[(i+1)%size]).getX(), Config::map.getCityById(route[(i+1)%size]).getY());
         sum += distance(p1, p2);
     }
     return(sum);

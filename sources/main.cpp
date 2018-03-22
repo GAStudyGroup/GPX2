@@ -124,15 +124,19 @@ void GA() {
 
     {
         ImportData dataFile(Config::LIB_PATH+Config::NAME);
+        cout<<"passou da criacao import"<<endl;
         // carrega o mapa
         Config::map.setCityList(dataFile.getCitiesCoord());
+        cout<<"passou da import"<<endl;
         unsigned lkPop = Config::POP_SIZE * Config::LK_PERCENTAGE;
         unsigned fillPop = Config::POP_SIZE - lkPop;
         // carrega a primeira população
         if (Config::LK_PERCENTAGE > 0) {
             pop = dataFile.importFirstPopulation(Config::NAME, lkPop);
         }
+        cout<<"passou da import first"<<endl;
         fillPopulation(pop, fillPop);
+        cout<<"passou da fill"<<endl;
     }
 
     int i{1}, firstBestFitness{pop.bestFitness()};
