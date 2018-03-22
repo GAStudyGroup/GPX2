@@ -124,12 +124,10 @@ void GPX2::createGhosts()
             if (isGhost.size() == 4) { // node with degree 4
                 string ghostID = idKey + ghostToken;
 
-                double x = city.second->getX(), y = city.second->getY();
-
-                CityNode* ghostNode = new CityNode(ghostID, x, y);
+                CityNode* ghostNode = new CityNode(ghostID);
                 insertGhost(idKey, red, ghostNode);
 
-                ghostNode = new CityNode(ghostID, x, y);
+                ghostNode = new CityNode(ghostID);
                 insertGhost(idKey, blue, ghostNode);
             }
 
@@ -182,7 +180,7 @@ void GPX2::joinGraphs()
         CityNode* c = red[id];
         // criar a entrada no map da união
         unitedGraph.insert(
-            make_pair((c->getId()), new CityNode((c->getId()), c->getX(), c->getY())));
+            make_pair((c->getId()), new CityNode((c->getId()))));
         // colocar as edges no map da união
         for (CityNode::node n : red[(c->getId())]->getEdges()) {
             unitedGraph[(c->getId())]->addEdge(make_pair(n.first, n.second));
@@ -448,7 +446,7 @@ void GPX2::buildOffspring()
                 delete red[s];
                 red.erase(s);
 
-                CityNode* newNode = new CityNode(blue[s]->getId(), blue[s]->getX(), blue[s]->getY());
+                CityNode* newNode = new CityNode(blue[s]->getId());
                 newNode->setEdges(blue[s]->getEdges());
                 red.insert(make_pair(s, newNode));
             }
@@ -457,7 +455,7 @@ void GPX2::buildOffspring()
                 delete blue[s];
                 blue.erase(s);
 
-                CityNode* newNode = new CityNode(red[s]->getId(), red[s]->getX(), red[s]->getY());
+                CityNode* newNode = new CityNode(red[s]->getId());
                 newNode->setEdges(red[s]->getEdges());
                 blue.insert(make_pair(s, newNode));
             }

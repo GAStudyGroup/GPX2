@@ -30,7 +30,7 @@ City Coordinates::getCityById(const int id)
 }
 
 
-City getCityById(const string id){
+City Coordinates::getCityById(const string id){
     auto it = find_if(cityList.begin(), cityList.end(), [&id](const City& obj) { return (obj.getId() == stoi(id)); });
     if (it != cityList.end()) {
         return (*it);
