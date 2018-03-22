@@ -22,6 +22,7 @@ using std::sort;
 using std::srand;
 using std::stof;
 using std::stoi;
+using std::ofstream;
 
 // inicia o algoritmo genético
 void GA();
@@ -40,24 +41,15 @@ Population crossNBestxAllwithReset(Map, Population);
 Population crossAllxAllwith2opt(Population);
 Population crossAllxAllwithNBestAndReset(Map, Population);
 
-
-// Definição das variáveis globais
-/* Config::type TYPE = Config::type::EUC_2D;
-int ID{0};
-string NAME{""};
-string LIB_PATH{""};
-unsigned NEW_POP_TYPE{0};
-double LK_PERCENTAGE{0};
-unsigned POP_SIZE{0}; */
+ofstream logFile;
 
 //1 argumento tour_name, 
 //2 caminho para o .tsp, 
-//3 tamanho da pop, 4 ID da run(usado para log)
+//3 tamanho da pop, 4 ID da run(usado para log
 //5 porcentagem de população inicial gerado pelo LK
 //6 tipo de geração da nova poop
 // ex: GA berlin52 lib/ 100 0.1 0
 int main(int argc, char *argv[]) {
-    
 
     srand(time(NULL)); 
 
@@ -124,6 +116,14 @@ void GA() {
     Map map;
     Population pop;
 
+    string logName{"Logs/"+to_string(Config::NEW_POP_TYPE)+"/log_"+Config::NAME+"_"+to_string(Config::POP_SIZE)+(Config::LK_PERCENTAGE>0?("_LK"):(""))+".log"};
+
+    logFile.open(logName);
+    if(!logFile.is_open()){
+        cout<<"falha na abertura do arquivo"<<endl;
+        exit(0);
+    }
+
     {
         ImportData dataFile(Config::LIB_PATH+Config::NAME);
         // carrega o mapa
@@ -132,24 +132,31 @@ void GA() {
         unsigned fillPop = Config::POP_SIZE - lkPop;
         // carrega a primeira população
         if (Config::LK_PERCENTAGE > 0) {
-            pop = dataFile.importFirstPopulation(map, Config::NAME,
-                                                 lkPop);
+            pop = dataFile.importFirstPopulation(map, Config::NAME, lkPop);
         }
         fillPopulation(map, pop, fillPop);
     }
 
     int i{1}, firstBestFitness{pop.bestFitness()};
-    cout << "First fitness " << firstBestFitness << endl;
+    logFile << "First fitness " << firstBestFitness << endl;
     do {
         pop = generateNewPopulation(map, pop);
 
-        cout << "gen " << i << " best fitness " << pop.bestFitness() << endl;
+        logFile << "gen " << i << " best fitness " << pop.bestFitness() << endl;
         i++;
     } while (stop(pop));
-    cout << "THE END" << endl;
-    cout << "first best fitness: " << firstBestFitness << endl;
-    cout << "gen " << i << " best fitness " << pop.bestFitness() << endl;
-    cout << "=========================" << endl;
+    logFile << "THE END" << endl;
+    logFile << "first best fitness: " << firstBestFitness << endl;
+    logFile << "gen " << i << " best fitness " << pop.bestFitness() << endl;
+    logFile << "=========================" << endl;
+
+    logFile << "\nLast population" <<endl;
+    sort(pop.getPopulation().begin(), pop.getPopulation().end(),
+         [](Tour &a, Tour &b) { return a.getFitness() < b.getFitness(); });
+    for(Tour t : pop.getPopulation()){
+        logFile<<t<<endl;
+    }
+    logFile.close();
 }
 
 bool stop(Population pop) {
@@ -165,8 +172,7 @@ bool stop(Population pop) {
             totalEqual++;
         }
     }
-    cout << "total equal: " << totalEqual << ", pop size "
-         << Config::POP_SIZE << endl;
+    logFile << "total equal: " << totalEqual << ", pop size "<< Config::POP_SIZE << endl;
     // zera o contador de gerações sem mudança se for encontrado uma fitness
     // melhor
     if (bestFitness > currentFitness) {

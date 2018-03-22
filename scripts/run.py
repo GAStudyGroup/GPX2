@@ -8,11 +8,11 @@ LIBS_PATH = "./lib/"
 BIN_PATH = "bin/"
 
 POP_SIZE = 20
-LK_PERCENTAGE = 0
+LK_PERCENTAGE = 0.2
 NEW_POP_TYPE = 2
 
-# tours = ["eil101","berlin52","a280","att48","pcb442","pbd984"]
-tours = ["att48"]
+# tours = ["a280","att48","berlin52","burma14","ch150","eil101","gr137","pbd984","pcb442","u1432"]
+tours = ["eil101"]
 
 for tour_name in tours:
     for i in range(1):
@@ -25,6 +25,7 @@ for tour_name in tours:
             print("N best vs All GPX2 crossover and reset population\n")
         else:
             print("All vs ALL with N best saved to the next population and the rest reseted\n");
+
         #gerar a pop inicial
         if(LK_PERCENTAGE>0):
             call(["./"+BIN_PATH+"linkern","-Q" ,"-S"+tour_name, "-R "+str(POP_SIZE*LK_PERCENTAGE), LIBS_PATH+tour_name+".tsp"])

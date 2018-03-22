@@ -32,7 +32,7 @@ int Tour::getFitness()
 
 ostream& operator<<(ostream& output, Tour& t)
 { // Overload de operador para impressão da população
-
+    output<<"===================================================\n";
     for (City c : t.getRoute()) {
         output << c << "\n";
     }

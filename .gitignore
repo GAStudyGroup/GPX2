@@ -1,8 +1,6 @@
 *.d
 *.dat
 
-Logs/*.log
-Logs/
 sources/*.o
 bin/GA
 
