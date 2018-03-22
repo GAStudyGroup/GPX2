@@ -9,10 +9,10 @@ BIN_PATH = "bin/"
 
 POP_SIZE = 20
 LK_PERCENTAGE = 0.2
-NEW_POP_TYPE = 2
+NEW_POP_TYPE = 1
 
 # tours = ["a280","att48","berlin52","burma14","ch150","eil101","gr137","pbd984","pcb442","u1432"]
-tours = ["eil101"]
+tours = ["att48"]
 
 for tour_name in tours:
     for i in range(1):

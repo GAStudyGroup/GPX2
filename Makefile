@@ -6,7 +6,7 @@
 #
 
 CC := g++ -std=gnu++17 -pthread
-CFLAGS := -fsanitize=leak -fsanitize=address -Wall -O3
+CFLAGS := -fsanitize=leak -fsanitize=address -Wall -O0
 INC_FOLDER := -I includes
 SRC_FOLDER := sources
 HISTORY := history

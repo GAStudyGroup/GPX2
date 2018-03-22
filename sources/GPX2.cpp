@@ -537,7 +537,7 @@ Tour GPX2::mapToTour(CityMap& mapOffspring)
 
     isAlreadyVisited.push_back(mapOffspring.begin()->first);
 
-    offspring.getRoute().push_back(City(stoi(city->getId()), city->getX(), city->getY())); // já foi visitado então entra no filho
+    offspring.getRoute().push_back(stoi(city->getId())); // já foi visitado então entra no filho
 
     nextToVisit.push_back(city->getEdges()[0].first);
 
@@ -547,7 +547,7 @@ Tour GPX2::mapToTour(CityMap& mapOffspring)
         city = mapOffspring[nextToVisit.front()];
         nextToVisit.pop_front();
         // Cria um objeto e carrega no Tour filho
-        offspring.getRoute().push_back(City(stoi(city->getId()), city->getX(), city->getY()));
+        offspring.getRoute().push_back(stoi(city->getId()));
 
         for (CityNode::node n : city->getEdges()) {
 

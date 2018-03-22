@@ -6,8 +6,8 @@
 Tour::Tour() {}
 
 Tour::Tour(vector<City> route){
-    for(City c : rout){
-        route.push_back(c.getId());
+    for(City c : route){
+        this->route.push_back(c.getId());
     }
 }
 

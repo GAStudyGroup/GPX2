@@ -159,7 +159,7 @@ void ImportData::setEdge_Type(string type){
 
 }
 
-Population ImportData::importFirstPopulation(Map map, string name, unsigned popSize)
+Population ImportData::importFirstPopulation(string name, unsigned popSize)
 {
     ifstream file;
     string word{ "" };
@@ -180,7 +180,7 @@ Population ImportData::importFirstPopulation(Map map, string name, unsigned popS
         auto cities = explode(ss.str(),'\n');
         //while (file >> word) {
         for(auto wordaux : cities){
-            newT.getRoute().push_back(map.getCityById(stoi(wordaux)));
+            newT.getRoute().push_back(stoi(wordaux));
         }
         //}
         file.close();

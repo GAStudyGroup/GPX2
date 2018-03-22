@@ -33,7 +33,7 @@ bool stop(Population);
 Population generateNewPopulation(Population);
 
 // Gera um tour utilizando Nearest Neighbor
-vector<City> nearestNeighbor(Map &);
+//vector<City> nearestNeighbor(Map &);
 
 void fillPopulation(Population &, unsigned);
 Population crossNBestxAllwithReset(Population);
@@ -85,7 +85,7 @@ void fillPopulation(Population &pop, unsigned popToFill) {
     }
 }
 
-vector<City> nearestNeighbor(Map &map) {
+/* vector<City> nearestNeighbor(Map &map) {
     vector<pair<float, City>> cityList;
     for (City c : map.getCityList()) {
         cityList.push_back(make_pair(0, c));
@@ -109,7 +109,7 @@ vector<City> nearestNeighbor(Map &map) {
         cityList.erase(cityList.begin());
     }
     return (tour);
-}
+} */
 
 void GA() {
     Population pop;
@@ -130,31 +130,31 @@ void GA() {
         unsigned fillPop = Config::POP_SIZE - lkPop;
         // carrega a primeira população
         if (Config::LK_PERCENTAGE > 0) {
-            pop = dataFile.importFirstPopulation(Config::map, Config::NAME, lkPop);
+            pop = dataFile.importFirstPopulation(Config::NAME, lkPop);
         }
         fillPopulation(pop, fillPop);
     }
 
     int i{1}, firstBestFitness{pop.bestFitness()};
-    logFile << "First fitness " << firstBestFitness << endl;
+    cout << "First fitness " << firstBestFitness << endl;
     do {
         pop = generateNewPopulation(pop);
 
-        logFile << "gen " << i << " best fitness " << pop.bestFitness() << endl;
+        cout << "gen " << i << " best fitness " << pop.bestFitness() << endl;
         i++;
     } while (stop(pop));
-    logFile << "THE END" << endl;
-    logFile << "first best fitness: " << firstBestFitness << endl;
-    logFile << "gen " << i << " best fitness " << pop.bestFitness() << endl;
-    logFile << "=========================" << endl;
+    cout << "THE END" << endl;
+    cout << "first best fitness: " << firstBestFitness << endl;
+    cout << "gen " << i << " best fitness " << pop.bestFitness() << endl;
+    cout << "=========================" << endl;
 
-    logFile << "\nLast population" <<endl;
+    cout << "\nLast population" <<endl;
     sort(pop.getPopulation().begin(), pop.getPopulation().end(),
          [](Tour &a, Tour &b) { return a.getFitness() < b.getFitness(); });
     for(Tour t : pop.getPopulation()){
-        logFile<<t<<endl;
+        cout<<t<<endl;
     }
-    logFile.close();
+    /* logFile.close(); */
 }
 
 bool stop(Population pop) {
@@ -170,7 +170,7 @@ bool stop(Population pop) {
             totalEqual++;
         }
     }
-    logFile << "total equal: " << totalEqual << ", pop size "<< Config::POP_SIZE << endl;
+    cout << "total equal: " << totalEqual << ", pop size "<< Config::POP_SIZE << endl;
     // zera o contador de gerações sem mudança se for encontrado uma fitness
     // melhor
     if (bestFitness > currentFitness) {
@@ -190,13 +190,13 @@ bool stop(Population pop) {
     }
 }
 
-Population generateNewPopulation(Map map, Population pop) {
+Population generateNewPopulation(Population pop) {
     if(Config::NEW_POP_TYPE==0){
         return crossAllxAllwith2opt(pop);
     }else if(Config::NEW_POP_TYPE==1){
-        return crossNBestxAllwithReset(map, pop);
+        return crossNBestxAllwithReset(pop);
     }else{
-        return crossAllxAllwithNBestAndReset(map, pop);
+        return crossAllxAllwithNBestAndReset(pop);
     }
 }
 
@@ -222,7 +222,7 @@ Population crossAllxAllwith2opt(Population pop) {
     return newPop;
 }
 
-Population crossNBestxAllwithReset(Map map, Population pop) {
+Population crossNBestxAllwithReset(Population pop) {
     Population newPop;
     // dar sort na pop
     sort(pop.getPopulation().begin(), pop.getPopulation().end(),
@@ -243,7 +243,7 @@ Population crossNBestxAllwithReset(Map map, Population pop) {
     return (newPop);
 }
 
-Population crossAllxAllwithNBestAndReset(Map map, Population pop){
+Population crossAllxAllwithNBestAndReset(Population pop){
     Population tmpPop, newPop;
     Tour currentTour;
 

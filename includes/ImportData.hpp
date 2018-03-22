@@ -34,7 +34,7 @@ public:
 
     void setEdge_Type(string);
 
-    Population importFirstPopulation(Map, string, unsigned);
+    Population importFirstPopulation(string, unsigned);
 
 private:
     string tspName = "N/A";
