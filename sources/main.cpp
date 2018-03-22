@@ -31,15 +31,15 @@ void GA();
 bool stop(Population);
 
 // Gera uma nova população
-Population generateNewPopulation(Map, Population);
+Population generateNewPopulation(Population);
 
 // Gera um tour utilizando Nearest Neighbor
 vector<City> nearestNeighbor(Map &);
 
-void fillPopulation(Map &, Population &, unsigned);
-Population crossNBestxAllwithReset(Map, Population);
+void fillPopulation(Population &, unsigned);
+Population crossNBestxAllwithReset(Population);
 Population crossAllxAllwith2opt(Population);
-Population crossAllxAllwithNBestAndReset(Map, Population);
+Population crossAllxAllwithNBestAndReset(Population);
 
 ofstream logFile;
 
@@ -76,10 +76,10 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void fillPopulation(Map &map, Population &pop, unsigned popToFill) {
+void fillPopulation(Population &pop, unsigned popToFill) {
     for (unsigned i = 0; i < popToFill; i++) {
         // Tour t(nearestNeighbor(map));
-        Tour t(map.getCityList());
+        Tour t(Config::map.getCityList());
         random_shuffle(t.getRoute().begin(), t.getRoute().end());
         t = Opt::optimize(t);
         pop.getPopulation().push_back(t);
@@ -113,7 +113,6 @@ vector<City> nearestNeighbor(Map &map) {
 }
 
 void GA() {
-    Map map;
     Population pop;
 
     string logName{"Logs/"+to_string(Config::NEW_POP_TYPE)+"/log_"+Config::NAME+"_"+to_string(Config::POP_SIZE)+(Config::LK_PERCENTAGE>0?("_LK"):(""))+".log"};
@@ -127,20 +126,20 @@ void GA() {
     {
         ImportData dataFile(Config::LIB_PATH+Config::NAME);
         // carrega o mapa
-        map.setCityList(dataFile.getCitiesCoord());
+        Config::map.setCityList(dataFile.getCitiesCoord());
         unsigned lkPop = Config::POP_SIZE * Config::LK_PERCENTAGE;
         unsigned fillPop = Config::POP_SIZE - lkPop;
         // carrega a primeira população
         if (Config::LK_PERCENTAGE > 0) {
-            pop = dataFile.importFirstPopulation(map, Config::NAME, lkPop);
+            pop = dataFile.importFirstPopulation(Config::map, Config::NAME, lkPop);
         }
-        fillPopulation(map, pop, fillPop);
+        fillPopulation(pop, fillPop);
     }
 
     int i{1}, firstBestFitness{pop.bestFitness()};
     logFile << "First fitness " << firstBestFitness << endl;
     do {
-        pop = generateNewPopulation(map, pop);
+        pop = generateNewPopulation(pop);
 
         logFile << "gen " << i << " best fitness " << pop.bestFitness() << endl;
         i++;
@@ -241,7 +240,7 @@ Population crossNBestxAllwithReset(Map map, Population pop) {
     }
 
     // preencher o resto da pop com novos tours gerados com NN e 2opt
-    fillPopulation(map, newPop, Config::POP_SIZE - Config::N_BEST);
+    fillPopulation(newPop, Config::POP_SIZE - Config::N_BEST);
     return (newPop);
 }
 
@@ -271,6 +270,6 @@ Population crossAllxAllwithNBestAndReset(Map map, Population pop){
         newPop.getPopulation().push_back(tmpPop.getPopulation()[i]);
     }
 
-    fillPopulation(map, newPop, Config::POP_SIZE - Config::N_BEST);
+    fillPopulation(newPop, Config::POP_SIZE - Config::N_BEST);
     return newPop;
 }

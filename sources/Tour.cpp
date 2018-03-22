@@ -4,17 +4,20 @@
 
 Tour::Tour() {}
 
-Tour::Tour(vector<City> route)
-    : route(route)
-{
+Tour::Tour(vector<City> route){
+    for(City c : rout){
+        route.push_back(c.getId());
+    }
 }
 
-void Tour::setRoute(vector<City> route)
+Tour::Tour(vector<int> route):route(route){}
+
+void Tour::setRoute(vector<int> route)
 {
     this->route = route;
 }
 
-vector<City>& Tour::getRoute()
+vector<int>& Tour::getRoute()
 {
     return route;
 }
