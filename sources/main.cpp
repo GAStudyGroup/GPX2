@@ -58,7 +58,7 @@ double LK_PERCENTAGE{0};
 int main(int argc, char *argv[]) {
     unsigned popSize{0};
 
-    srand(time(NULL));
+    srand(time(NULL)); 
 
     if (argc == 7) {
         try {

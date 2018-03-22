@@ -4,10 +4,10 @@
 Logs/*.log
 Logs/
 sources/*.o
-bin/
+bin/GA
 
 *.txt
 *.log
 *.opt
 
-.vscode/*
+.vscode/
