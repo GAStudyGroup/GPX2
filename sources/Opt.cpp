@@ -53,14 +53,14 @@ bool Opt::adjacent(edge &e1, edge &e2){
 }
 
 bool Opt::isBetter(edge &e1, edge &e2, Tour &t){
-    double e1_first_x{map.getCityById(e1.first).getX()},
-            e1_first_y{map.getCityById(e1.first).getY()},
-            e1_second_x{map.getCityById(e1.second).getX()},
-            e1_second_y{map.getCityById(e1.second).getY()},
-            e2_first_x{map.getCityById(e2.first).getX()},
-            e2_first_y{map.getCityById(e2.first).getY()},
-            e2_second_x{map.getCityById(e2.second).getX()},
-            e2_second_y{map.getCityById(e2.second).getY()};
+    double e1_first_x{Config::map.getCityById(e1.first).getX()},
+            e1_first_y{Config::map.getCityById(e1.first).getY()},
+            e1_second_x{Config::map.getCityById(e1.second).getX()},
+            e1_second_y{Config::map.getCityById(e1.second).getY()},
+            e2_first_x{Config::map.getCityById(e2.first).getX()},
+            e2_first_y{Config::map.getCityById(e2.first).getY()},
+            e2_second_x{Config::map.getCityById(e2.second).getX()},
+            e2_second_y{Config::map.getCityById(e2.second).getY()};
 
     int oldDistance = distance(std::make_pair(e1_first_x,e1_first_y),std::make_pair(e1_second_x,e1_second_y))
         +

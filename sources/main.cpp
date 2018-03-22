@@ -8,7 +8,6 @@
 #include "Config.hpp"
 #include "GPX2.hpp"
 #include "ImportData.hpp"
-#include "Map.hpp"
 #include "Opt.hpp"
 #include "Population.hpp"
 #include "Utils.hpp"

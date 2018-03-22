@@ -3,6 +3,7 @@
 
 #include "Tour.hpp"
 #include "CityNode.hpp"
+
 #include <utility>
 
 using std::pair;

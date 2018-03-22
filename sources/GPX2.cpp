@@ -1,4 +1,5 @@
 #include "GPX2.hpp"
+#include "Config.hpp"
 
 Tour GPX2::crossover(Tour redT, Tour blueT)
 {
@@ -68,32 +69,36 @@ GPX2::CityMap GPX2::tourToMap(Tour& t)
 
     map<string, CityNode*> aux; // Mapa com as conexões dos nodes 
     double dist = 0;
-    vector<City> cities{ t.getRoute() }; 
+    vector<int> citiesId{ t.getRoute() }; 
 
-    CityNode* prev = new CityNode(to_string(cities[0].getId()), cities[0].getX(), cities[0].getY()); // ponto anterior ao atual dentro do for
+    CityNode* prev = new CityNode(to_string(citiesId[0])); // ponto anterior ao atual dentro do for
     CityNode* first = prev; // referência do primeiro acesso
 
     aux.insert(make_pair(first->getId(), first)); // gera o mapa e insere o primeiro dentro dele
 
     for (unsigned i = 1; i < t.getRoute().size(); i++) { // percorre o vetor a partir do segundo elemento, o primeiro já foi transformado
-        CityNode* cn = new CityNode(to_string(cities[i].getId()), cities[i].getX(), cities[i].getY()); // gera um node com o segundo elemento
+        CityNode* cn = new CityNode(to_string(citiesId[i])); // gera um node com o segundo elemento
 
-        aux.insert(make_pair(cn->getId(), cn)); // insere o node dentro do mapa
+        aux.insert(make_pair(cn->getId(), cn)); // insere o node dentro do mapa 
 
-        dist = distance(make_pair(prev->getX(),prev->getY()),make_pair(cn->getX(),cn->getY()));
+        double prevX{Config::map.getCityById(prev->getId()).getX()}, prevY{Config::map.getCityById(prev->getId()).getY()};
+        double cnX{Config::map.getCityById(cn->getId()).getX()}, cnY{Config::map.getCityById(cn->getId()).getY()};
+        dist = distance(make_pair(prevX, prevY),make_pair(cnX, cnY));
 
         cn->addEdge(CityNode::node(prev->getId(), dist)); // adiciona ao node atual as arestas de conexão
 
-        dist = distance(make_pair(cn->getX(),cn->getY()),make_pair(prev->getX(),prev->getY()));
+        dist = distance(make_pair(cnX, cnY), make_pair(prevX, prevY));  /// VERIFICAR SAMERDA DEPOIS -----------------------------------------------
         prev->addEdge(CityNode::node(cn->getId(), dist)); // adiciona ao node anterior o atual como um próx (lista duplamente encadeada)
 
         prev = cn; // o anterior recebe o atual para continuar o for
     }
 
-    dist = distance(make_pair(prev->getX(),prev->getY()),make_pair(first->getX(),first->getY()));
+    double prevX{Config::map.getCityById(prev->getId()).getX()}, prevY{Config::map.getCityById(prev->getId()).getY()};
+    double firstX{Config::map.getCityById(first->getId()).getX()}, firstY{Config::map.getCityById(first->getId()).getY()};
+    dist = distance(make_pair(prevX, prevY), make_pair(firstX, firstY));
     first->addEdge(CityNode::node(prev->getId(), dist)); // o primeiro recebe o atual ao sair do for, completando os ligamentos das arestas
 
-    dist = distance(make_pair(first->getX(),first->getY()),make_pair(prev->getX(),prev->getY()));
+    dist = distance(make_pair(firstX, firstY), make_pair(prevX, prevY));
     prev->addEdge(CityNode::node(first->getId(), dist)); // o atual recebe o primeiro para completar os ligamentos
 
     return (aux); // retorna o mpaa com os nodes já instanciados e adicionados
