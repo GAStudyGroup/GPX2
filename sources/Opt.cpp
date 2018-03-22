@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <utility> 
 
+#include "Config.hpp"
+
 using std::find;
 using std::reverse;
 
@@ -51,6 +53,7 @@ bool Opt::adjacent(edge &e1, edge &e2){
 }
 
 bool Opt::isBetter(edge &e1, edge &e2, Tour &t){
+    double e1_x{map.getCityById(e1.first)},e1_y,e2_x,e2_y;
     int oldDistance = distance(std::make_pair(t.getRoute()[e1.first].getX(),t.getRoute()[e1.first].getY()),std::make_pair(t.getRoute()[e1.second].getX(),t.getRoute()[e1.second].getY())) 
     + distance(std::make_pair(t.getRoute()[e2.first].getX(),t.getRoute()[e2.first].getY()),std::make_pair(t.getRoute()[e2.second].getX(),t.getRoute()[e2.second].getY()));
 

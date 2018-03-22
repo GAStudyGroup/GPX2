@@ -10,7 +10,6 @@
 #include <vector>
 
 #include "City.hpp"
-#include "Map.hpp"
 #include "Population.hpp"
 
 using std::cout;

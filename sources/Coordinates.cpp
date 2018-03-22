@@ -1,23 +1,23 @@
-#include "Map.hpp"
+#include "Coordinates.hpp"
 
-Map::Map() {}
+Coordinates::Coordinates() {}
 
-Map::Map(vector<City> data)
+Coordinates::Coordinates(vector<City> data)
     : cityList(data)
 {
 }
 
-vector<City> Map::getCityList()
+vector<City> Coordinates::getCityList()
 {
     return (cityList);
 }
 
-void Map::setCityList(vector<City> cityList)
+void Coordinates::setCityList(vector<City> cityList)
 {
     this->cityList = cityList;
 }
 
-City Map::getCityById(const int id)
+City Coordinates::getCityById(const int id)
 {
     auto it = find_if(cityList.begin(), cityList.end(), [&id](const City& obj) { return (obj.getId() == id); });
     if (it != cityList.end()) {

@@ -2,7 +2,7 @@
 #define CONFIG_HPP
 #include <string>
 
-#include "Map.hpp"
+#include "Coordinates.hpp"
 
 namespace Config{
     enum type{EUC_2D,GEO,ATT};
