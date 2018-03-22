@@ -19,7 +19,7 @@ namespace Config{
     extern unsigned NEW_POP_TYPE;
     extern double LK_PERCENTAGE;
     extern unsigned POP_SIZE;
-    extern Map map;
+    extern Coordinates map;
 }
 
 
