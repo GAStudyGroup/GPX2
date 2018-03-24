@@ -7,3 +7,6 @@ std::string Config::LIB_PATH{""};
 unsigned Config::NEW_POP_TYPE{0};
 double Config::LK_PERCENTAGE{0};
 unsigned Config::POP_SIZE{0};
+Coordinates Config::map;
+unsigned Config::BEST_FITNESS{0};
+unsigned Config::GENERATION_LIMIT{100};

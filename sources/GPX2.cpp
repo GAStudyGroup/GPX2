@@ -1,4 +1,5 @@
 #include "GPX2.hpp"
+#include "Config.hpp"
 
 Tour GPX2::crossover(Tour redT, Tour blueT)
 {
@@ -68,32 +69,34 @@ GPX2::CityMap GPX2::tourToMap(Tour& t)
 
     map<string, CityNode*> aux; // Mapa com as conexões dos nodes 
     double dist = 0;
-    vector<City> cities{ t.getRoute() }; 
+    vector<int> citiesId{ t.getRoute() }; 
 
-    CityNode* prev = new CityNode(to_string(cities[0].getId()), cities[0].getX(), cities[0].getY()); // ponto anterior ao atual dentro do for
+    CityNode* prev = new CityNode(to_string(citiesId[0])); // ponto anterior ao atual dentro do for
     CityNode* first = prev; // referência do primeiro acesso
 
     aux.insert(make_pair(first->getId(), first)); // gera o mapa e insere o primeiro dentro dele
 
     for (unsigned i = 1; i < t.getRoute().size(); i++) { // percorre o vetor a partir do segundo elemento, o primeiro já foi transformado
-        CityNode* cn = new CityNode(to_string(cities[i].getId()), cities[i].getX(), cities[i].getY()); // gera um node com o segundo elemento
+        CityNode* cn = new CityNode(to_string(citiesId[i])); // gera um node com o segundo elemento
 
-        aux.insert(make_pair(cn->getId(), cn)); // insere o node dentro do mapa
+        aux.insert(make_pair(cn->getId(), cn)); // insere o node dentro do mapa 
 
-        dist = distance(make_pair(prev->getX(),prev->getY()),make_pair(cn->getX(),cn->getY()));
+        /* double prevX{Config::map.getCityById(prev->getId()).getX()}, prevY{Config::map.getCityById(prev->getId()).getY()};
+        double cnX{Config::map.getCityById(cn->getId()).getX()}, cnY{Config::map.getCityById(cn->getId()).getY()}; */
+        dist = distance(prev->getId(),cn->getId());
 
         cn->addEdge(CityNode::node(prev->getId(), dist)); // adiciona ao node atual as arestas de conexão
 
-        dist = distance(make_pair(cn->getX(),cn->getY()),make_pair(prev->getX(),prev->getY()));
         prev->addEdge(CityNode::node(cn->getId(), dist)); // adiciona ao node anterior o atual como um próx (lista duplamente encadeada)
 
         prev = cn; // o anterior recebe o atual para continuar o for
     }
 
-    dist = distance(make_pair(prev->getX(),prev->getY()),make_pair(first->getX(),first->getY()));
+    /* double prevX{Config::map.getCityById(prev->getId()).getX()}, prevY{Config::map.getCityById(prev->getId()).getY()};
+    double firstX{Config::map.getCityById(first->getId()).getX()}, firstY{Config::map.getCityById(first->getId()).getY()}; */
+    dist = distance(prev->getId(), first->getId());
     first->addEdge(CityNode::node(prev->getId(), dist)); // o primeiro recebe o atual ao sair do for, completando os ligamentos das arestas
 
-    dist = distance(make_pair(first->getX(),first->getY()),make_pair(prev->getX(),prev->getY()));
     prev->addEdge(CityNode::node(first->getId(), dist)); // o atual recebe o primeiro para completar os ligamentos
 
     return (aux); // retorna o mpaa com os nodes já instanciados e adicionados
@@ -119,12 +122,10 @@ void GPX2::createGhosts()
             if (isGhost.size() == 4) { // node with degree 4
                 string ghostID = idKey + ghostToken;
 
-                double x = city.second->getX(), y = city.second->getY();
-
-                CityNode* ghostNode = new CityNode(ghostID, x, y);
+                CityNode* ghostNode = new CityNode(ghostID);
                 insertGhost(idKey, red, ghostNode);
 
-                ghostNode = new CityNode(ghostID, x, y);
+                ghostNode = new CityNode(ghostID);
                 insertGhost(idKey, blue, ghostNode);
             }
 
@@ -177,7 +178,7 @@ void GPX2::joinGraphs()
         CityNode* c = red[id];
         // criar a entrada no map da união
         unitedGraph.insert(
-            make_pair((c->getId()), new CityNode((c->getId()), c->getX(), c->getY())));
+            make_pair((c->getId()), new CityNode((c->getId()))));
         // colocar as edges no map da união
         for (CityNode::node n : red[(c->getId())]->getEdges()) {
             unitedGraph[(c->getId())]->addEdge(make_pair(n.first, n.second));
@@ -443,7 +444,7 @@ void GPX2::buildOffspring()
                 delete red[s];
                 red.erase(s);
 
-                CityNode* newNode = new CityNode(blue[s]->getId(), blue[s]->getX(), blue[s]->getY());
+                CityNode* newNode = new CityNode(blue[s]->getId());
                 newNode->setEdges(blue[s]->getEdges());
                 red.insert(make_pair(s, newNode));
             }
@@ -452,7 +453,7 @@ void GPX2::buildOffspring()
                 delete blue[s];
                 blue.erase(s);
 
-                CityNode* newNode = new CityNode(red[s]->getId(), red[s]->getX(), red[s]->getY());
+                CityNode* newNode = new CityNode(red[s]->getId());
                 newNode->setEdges(red[s]->getEdges());
                 blue.insert(make_pair(s, newNode));
             }
@@ -534,7 +535,7 @@ Tour GPX2::mapToTour(CityMap& mapOffspring)
 
     isAlreadyVisited.push_back(mapOffspring.begin()->first);
 
-    offspring.getRoute().push_back(City(stoi(city->getId()), city->getX(), city->getY())); // já foi visitado então entra no filho
+    offspring.getRoute().push_back(stoi(city->getId())); // já foi visitado então entra no filho
 
     nextToVisit.push_back(city->getEdges()[0].first);
 
@@ -544,7 +545,7 @@ Tour GPX2::mapToTour(CityMap& mapOffspring)
         city = mapOffspring[nextToVisit.front()];
         nextToVisit.pop_front();
         // Cria um objeto e carrega no Tour filho
-        offspring.getRoute().push_back(City(stoi(city->getId()), city->getX(), city->getY()));
+        offspring.getRoute().push_back(stoi(city->getId()));
 
         for (CityNode::node n : city->getEdges()) {
 

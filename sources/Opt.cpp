@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <utility> 
 
+#include "Config.hpp"
+
 using std::find;
 using std::reverse;
 
@@ -18,7 +20,6 @@ Tour Opt::optimize(Tour &tour){
 
     bool run{false};
     long unsigned int routeSize{tour.getRoute().size()};
-    // std::cout<<"In "<<tour.getFitness()<<std::endl;
     do{
         run = false;
         for(unsigned i=1;i<routeSize-2;i++){
@@ -38,7 +39,7 @@ Tour Opt::optimize(Tour &tour){
             }
         }
     }while(run);
-    // std::cout<<"Out "<<tour.getFitness()<<std::endl;
+
     return(tour);
 }
 
@@ -51,12 +52,22 @@ bool Opt::adjacent(edge &e1, edge &e2){
 }
 
 bool Opt::isBetter(edge &e1, edge &e2, Tour &t){
-    int oldDistance = distance(std::make_pair(t.getRoute()[e1.first].getX(),t.getRoute()[e1.first].getY()),std::make_pair(t.getRoute()[e1.second].getX(),t.getRoute()[e1.second].getY())) 
-    + distance(std::make_pair(t.getRoute()[e2.first].getX(),t.getRoute()[e2.first].getY()),std::make_pair(t.getRoute()[e2.second].getX(),t.getRoute()[e2.second].getY()));
+    /* double e1_first_x{Config::map.getCityById(t.getRoute()[e1.first]).getX()},
+            e1_first_y{Config::map.getCityById(t.getRoute()[e1.first]).getY()},
+            e1_second_x{Config::map.getCityById(t.getRoute()[e1.second]).getX()},
+            e1_second_y{Config::map.getCityById(t.getRoute()[e1.second]).getY()},
+            e2_first_x{Config::map.getCityById(t.getRoute()[e2.first]).getX()},
+            e2_first_y{Config::map.getCityById(t.getRoute()[e2.first]).getY()},
+            e2_second_x{Config::map.getCityById(t.getRoute()[e2.second]).getX()},
+            e2_second_y{Config::map.getCityById(t.getRoute()[e2.second]).getY()}; */
 
-    int newDistance = distance(std::make_pair(t.getRoute()[e1.first].getX(),t.getRoute()[e1.first].getY()),std::make_pair(t.getRoute()[e2.first].getX(),t.getRoute()[e2.first].getY())) 
-    + distance(std::make_pair(t.getRoute()[e1.second].getX(),t.getRoute()[e1.second].getY()),std::make_pair(t.getRoute()[e2.second].getX(),t.getRoute()[e2.second].getY()));
-
+    int oldDistance = distance(t.getRoute()[e1.first],t.getRoute()[e1.second])
+        +
+        distance(t.getRoute()[e2.first],t.getRoute()[e2.second]);
+    
+    int newDistance = distance(t.getRoute()[e1.first],t.getRoute()[e2.first])
+        +
+        distance(t.getRoute()[e1.second],t.getRoute()[e2.second]);
     if(oldDistance>newDistance){
         return(true);
     }else{

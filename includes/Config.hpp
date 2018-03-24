@@ -2,13 +2,18 @@
 #define CONFIG_HPP
 #include <string>
 
+#include "Coordinates.hpp"
+
 namespace Config{
     enum type{EUC_2D,GEO,ATT};
 
-    const unsigned GENERATION_LIMIT{100};
-    const unsigned N_BEST{6};
+    extern unsigned GENERATION_LIMIT;
+    const unsigned N_BEST{3};
+    const unsigned AFTER_BEST{1};
 
     extern type TYPE;
+    extern Coordinates map;
+    extern unsigned BEST_FITNESS;
 
     //argumentos do algoritmo
     extern unsigned ID;

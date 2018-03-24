@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "City.hpp"
+#include "Tour.hpp"
 #include "CityNode.hpp"
 #include "Partition.hpp"
 #include "Utils.hpp"

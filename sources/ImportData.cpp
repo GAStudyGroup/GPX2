@@ -6,7 +6,7 @@ extern Config::type TYPE;
 ImportData::ImportData(string nome)
 {
     string input;
-    cout << "Importando Arquivo \n";
+    // cout << "Importando Arquivo \n";
     myfile.open(nome + ".tsp");
     if (!myfile.is_open()) {
         cout << "Falha na leitura do arquivo" << endl;
@@ -159,7 +159,7 @@ void ImportData::setEdge_Type(string type){
 
 }
 
-Population ImportData::importFirstPopulation(Map map, string name, unsigned popSize)
+Population ImportData::importFirstPopulation(string name, unsigned popSize)
 {
     ifstream file;
     string word{ "" };
@@ -180,7 +180,7 @@ Population ImportData::importFirstPopulation(Map map, string name, unsigned popS
         auto cities = explode(ss.str(),'\n');
         //while (file >> word) {
         for(auto wordaux : cities){
-            newT.getRoute().push_back(map.getCityById(stoi(wordaux)));
+            newT.getRoute().push_back(stoi(wordaux));
         }
         //}
         file.close();

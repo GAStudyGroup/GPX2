@@ -10,7 +10,6 @@
 #include <vector>
 
 #include "City.hpp"
-#include "Map.hpp"
 #include "Population.hpp"
 
 using std::cout;
@@ -35,7 +34,7 @@ public:
 
     void setEdge_Type(string);
 
-    Population importFirstPopulation(Map, string, unsigned);
+    Population importFirstPopulation(string, unsigned);
 
 private:
     string tspName = "N/A";

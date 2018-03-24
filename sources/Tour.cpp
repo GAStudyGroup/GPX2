@@ -1,40 +1,43 @@
 #include "Tour.hpp"
+#include "Config.hpp"
 
 #include <iostream>
 
 Tour::Tour() {}
 
-Tour::Tour(vector<City> route)
-    : route(route)
-{
+Tour::Tour(vector<City> route){
+    for(City c : route){
+        this->route.push_back(c.getId());
+    }
 }
 
-void Tour::setRoute(vector<City> route)
+Tour::Tour(vector<int> route):route(route){}
+
+void Tour::setRoute(vector<int> route)
 {
     this->route = route;
 }
 
-vector<City>& Tour::getRoute()
+vector<int>& Tour::getRoute()
 {
     return route;
 }
 
 int Tour::getFitness()
 { // Irá retornar a fitness do Tour específico
-    int sum{ 0 };
-    unsigned size = route.size();
-    for(unsigned i=0;i<size;i++){
-        pair<double,double> p1(route[i].getX(),route[i].getY()),p2(route[(i+1)%size].getX(),route[(i+1)%size].getY());
-        sum += distance(p1,p2);
+    int sum{0};
+    unsigned size{(unsigned)route.size()};
+    for(unsigned i=0; i<size; i++){
+        sum += distance(route[i], route[(i+1)%size]);
     }
-    return (sum);
+    return(sum);
 }
 
 ostream& operator<<(ostream& output, Tour& t)
 { // Overload de operador para impressão da população
     output<<"===================================================\n";
-    for (City c : t.getRoute()) {
-        output << c << "\n";
+    for (int cityId : t.getRoute()) {
+        output << Config::map.getCityById(cityId) << "\n";
     }
     output << "Fitness: " << t.getFitness() << "\n";
     return (output);

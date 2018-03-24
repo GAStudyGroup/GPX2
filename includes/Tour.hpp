@@ -3,9 +3,10 @@
 
 #include <cmath>
 #include <vector>
+#include <iostream>
 
-#include "City.hpp"
 #include "Utils.hpp"
+#include "City.hpp"
 
 using std::ostream;
 using std::round;
@@ -18,14 +19,15 @@ class Tour {
 public:
     Tour(); 
     Tour(vector<City>);
+    Tour(vector<int>);
 
-    void setRoute(vector<City>);
+    void setRoute(vector<int>);
 
-    vector<City>& getRoute();
+    vector<int>& getRoute();
 
     int getFitness();
 private:
-    vector<City> route;
+    vector<int> route;
 };
 
 #endif
