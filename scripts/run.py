@@ -2,58 +2,26 @@
 """Código para automatizar a geração da população inicial, inicialização do algoritmo genético e validação dos logs de saídas"""
 
 from subprocess import call
-import os
 
-from find_best import getBest
+import utils as u
+import constants as c
 
-LIBS_PATH = "./lib/"
-BIN_PATH = "bin/"
+for tour_name in c.TOURS:
+    for i in range(c.NUMBER_OF_RUNS):
+        best_fitness = u.getBest(tour_name)
 
-POP_SIZE = 50
-LK_PERCENTAGE = 0
-NEW_POP_TYPE = 1
-
-#tours = ["a280","att48","berlin52","burma14","ch150","eil101","gr137","pbd984","pcb442","u1432"]
-tours = ["att48"]
-
-
-for tour_name in tours:
-    for i in range(1):
-        best_fitness = getBest(LIBS_PATH,tour_name);
-
-        print(str(i)+" Generating population for problem "+tour_name+" with population size "+str(POP_SIZE)+", using "+str(LK_PERCENTAGE*100)+"% of LK generated tours and using:")
-        
-        if(NEW_POP_TYPE==0):
-            print("All vs All GPX2 crossover\n")
-        elif(NEW_POP_TYPE==1):
-            print("N best vs All GPX2 crossover with reset population\n")
-        else:
-            print("All vs ALL with N best saved to the next population and the rest reseted\n");
-        
-        print("best fitness found: "+str(best_fitness))
+        u.printInformations(tour_name,i,best_fitness)
 
         #gerar a pop inicial
-        if(LK_PERCENTAGE>0):
-            call(["./"+BIN_PATH+"linkern","-Q" ,"-S"+tour_name, "-R "+str(POP_SIZE*LK_PERCENTAGE), LIBS_PATH+tour_name+".tsp"])
+        if(c.LK_PERCENTAGE>0):
+            call(["./"+c.BIN_PATH+"linkern","-Q" ,"-S"+tour_name, "-R "+str(c.POP_SIZE*c.LK_PERCENTAGE), c.LIBS_PATH+tour_name+".tsp"])
 
         print("\n\nStarting GA\n")
 
         #chamar o GA
-        call(["./"+BIN_PATH+"GA", tour_name, LIBS_PATH, str(POP_SIZE), str(i), str(LK_PERCENTAGE), str(NEW_POP_TYPE), str(best_fitness)])
+        call(["./"+c.BIN_PATH+"GA", tour_name, c.LIBS_PATH, str(c.POP_SIZE), str(i), str(c.LK_PERCENTAGE), str(c.NEW_POP_TYPE), str(best_fitness)])
 
 
         print("\n\nclean up\n")
         
-        #apagar a pop inicial
-        for f in os.listdir("."):
-            if f.endswith(".dat"):
-                os.remove(f) 
-        
-        """ print("Validate crossover")
-        call(["./scripts/validate_crossover.py", str(i), str(tour_name)])
-        print("end validate crossover")
-
-        print("Validate build")
-        call(["./scripts/validate_build.py", str(i), str(tour_name)])
-        print("end validate build") """
-        
+        u.eraseTours()

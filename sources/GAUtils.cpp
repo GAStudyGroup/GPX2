@@ -185,17 +185,18 @@ void GAUtils::printHeader(std::ostream &out){
 }
 
 void GAUtils::printFooter(std::ostream &out,Population &pop,unsigned gen,unsigned best){
-    out << "THE END" << endl;
-    out << "first best fitness: " << best << endl;
-    out << "gen " << gen << " best fitness " << pop.bestFitness() << endl;
-    out << "=========================" << endl;
+    out << "\nTHE END\n";
+    out << "first best fitness: " << best << "\n";
+    out << "gen " << gen << " best fitness " << pop.bestFitness() << "\n";
+    out << "=========================" << "\n";
 
-    out << "\nLast population" <<endl;
+    out << "\nLast population\n";
     sort(pop.getPopulation().begin(), pop.getPopulation().end(),
          [](Tour &a, Tour &b) { return a.getFitness() < b.getFitness(); });
     for(Tour t : pop.getPopulation()){
-        out<<t<<endl;
+        out<<t<<"\n";
     }
+    out<<endl;
 }
 
 
