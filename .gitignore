@@ -9,3 +9,5 @@ bin/GA
 *.opt
 
 .vscode/
+
+scripts/__pycache__/*
