@@ -37,8 +37,8 @@ ostream& operator<<(ostream& output, Tour& t)
 { // Overload de operador para impressão da população
     output<<"===================================================\n";
     for (int cityId : t.getRoute()) {
-        output << Config::map.getCityById(cityId) << "\n";
+        output << cityId << " ";
     }
-    output << "Fitness: " << t.getFitness() << "\n";
+    output << "\nFitness: " << t.getFitness() << "\n";
     return (output);
 }

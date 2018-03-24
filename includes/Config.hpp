@@ -7,9 +7,10 @@
 namespace Config{
     enum type{EUC_2D,GEO,ATT};
 
-    extern unsigned GENERATION_LIMIT;
-    const unsigned N_BEST{3};
     const unsigned AFTER_BEST{1};
+
+    extern unsigned GENERATION_LIMIT;
+    extern unsigned N_BEST;
 
     extern type TYPE;
     extern Coordinates map;

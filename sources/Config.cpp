@@ -1,6 +1,7 @@
 #include "Config.hpp"
 
 Config::type TYPE = Config::type::EUC_2D;
+unsigned Config::N_BEST{3};
 unsigned Config::ID{0};
 std::string Config::NAME{""};
 std::string Config::LIB_PATH{""};
