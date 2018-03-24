@@ -22,7 +22,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     obj.cleanInsideAccess();
 
     // se houver menos de 2 partições o GPX não consegue recombina-las
-    if (obj.feasiblePartitions.size() < 2) {
+    if (obj.feasiblePartitions.size() < 1) {
         return ((redT.getFitness() < blueT.getFitness()) ? redT : blueT);
     }
 
@@ -36,21 +36,50 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
         obj.fusion();
     }
 
+    if (obj.feasiblePartitions.size() < 1) {
+        return ((redT.getFitness() < blueT.getFitness()) ? redT : blueT);
+    }
+
+    
+
     // Step 7
     obj.choose();
 
     // Step 8
     obj.buildOffspring();
-
     Tour t;
     if (obj.offspringChoosen == Parent::RED) {
         obj.removeGhosts(obj.red);
         // Step 9
         t = obj.mapToTour(obj.red);
+        if(obj.feasiblePartitions.size() == 1){
+            int redF{redT.getFitness()},blueF{blueT.getFitness()},offF{t.getFitness()};
+            if(offF < redF && offF < blueF){
+                std::cout<<"only one feasible"<<std::endl;
+                std::cout<<"red "<<redF<<std::endl;
+                std::cout<<"blue "<<blueF<<std::endl;
+                std::cout<<"offspring "<<offF<<std::endl;
+                std::cin.get();
+            }else{
+                std::cout<<"pegou o melhor pai apenas"<<endl;
+            }
+        }
     } else {
         obj.removeGhosts(obj.blue);
         // Step 9
         t = obj.mapToTour(obj.blue);
+        if(obj.feasiblePartitions.size() == 1){
+            int redF{redT.getFitness()},blueF{blueT.getFitness()},offF{t.getFitness()};
+            if(offF < redF && offF < blueF){
+                std::cout<<"only one feasible"<<std::endl;
+                std::cout<<"red "<<redF<<std::endl;
+                std::cout<<"blue "<<blueF<<std::endl;
+                std::cout<<"offspring "<<offF<<std::endl;
+                std::cin.get();
+            }else{
+                std::cout<<"pegou o melhor pai apenas"<<endl;
+            }
+        }
     }
 
     // Deletar as coisas
