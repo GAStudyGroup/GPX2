@@ -6,7 +6,7 @@ extern Config::type TYPE;
 ImportData::ImportData(string nome)
 {
     string input;
-    cout << "Importando Arquivo \n";
+    // cout << "Importando Arquivo \n";
     myfile.open(nome + ".tsp");
     if (!myfile.is_open()) {
         cout << "Falha na leitura do arquivo" << endl;

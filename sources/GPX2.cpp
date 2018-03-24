@@ -81,9 +81,9 @@ GPX2::CityMap GPX2::tourToMap(Tour& t)
 
         aux.insert(make_pair(cn->getId(), cn)); // insere o node dentro do mapa 
 
-        double prevX{Config::map.getCityById(prev->getId()).getX()}, prevY{Config::map.getCityById(prev->getId()).getY()};
-        double cnX{Config::map.getCityById(cn->getId()).getX()}, cnY{Config::map.getCityById(cn->getId()).getY()};
-        dist = distance(make_pair(prevX, prevY),make_pair(cnX, cnY));
+        /* double prevX{Config::map.getCityById(prev->getId()).getX()}, prevY{Config::map.getCityById(prev->getId()).getY()};
+        double cnX{Config::map.getCityById(cn->getId()).getX()}, cnY{Config::map.getCityById(cn->getId()).getY()}; */
+        dist = distance(prev->getId(),cn->getId());
 
         cn->addEdge(CityNode::node(prev->getId(), dist)); // adiciona ao node atual as arestas de conexão
 
@@ -92,9 +92,9 @@ GPX2::CityMap GPX2::tourToMap(Tour& t)
         prev = cn; // o anterior recebe o atual para continuar o for
     }
 
-    double prevX{Config::map.getCityById(prev->getId()).getX()}, prevY{Config::map.getCityById(prev->getId()).getY()};
-    double firstX{Config::map.getCityById(first->getId()).getX()}, firstY{Config::map.getCityById(first->getId()).getY()};
-    dist = distance(make_pair(prevX, prevY), make_pair(firstX, firstY));
+    /* double prevX{Config::map.getCityById(prev->getId()).getX()}, prevY{Config::map.getCityById(prev->getId()).getY()};
+    double firstX{Config::map.getCityById(first->getId()).getX()}, firstY{Config::map.getCityById(first->getId()).getY()}; */
+    dist = distance(prev->getId(), first->getId());
     first->addEdge(CityNode::node(prev->getId(), dist)); // o primeiro recebe o atual ao sair do for, completando os ligamentos das arestas
 
     prev->addEdge(CityNode::node(first->getId(), dist)); // o atual recebe o primeiro para completar os ligamentos

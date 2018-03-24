@@ -26,10 +26,9 @@ vector<int>& Tour::getRoute()
 int Tour::getFitness()
 { // Irá retornar a fitness do Tour específico
     int sum{0};
-    unsigned size{route.size()};
+    unsigned size{(unsigned)route.size()};
     for(unsigned i=0; i<size; i++){
-        pair<double,double> p1(Config::map.getCityById(route[i]).getX(), Config::map.getCityById(route[i]).getY()), p2(Config::map.getCityById(route[(i+1)%size]).getX(), Config::map.getCityById(route[(i+1)%size]).getY());
-        sum += distance(p1, p2);
+        sum += distance(route[i], route[(i+1)%size]);
     }
     return(sum);
 }

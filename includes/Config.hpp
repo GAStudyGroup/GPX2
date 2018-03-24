@@ -8,7 +8,7 @@ namespace Config{
     enum type{EUC_2D,GEO,ATT};
 
     const unsigned GENERATION_LIMIT{10};
-    const unsigned N_BEST{2};
+    const unsigned N_BEST{3};
 
     extern type TYPE;
 

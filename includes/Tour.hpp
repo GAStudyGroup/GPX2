@@ -3,8 +3,10 @@
 
 #include <cmath>
 #include <vector>
+#include <iostream>
 
 #include "Utils.hpp"
+#include "City.hpp"
 
 using std::ostream;
 using std::round;
