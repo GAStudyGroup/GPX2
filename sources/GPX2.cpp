@@ -21,7 +21,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     obj.findAllPartitions();
     obj.cleanInsideAccess();
 
-    // If there are less than 2 partition the GPX can't recombine them
+    // If there are less than 1 partition the GPX can't recombine them
     if (obj.feasiblePartitions.size() < 1) {
         return ((redT.getFitness() < blueT.getFitness()) ? redT : blueT);
     }
@@ -40,8 +40,6 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
         return ((redT.getFitness() < blueT.getFitness()) ? redT : blueT);
     }
 
-    
-
     // Step 7
     obj.choose();
 
@@ -58,7 +56,6 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
         t = obj.mapToTour(obj.blue);
     }
 
-    // Deletar as coisas
     return t;
 }
 
@@ -68,12 +65,11 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
 GPX2::CityMap GPX2::tourToMap(Tour& t)
 { 
     //Maps the tour to a graph with connections between the nodes
-
     if (t.getRoute().empty()) {
         exit(EXIT_FAILURE);
     }
 
-    map<string, CityNode*> aux; // Maps with all connections between the nodes
+    map<string, CityNode*> aux; // Map with all connections between the nodes
     double dist = 0;
     vector<int> citiesId{ t.getRoute() }; 
 
@@ -87,8 +83,6 @@ GPX2::CityMap GPX2::tourToMap(Tour& t)
 
         aux.insert(make_pair(cn->getId(), cn)); // insert the node in the map
 
-        /* double prevX{Config::map.getCityById(prev->getId()).getX()}, prevY{Config::map.getCityById(prev->getId()).getY()};
-        double cnX{Config::map.getCityById(cn->getId()).getX()}, cnY{Config::map.getCityById(cn->getId()).getY()}; */
         dist = distance(prev->getId(),cn->getId());
 
         cn->addEdge(CityNode::node(prev->getId(), dist)); // adds the current node to the connection edges
@@ -98,14 +92,12 @@ GPX2::CityMap GPX2::tourToMap(Tour& t)
         prev = cn; //the previous receives the current to continue the loop
     }
 
-    /* double prevX{Config::map.getCityById(prev->getId()).getX()}, prevY{Config::map.getCityById(prev->getId()).getY()};
-    double firstX{Config::map.getCityById(first->getId()).getX()}, firstY{Config::map.getCityById(first->getId()).getY()}; */
     dist = distance(prev->getId(), first->getId());
     first->addEdge(CityNode::node(prev->getId(), dist)); //the first receives the current when it goes out from the for, finishing the links between the edges
 
     prev->addEdge(CityNode::node(first->getId(), dist));  //the current receives the first to complete the links
 
-    return (aux);//returns a map with the nodes already instantiated and adddeds
+    return (aux);//returns a map with the nodes already instantiated and added
 }
 
 
