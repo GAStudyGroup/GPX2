@@ -21,7 +21,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     obj.findAllPartitions();
     obj.cleanInsideAccess();
 
-    // se houver menos de 2 partições o GPX não consegue recombina-las
+    // If there are less than 2 partition the GPX can't recombine them
     if (obj.feasiblePartitions.size() < 1) {
         return ((redT.getFitness() < blueT.getFitness()) ? redT : blueT);
     }
@@ -31,7 +31,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     obj.checkAllPartitions();
 
     // Fusion
-    // Precisa ter mais de uma partição unfeasible para o fusion poder acontecer
+    //It's needed to have more than one unfeasible partition to fuse them
     if (obj.unfeasiblePartitions.size() > 1) {
         obj.fusion();
     }
@@ -64,47 +64,48 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
 
 // -----------------------------------------------------------------------------
 
-// STEP 1 - MAPEAR O TOUR
+// STEP 1 - Tour Mapping
 GPX2::CityMap GPX2::tourToMap(Tour& t)
-{ // Mapear o tour para um grafo com ligações entre os nós
+{ 
+    //Maps the tour to a graph with connections between the nodes
 
     if (t.getRoute().empty()) {
         exit(EXIT_FAILURE);
     }
 
-    map<string, CityNode*> aux; // Mapa com as conexões dos nodes 
+    map<string, CityNode*> aux; // Maps with all connections between the nodes
     double dist = 0;
     vector<int> citiesId{ t.getRoute() }; 
 
-    CityNode* prev = new CityNode(to_string(citiesId[0])); // ponto anterior ao atual dentro do for
-    CityNode* first = prev; // referência do primeiro acesso
+    CityNode* prev = new CityNode(to_string(citiesId[0])); //previous point of the current one inside the loop
+    CityNode* first = prev; // First acess reference
 
-    aux.insert(make_pair(first->getId(), first)); // gera o mapa e insere o primeiro dentro dele
+    aux.insert(make_pair(first->getId(), first)); // generates the map and insert the first node inside it
 
-    for (unsigned i = 1; i < t.getRoute().size(); i++) { // percorre o vetor a partir do segundo elemento, o primeiro já foi transformado
-        CityNode* cn = new CityNode(to_string(citiesId[i])); // gera um node com o segundo elemento
+    for (unsigned i = 1; i < t.getRoute().size(); i++) { // goes by the vector from the second element, because the first was already changed
+        CityNode* cn = new CityNode(to_string(citiesId[i])); // creates a node with the second element
 
-        aux.insert(make_pair(cn->getId(), cn)); // insere o node dentro do mapa 
+        aux.insert(make_pair(cn->getId(), cn)); // insert the node in the map
 
         /* double prevX{Config::map.getCityById(prev->getId()).getX()}, prevY{Config::map.getCityById(prev->getId()).getY()};
         double cnX{Config::map.getCityById(cn->getId()).getX()}, cnY{Config::map.getCityById(cn->getId()).getY()}; */
         dist = distance(prev->getId(),cn->getId());
 
-        cn->addEdge(CityNode::node(prev->getId(), dist)); // adiciona ao node atual as arestas de conexão
+        cn->addEdge(CityNode::node(prev->getId(), dist)); // adds the current node to the connection edges
 
-        prev->addEdge(CityNode::node(cn->getId(), dist)); // adiciona ao node anterior o atual como um próx (lista duplamente encadeada)
+        prev->addEdge(CityNode::node(cn->getId(), dist)); //add the previous node to the current and the current to previous like a double-sided linked list
 
-        prev = cn; // o anterior recebe o atual para continuar o for
+        prev = cn; //the previous receives the current to continue the loop
     }
 
     /* double prevX{Config::map.getCityById(prev->getId()).getX()}, prevY{Config::map.getCityById(prev->getId()).getY()};
     double firstX{Config::map.getCityById(first->getId()).getX()}, firstY{Config::map.getCityById(first->getId()).getY()}; */
     dist = distance(prev->getId(), first->getId());
-    first->addEdge(CityNode::node(prev->getId(), dist)); // o primeiro recebe o atual ao sair do for, completando os ligamentos das arestas
+    first->addEdge(CityNode::node(prev->getId(), dist)); //the first receives the current when it goes out from the for, finishing the links between the edges
 
-    prev->addEdge(CityNode::node(first->getId(), dist)); // o atual recebe o primeiro para completar os ligamentos
+    prev->addEdge(CityNode::node(first->getId(), dist));  //the current receives the first to complete the links
 
-    return (aux); // retorna o mpaa com os nodes já instanciados e adicionados
+    return (aux);//returns a map with the nodes already instantiated and adddeds
 }
 
 
@@ -113,18 +114,18 @@ GPX2::CityMap GPX2::tourToMap(Tour& t)
 // STEP 2 - Criar e inserir ghosts
 void GPX2::createGhosts()
 {
-    set<string> isGhost;
+    set<string> Ghosts;
 
-    // The SET containner does not allow repeated values inside himself
+    // The SET container does not allow repeated values inside himself
     for (auto& city : red) {
 
         string idKey = city.first;
         if (idKey.find(ghostToken) == string::npos) { // the node is not a ghost
             for (unsigned i = 0; i < 2; i++) {
-                isGhost.insert(city.second->getEdges()[i].first);
-                isGhost.insert(blue[idKey]->getEdges()[i].first);
+                Ghosts.insert(city.second->getEdges()[i].first);
+                Ghosts.insert(blue[idKey]->getEdges()[i].first);
             }
-            if (isGhost.size() == 4) { // node with degree 4
+            if (Ghosts.size() == 4) { // node with degree 4
                 string ghostID = idKey + ghostToken;
 
                 CityNode* ghostNode = new CityNode(ghostID);
@@ -134,42 +135,42 @@ void GPX2::createGhosts()
                 insertGhost(idKey, blue, ghostNode);
             }
 
-            isGhost.clear();
+            Ghosts.clear();
         }
     }
 }
 
 void GPX2::insertGhost(string& id, CityMap& tour, CityNode* ghost)
 {
-    CityNode::node edgeFirst = tour[id]->getEdges()[0]; // edge que será mandado para o ghost
+    CityNode::node edgeFirst = tour[id]->getEdges()[0]; // edge to be added to the ghostNode
     tour[id]->deleteEdge(0); // delete edge
-    tour[id]->addEdge(CityNode::node(ghost->getId(), 0)); // adiciona ao node "REAL" o edge de ligação com o ghost
+    tour[id]->addEdge(CityNode::node(ghost->getId(), 0)); // Adds to the original node the linking edge with the ghost
 
     for (unsigned i = 0; i < 2; i++) {
-        // percorre os edges de ligação com o nó que foi para o ghost
+        // goes by the linking edges with the node connected with the ghost
         CityNode::node edge = tour[edgeFirst.first]->getEdges()[i];
 
-        if (edge.first.compare(id) == 0) { // verifica se é a ligação
+        if (edge.first.compare(id) == 0) { // checks if it is the connection
 
-            // adiciona a ligação ao ghost e deleta do "REAL"
+            //adds the connection to the ghost and removes it from the original node
             tour[edgeFirst.first]->deleteEdge(i);
             tour[edgeFirst.first]->addEdge(CityNode::node(ghost->getId(), edgeFirst.second));
         }
     }
 
-    ghost->addEdge(edgeFirst); // faz o ghost se ligar ao edge
+    ghost->addEdge(edgeFirst); // connects the ghost to the edge
     ghost->setAccess(true);
-    ghost->addEdge(CityNode::node(tour[id]->getId(), 0)); // adiciona o REAL como um edge do ghost
+    ghost->addEdge(CityNode::node(tour[id]->getId(), 0)); // adds the original node as and edge of the ghost
 
-    tour.insert(make_pair(ghost->getId(), ghost)); // insere o ghost no mapPai
+    tour.insert(make_pair(ghost->getId(), ghost)); // inserts the ghost in the parent map
 }
 
 // -----------------------------------------------------------------------------
 
-// STEP 3 - Criar GU
+// STEP 3 - Creating the GU
 
 void GPX2::joinGraphs()
-{ // executa a união dos dois grafos, gerando Gu
+{ // joins the two graphs, creating the Gu
 
     vector<string> cityList, cityList2;
     for (auto node : red) {
@@ -181,10 +182,10 @@ void GPX2::joinGraphs()
 
     for (string id : cityList) {
         CityNode* c = red[id];
-        // criar a entrada no map da união
+        // creates the entry in the union map
         unitedGraph.insert(
             make_pair((c->getId()), new CityNode((c->getId()))));
-        // colocar as edges no map da união
+        // puts the edges in the union map
         for (CityNode::node n : red[(c->getId())]->getEdges()) {
             unitedGraph[(c->getId())]->addEdge(make_pair(n.first, n.second));
         }
@@ -196,31 +197,25 @@ void GPX2::joinGraphs()
 
 // -----------------------------------------------------------------------------
 
-// STEP 4 - Criar GU' (cortar arestas iguais)
+// STEP 4 - Creating the GU' (cutting the common edges)
 
 void GPX2::cutCommonEdges()
-{ // executa o processo de "cortar" as arestas iguais
-    // entre os pais, a partir do grafo da união,
-    // gerando o Gu'
+{ // executes the process of cutting the common edges between the parents from the union graph
     for (CityMap::iterator it = unitedGraph.begin();
-         it != unitedGraph.end(); it++) { // percorre todas as entradas do Gu
-        vector<CityNode::node>& vec = it->second->getEdges(); // Carrega o vetor com as arestas contidas
-        // naquela entrada do mapa
-        for (unsigned i = 0; i < vec.size(); i++) { // percorre o vetor de arestas
-            int commonEdges{ 0 }; // contagem de vértices iguais, caso contenha dois
-            // iguais será executado um "corte"
-            int last{ -1 }; // posição da primeira instância do no repetido
-            for (unsigned j = 0; j < vec.size(); j++) { // percorre o vetor de arestas
-                if (vec[i].first == vec[j].first) { // verifica igualdade
+         it != unitedGraph.end(); it++) { // goes by all entres from Gu
+        vector<CityNode::node>& vec = it->second->getEdges(); //Loads the vector with the entries contained in the map entry
+        for (unsigned i = 0; i < vec.size(); i++) { // goes by the edges' vector
+            int commonEdges{ 0 }; //Counts the common edges, in case of two, both are "cutted"
+            int last{ -1 }; // position of the first instance of the common edge
+            for (unsigned j = 0; j < vec.size(); j++) { // goes by the edges's vector
+                if (vec[i].first == vec[j].first) { // Checks the equality
                     commonEdges++;
                     last = j;
-                    if (commonEdges > 1) { // caso exista mais do que uma instância do
-                        // vértice então executa o corte
-                        vec[i].second = 0; // Distância entre os vértices = 0 para simbolizar o corte
-                        it->second->deleteEdge(
-                            last); // Deleta a primeira instância do vértice
-                        it->second->setAccess(
-                            true); // Altera o acesso do vértice (entrada e saída)
+                    if (commonEdges > 1) { 
+                        // In case of more than one instance of the vertex, it does the "cut"
+                        vec[i].second = 0;  //The distance between them is set to 0, to represent the "cut"
+                        it->second->deleteEdge(last); // Removes the first vertex instance
+                        it->second->setAccess(true); // Changes the vertex acess entry/exit
                     }
                 }
             }
