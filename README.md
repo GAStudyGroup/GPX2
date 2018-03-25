@@ -1,20 +1,59 @@
+# GPX (Generalized Partition Crossover) for solving the TSP (Travelling Salesperson Problem)
+In this repository there are two branches, the *master* branch contains the implementation of a genetic algorithm using GPX, while the *basedev* branch contains the implementation of the GPX and its basic structures (City e Tour) to be used by others.
+
+# Execution steps of GPX
+
+## STEP 1 - Tour Mapping
+
+The Tour structure, initially , it is a city list in which its order represents the city visitation order. 
+
+To be possible of using GPX, it is necessary that the Tour be represented in the form of a graph, in which the vertices are the cities, while the edges are the connections between the cities.
+
+## STEP 2 - Applicating GhostNodes
+
+The GPX uses the GhostNode concept, when two parent graphs are united may exist nodes of degree 4 , or in another words, nodes connected to 4 other vertices.
+
+These vertices can be duplicated, therefore, a ghost node is created in the same spot of the "real" vertex, by doing this is possible to increase the partition number.
+
+## STEP 3 - Union of the Parent Graphs
+
+To be possible to create partitions it's needed that a Graph containing the union of the parents be generated, when the graphs are united, the resulting graph is an overlapping of the two parents. This graph will be called GU.
+
+## STEP 4 - Remove the overlapping edges
+
+After creating the GU it's necessary to remove the overlapping edges, that is, the edges which are in both parents. By doing theses "cuts" the partitions are created.
+
+The cuts will be described as cost 0 edges and also they will be marked as AcessNodes.
+
+## STEP 5 - Finding the Partitions
+
+When executing a GPX, after the creation of the GU' is needed to find "SubTours" that represent partitions, these partitions are used to create the children afterwards.
+
+The partitions are circuits with connections between the the vertices. The higher the partition number the better is the performance of the Crossover.
+
+## STEP 6 - Verify if the partitions are recombinants (feasible)
+
+To be possible of executing the GPX it's also needed that the partitions be recombinant, that is, that they have the same AcessNodes that their parents.
+
+This means that is possible to go throught the same subtour in both parents.
+
+If a partition does not follow this rule, so it is a non-recombinant partition, which we call unfeasible. In order to improve performance, the GPX2 try to fuse unfeasible partitions, so they might become feasible, hence, increasing the partition number.
+
+## STEP 7 - Choose the "SubTours" that will compound the child
+
+In this step it will be veryfied between the parents which of the two have the better SubTour to be inherited by the child. Each partition is made up by the union of a SubTour from each parent, the best SubTour is choose and saved. 
+
+## STEP 9 - Converting the graph to a Cities List (Tour) 
+
+When the GPX is finished, the GPX will transform the child graph into a tour again.
+
+# ----------------------------------------------------------------
+
 # Crossover GPX implementado para o problema do TSP 
 
 Implementação do Generalized Partition Crossover para o problema do Traveling Salesman Problem.
 
 Existem dois Branchs neste repositório, o Branch *master* contém a implementação de um algoritmo genético utilizando o GPX e o Branch *basedev* contém a implementação do GPX e as estruturas básicas que precisam ser utilizadas, City e Tour, para fins de uso por terceiros.
-
-
-# AG TODO
-
-Validar qual combinação de partições seria melhor para fusão, no caso, em situações onde existem 2 ou mais combinações diferentes de possíveis fusões, nas quais uma das partições estejam em todas as combinações, será verificado qual combinação irá gerar uma "partição melhor", maior número ou menor número.
-
-Novas alterações.
-
-"OBJETO CITY"
-
-Refazer a build offspring e retirar a choose. Guardar os pontos do objeto partição na própria partição, ligar direto entrada e saída(nas feasible).
-
 
 # Etapas da execução do GPX
 
@@ -75,60 +114,3 @@ Para melhoria, após a montagem do filho sobre os pais, é verificado qual Tour,
 ## STEP 9 - Linearização de Grafo para lista de City (Tour)
 
 Após terminado, o GPX irá retornar o Grafo filho ao estado original dos pais, forma de um Tour.
---------------------------------------------------------------------------------------
-# GPX (Generalized Partition Crossover) for solving the TSP (Travelling Salesperson Problem)
-In this repository there are two branches, the *master* branch contains the implementation of a genetic algorithm using GPX, while the *basedev* branch contains the implementation of the GPX and its basic structures (City e Tour) to be used by others.
-
-# AG TODO 
-- [ ] Use LKH Local Search to generate the initial Population
-- [ ] Read the files and load as initialPop
-- [ ] Use GPX for generating new Populations
-- [ ] Create a log of the best individual of each generation
-- [ ] Use stagnation criterium to stop the algorithm
-
-# Execution steps of GPX
-
-## STEP 1 - Tour Mapping
-
-The Tour structure, initially , it is a city list in which its order represents the city visitation order. 
-
-To be possible of using GPX, it is necessary that the Tour be represented in the form of a graph, in which the vertices are the cities, while the edges are the connections between the cities.
-
-## STEP 2 - Applicating GhostNodes
-
-The GPX uses the GhostNode concept, when two parent graphs are united may exist nodes of degree 4 , or in another words, nodes connected to 4 other vertices.
-
-These vertices can be duplicated, therefore, a ghost node is created in the same spot of the "real" vertex, by doing this is possible to increase the partition number.
-
-## STEP 3 - Union of the Parent Graphs
-
-To be possible to create partitions it's needed that a Graph containing the union of the parents be generated, when the graphs are united, the resulting graph is an overlapping of the two parents. This graph will be called GU.
-
-## STEP 4 - Remove the overlapping edges
-
-After creating the GU it's necessary to remove the overlapping edges, that is, the edges which are in both parents. By doing theses "cuts" the partitions are created.
-
-The cuts will be described as cost 0 edges and also they will be marked as AcessNodes.
-
-## STEP 5 - Finding the Partitions
-
-When executing a GPX, after the creation of the GU' is needed to find "SubTours" that represent partitions, these partitions are used to create the children afterwards.
-
-The partitions are circuits with connections between the the vertices. The higher the partition number the better is the performance of the Crossover.
-
-## STEP 6 - Verify if the partitions are recombinants (feasible)
-
-To be possible of executing the GPX it's also needed that the partitions be recombinant, that is, that they have the same AcessNodes that their parents.
-
-This means that is possible to go throught the same subtour in both parents.
-
-If a partition does not follow this rule, so it is a non-recombinant partition, which we call unfeasible. In order to improve performance, the GPX2 try to fuse unfeasible partitions, so they might become feasible, hence, increasing the partition number.
-
-## STEP 7 - Choose the "SubTours" that will compound the child
-
-In this step it will be veryfied between the parents which of the two have the better SubTour to be inherited by the child. Each partition is made up by the union of a SubTour from each parent, the best SubTour is choose and saved. 
-
-## STEP 9 - Converting the graph to a Cities List (Tour) 
-
-When the GPX is finished, the GPX will transform the child graph into a tour again.
-
