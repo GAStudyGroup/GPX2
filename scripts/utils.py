@@ -15,8 +15,8 @@ def getBest(name):
             return int(array[1])
 
 #print general information about the run
-def printInformations(name,id,best):
-    print(str(id)+" Generating population for problem "+name+" with population size "+str(c.POP_SIZE)+", using "+str(c.LK_PERCENTAGE*100)+"% of LK generated tours and using:")
+def printInformations(name,size,lk,id,best):
+    print(str(id)+" Generating population for problem "+name+" with population size "+str(size)+", using "+str(lk)+"% of LK generated tours and using:")
         
     if(c.NEW_POP_TYPE==0):
         print("All vs All GPX2 crossover\n")
