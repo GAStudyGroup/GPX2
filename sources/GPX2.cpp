@@ -233,7 +233,7 @@ void GPX2::cutCommonEdges()
 // STEP 5 - Partições
 
 vector<string> GPX2::findPartition(const string nodeOne)
-{ // a partir do valor passado irá executar uma busca em  Gu' para encontrar as partições nodeOne funciona como uma raiz, que será o ponto inicial da busca, achando  a partição onde ele está contido retorna um vetor com os IDs das cidades que compoem a partição
+{ // a partir do valor passado irá executar uma busca em largura em Gu' para encontrar as partições nodeOne funciona como uma raiz, que será o ponto inicial da busca, achando  a partição onde ele está contido retorna um vetor com os IDs das cidades que compoem a partição
 
     CityNode* root; // nó para verificação
     vector<string> idAlreadyVisited; // lista dos nós já visitados
