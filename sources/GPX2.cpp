@@ -52,34 +52,10 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
         obj.removeGhosts(obj.red);
         // Step 9
         t = obj.mapToTour(obj.red);
-        if(obj.feasiblePartitions.size() == 1){
-            int redF{redT.getFitness()},blueF{blueT.getFitness()},offF{t.getFitness()};
-            if(offF < redF && offF < blueF){
-                std::cout<<"only one feasible"<<std::endl;
-                std::cout<<"red "<<redF<<std::endl;
-                std::cout<<"blue "<<blueF<<std::endl;
-                std::cout<<"offspring "<<offF<<std::endl;
-                std::cin.get();
-            }else{
-                std::cout<<"pegou o melhor pai apenas"<<endl;
-            }
-        }
     } else {
         obj.removeGhosts(obj.blue);
         // Step 9
         t = obj.mapToTour(obj.blue);
-        if(obj.feasiblePartitions.size() == 1){
-            int redF{redT.getFitness()},blueF{blueT.getFitness()},offF{t.getFitness()};
-            if(offF < redF && offF < blueF){
-                std::cout<<"only one feasible"<<std::endl;
-                std::cout<<"red "<<redF<<std::endl;
-                std::cout<<"blue "<<blueF<<std::endl;
-                std::cout<<"offspring "<<offF<<std::endl;
-                std::cin.get();
-            }else{
-                std::cout<<"pegou o melhor pai apenas"<<endl;
-            }
-        }
     }
 
     // Deletar as coisas

@@ -1,18 +1,18 @@
 #include "GAUtils.hpp"
 
 void GAUtils::init(Population &pop){
+    //Import the map
     ImportData dataFile(Config::LIB_PATH+Config::NAME);
-
-    // carrega o mapa
     Config::map.setCityList(dataFile.getCitiesCoord());
 
-    // carrega a primeira população
+    //Import the first population from LK
     unsigned lkPop = Config::POP_SIZE * Config::LK_PERCENTAGE;
     unsigned fillPop = Config::POP_SIZE - lkPop;
     if (Config::LK_PERCENTAGE > 0) {
         pop = dataFile.importFirstPopulation(Config::NAME, lkPop);
     }
 
+    //fill the rest of the population with 2-opt
     GAUtils::fillPopulation(pop, fillPop);
 }
 
@@ -23,32 +23,29 @@ bool GAUtils::stop(Population &pop) {
     unsigned currentFitness{(unsigned)pop.bestFitness()};
 
     unsigned totalEqual{1};
-    // conta quantas rotas estão com a fitness igual a da melhor rota, para
-    // determinar estagnação
+    //how many routes have fitness equal to the best route, to determine stagnation
     for (Tour t : pop.getPopulation()) {
         if ((unsigned)t.getFitness() == bestFitness) {
             totalEqual++;
         }
     }
 
-    // Se a fitness atual for igual ou menor que a melhor conhecida, diminui o número de gerações para parar o AG
+    //If the current fitness is equal to or less than the best known, it decreases the number of generations to stop AG
     if(bestFitness <= Config::BEST_FITNESS){
         Config::GENERATION_LIMIT = Config::AFTER_BEST;
     }
 
-    // zera o contador de gerações sem mudança se for encontrado uma fitness
-    // melhor
+    //zero the generationsWithoutChange counter if a better fitness is found
     if (bestFitness > currentFitness) {
         bestFitness = currentFitness;
         generationsWithoutChange = 0;
     } else if (totalEqual == Config::POP_SIZE) {
-        // se todos os elementos foram iguais termina o GA
+        //if all elements are equal ends GA
         return (false);
     } else {
         generationsWithoutChange++;
     }
 
-    // limite de gerações
     if (generationsWithoutChange >= Config::GENERATION_LIMIT) {
         return (false);
     } else {
@@ -101,11 +98,10 @@ Population GAUtils::crossAllxAllwith2opt(Population &pop) {
 
 Population GAUtils::crossNBestxAllwithReset(Population &pop) {
     Population newPop;
-    // dar sort na pop
+
     sort(pop.getPopulation().begin(), pop.getPopulation().end(),
          [](Tour &a, Tour &b) { return a.getFitness() < b.getFitness(); });
 
-    // cruzar os 3 primeiros com todos
     for (unsigned i = 0; i < Config::N_BEST; i++) {
         Tour savedTour = pop.getPopulation()[i];
         for (Tour t : pop.getPopulation()) {
@@ -115,7 +111,6 @@ Population GAUtils::crossNBestxAllwithReset(Population &pop) {
         newPop.getPopulation().push_back(savedTour);
     }
 
-    // preencher o resto da pop com novos tours gerados com NN e 2opt
     fillPopulation(newPop, Config::POP_SIZE - Config::N_BEST);
     return (newPop);
 }
@@ -151,7 +146,7 @@ Population GAUtils::crossAllxAllwithNBestAndReset(Population &pop){
 }
 
 std::ofstream* GAUtils::initLogFile(){
-    string logName{"Logs/"+to_string(Config::NEW_POP_TYPE)+"/log_"+Config::NAME+"_"+to_string(Config::POP_SIZE)+(Config::LK_PERCENTAGE>0?("_LK"):(""))+".log"};
+    string logName{"Logs/"+to_string(Config::NEW_POP_TYPE)+"/log_"+to_string(Config::ID)+"_"+Config::NAME+"_"+to_string(Config::POP_SIZE)+(Config::LK_PERCENTAGE>0?("_LK"):(""))+".log"};
 
     ofstream *logFile = new ofstream(logName);
     if(!logFile->is_open()){
@@ -181,7 +176,7 @@ void GAUtils::printHeader(std::ostream &out){
             break;
         }
     }
-    out<<"\n"<<endl;
+    out<<endl;
 }
 
 void GAUtils::printFooter(std::ostream &out,Population &pop,unsigned gen,unsigned best){
@@ -199,6 +194,11 @@ void GAUtils::printFooter(std::ostream &out,Population &pop,unsigned gen,unsigne
     out<<endl;
 }
 
+void GAUtils::printTime(std::ostream &out, std::string txt, double milli, double sec){
+    out << "\n"+txt+"\n";
+    out << "\t" << milli << " milliseconds\n";
+    out << "\t" << sec << " seconds" << endl;
+}
 
 /* vector<City> nearestNeighbor() {
     vector<pair<float, City>> cityList;
