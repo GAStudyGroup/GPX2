@@ -3,13 +3,15 @@
 Repository for the development and testing of the Generalized Partition Crossover 2 (GPX2) algorithm.
 GPX2 is a recombination operator to be used in the solution of the traveling salesman problem (TSP), this operator is respectful, all equal edges in both parents are present in the child, and transmit edges, all edges of the child belong to some of parents, no new edges are created.
 In this project, two local search algorithms were used to generate the initial population of the genetic algorithm, 2-opt and Lin-Kernighan(LK).
-In this project we used the concorde implementation of LK, the binary is available in the support folder.
+The GPX theory is available on the [wiki page](https://github.com/GAStudyGroup/GPX2/wiki/GPX2-steps).
 
 There are three options to generate a new population:
   
   * Option 0:  Cross everyone with everyone and apply 2-opt in the results;
   * Option 1:  Cross the n best with everyone and save the result to the next generation, the rest of the population is generated using 2-opt and random beginning;
   * Option 2:   Cross everyone with everyone and save the n best to the next generation and reset the rest of the population using 2-opt and random beginning.
+
+In this project we used the concorde implementation of LK, the binary is available in the support folder.
 
 ## Usage
 
