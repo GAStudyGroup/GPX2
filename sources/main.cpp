@@ -10,6 +10,7 @@
 #include "Population.hpp"
 #include "Utils.hpp"
 #include "GAUtils.hpp"
+#include "Arg.hpp"
 
 using std::cout;
 using std::endl;
@@ -36,24 +37,84 @@ void GA();
 int main(int argc, char *argv[]) {
     srand(time(NULL)); 
 
-    if (argc == 9) {
+    Arg arg(argc,argv);
+
+    if(arg.getOption("n").empty()){
+        cout<<"name of the tour is required"<<endl;
+        return(0);
+    }
+    if(arg.getOption("s").empty()){
+        cout<<"size of the population is required"<<endl;
+        return(0);
+    }else{
         try {
-            Config::NAME = argv[1];
-            Config::LIB_PATH = argv[2];
-            Config::POP_SIZE = stoi(argv[3]);
-            Config::ID = stoi(argv[4]);
-            Config::LK_PERCENTAGE = stof(argv[5]);
-            Config::NEW_POP_TYPE = stoi(argv[6]);
-            Config::N_BEST = stoi(argv[7]);
-            Config::BEST_FITNESS = stoi(argv[8]);
+            Config::NAME = arg.getOption("n");
+            Config::POP_SIZE = stoi(arg.getOption("s"));
+
+            string tmp{""},cmd{"lib"};
+            if(arg.isSet(cmd)){
+                tmp = arg.getOption(cmd);
+                if(tmp == ""){
+                    cout<<"command "<<cmd<<" needs an argument"<<endl;
+                    return(0);
+                }else{
+                    Config::LIB_PATH = tmp;
+                }
+            }
+            cmd = "id";
+            if(arg.isSet(cmd)){
+                tmp = arg.getOption(cmd);
+                if(tmp == ""){
+                    cout<<"command "<<cmd<<" needs an argument"<<endl;
+                    return(0);
+                }else{
+                    Config::ID = stoi(tmp);
+                }
+            }
+            cmd = "lk";
+            if(arg.isSet(cmd)){
+                tmp = arg.getOption(cmd);
+                if(tmp == ""){
+                    cout<<"command "<<cmd<<" needs an argument"<<endl;
+                    return(0);
+                }else{
+                    Config::LK_PERCENTAGE = stof(tmp);
+                }
+            }
+            cmd = "np";
+            if(arg.isSet(cmd)){
+                tmp = arg.getOption(cmd);
+                if(tmp == ""){
+                    cout<<"command "<<cmd<<" needs an argument"<<endl;
+                    return(0);
+                }else{
+                    Config::NEW_POP_TYPE = stoi(tmp);
+                }
+            }
+            cmd = "nb";
+            if(arg.isSet(cmd)){
+                tmp = arg.getOption(cmd);
+                if(tmp == ""){
+                    cout<<"command "<<cmd<<" needs an argument"<<endl;
+                    return(0);
+                }else{
+                    Config::N_BEST = stoi(tmp);
+                }
+            }
+            cmd = "bf";
+            if(arg.isSet(cmd)){
+                tmp = arg.getOption(cmd);
+                if(tmp == ""){
+                    cout<<"command "<<cmd<<" needs an argument"<<endl;
+                    return(0);
+                }else{
+                    Config::BEST_FITNESS = stoi(tmp);
+                }
+            }
         } catch (invalid_argument &i_a) {
             cout << "Invalid argument!" << i_a.what() << endl;
             return (0);
         }
-    } else {
-        cout << "Invalid argument number."
-             << endl;
-        return (0);
     }
 
     GA();
