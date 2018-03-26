@@ -1,4 +1,9 @@
 #Arguments used by the algorithm
+POP_SIZE =          [50]
+LK_PERCENTAGE =     [0.1]
+NEW_POP_TYPE =      [1]
+N_BEST =            [3]
+
 #run 0
 # POP_SIZE =          [50, 75, 100]
 # LK_PERCENTAGE =     [0, 0.1, 0.2]
@@ -6,10 +11,10 @@
 # N_BEST =            3
 
 #run 1
-POP_SIZE =          [50, 75, 100]
-LK_PERCENTAGE =     [0, 0.1, 0.2]
-NEW_POP_TYPE =      1
-N_BEST =            3
+# POP_SIZE =          [50, 75, 100]
+# LK_PERCENTAGE =     [0, 0.1, 0.2]
+# NEW_POP_TYPE =      1
+# N_BEST =            3
 
 #run 2
 # POP_SIZE =          [50, 75, 100]

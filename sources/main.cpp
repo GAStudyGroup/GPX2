@@ -22,15 +22,17 @@ using std::ofstream;
 // inicia o algoritmo genético
 void GA();
 
-//1 argumento tour_name
-//2 caminho para o .tsp
-//3 tamanho da pop
-//4 ID da run(usado para log
-//5 porcentagem de população inicial gerado pelo LK
-//6 tipo de geração da nova poop
-//7 n best para serem salvos para a proxima geração
-//8 best fitness conhecida
-// ex: GA berlin52 lib/ 100 3 0.1 1 4 255 
+//1 -n argumento tour_name REQUIRED
+//2 -lib caminho para o .tsp
+//3 -s tamanho da pop REQUIRED
+//4 -id ID da run(usado para log
+//5 -lk porcentagem de população inicial gerado pelo LK 
+//6 -np tipo de geração da nova poop
+//7 -nb n best para serem salvos para a proxima geração
+//8 -bf best fitness conhecida
+// ex: GA -n berlin52 -lib lib/ -s 100 -id 3 -lk 0.1 -np 1 -nb 4 -bf 255 
+// ex: GA -n berlin52 -s 100
+
 int main(int argc, char *argv[]) {
     srand(time(NULL)); 
 

@@ -6,22 +6,24 @@ from subprocess import call
 import utils as u
 import configs as c
 
-for kl_percentage in c.LK_PERCENTAGE:
-    for pop_size in c.POP_SIZE:
-        for tour_name in c.TOURS:
-            for i in range(c.NUMBER_OF_RUNS):
-                best_fitness = u.getBest(tour_name)
+for n_best in c.N_BEST:
+    for new_pop_type in c.NEW_POP_TYPE:
+        for kl_percentage in c.LK_PERCENTAGE:
+            for pop_size in c.POP_SIZE:
+                for tour_name in c.TOURS:
+                    for i in range(c.NUMBER_OF_RUNS):
+                        best_fitness = u.getBest(tour_name)
 
-                u.printInformations(tour_name,pop_size,kl_percentage,i,best_fitness)
+                        u.printInformations(tour_name,pop_size,kl_percentage,i,n_best,new_pop_type,best_fitness)
 
-                if(kl_percentage>0):
-                    call(["./"+c.BIN_PATH+"linkern","-Q" ,"-S"+tour_name, "-R "+str(pop_size*kl_percentage), c.LIBS_PATH+tour_name+".tsp"])
+                        if(kl_percentage>0):
+                            call(["./"+c.BIN_PATH+"linkern","-Q" ,"-S"+tour_name, "-R "+str(pop_size*kl_percentage), c.LIBS_PATH+tour_name+".tsp"])
 
-                print("\n\nStarting GA\n")
+                        print("\n\nStarting GA\n")
 
-                call(["./"+c.BIN_PATH+"GA", tour_name, c.LIBS_PATH, str(pop_size), str(i), str(kl_percentage), str(c.NEW_POP_TYPE), str(c.N_BEST), str(best_fitness)])
+                        call(["./"+c.BIN_PATH+"GA", tour_name, c.LIBS_PATH, str(pop_size), str(i), str(kl_percentage), str(new_pop_type), str(n_best), str(best_fitness)])
 
-                print("\n\nclean up\n")
+                        print("\n\nclean up\n")
 
-                if(kl_percentage>0):
-                    u.eraseTours()
+                        if(kl_percentage>0):
+                            u.eraseTours()

@@ -2,7 +2,7 @@
 *.dat
 
 sources/*.o
-bin/GA
+bin/*
 
 *.txt
 *.log
