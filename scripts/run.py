@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Code to automate the generation of the initial population and the initialization of the genetic algorithm"""
+"""Code to automate the generation of the initial population and the start of the genetic algorithm"""
 
 from subprocess import call
 
@@ -21,7 +21,7 @@ for n_best in c.N_BEST:
 
                         print("\n\nStarting GA\n")
 
-                        call(["./"+c.BIN_PATH+"GA", tour_name, c.LIBS_PATH, str(pop_size), str(i), str(kl_percentage), str(new_pop_type), str(n_best), str(best_fitness)])
+                        call(["./"+c.BIN_PATH+"GA", "-n "+tour_name, "-lib "+c.LIBS_PATH, "-s "+str(pop_size), "-id "+str(i), "-lk "+str(kl_percentage), "-np "+str(new_pop_type), "-nb "+str(n_best), "-bf "+str(best_fitness)])
 
                         print("\n\nclean up\n")
 

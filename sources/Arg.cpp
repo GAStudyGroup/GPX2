@@ -5,7 +5,7 @@
 Arg::Arg(int argc, char **argv) {
     string tmp{""};
     vector<string> tmp2;
-    for (unsigned i = 1; i < argc; i++) {
+    for (int i = 1; i < argc; i++) {
         tmp += argv[i];
         tmp += " ";
     }
