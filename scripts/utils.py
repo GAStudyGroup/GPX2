@@ -18,12 +18,12 @@ def getBest(name):
 def printInformations(name,size,lk,id,n_best,new_pop,best_f):
     print(str(id)+" Generating population for problem "+name+" with population size "+str(size)+", using "+str(lk)+"% of LK generated tours and using:")
         
-    if(c.NEW_POP_TYPE==0):
+    if(new_pop==0):
         print("All vs All GPX2 crossover\n")
-    elif(c.NEW_POP_TYPE==1):
-        print(str(c.N_BEST)+" best vs All GPX2 crossover with reset population\n")
+    elif(new_pop==1):
+        print(str(n_best)+" best vs All GPX2 crossover with reset population\n")
     else:
-        print("All vs ALL with "+str(c.N_BEST)+" best saved to the next population and the rest reseted\n")
+        print("All vs ALL with "+str(n_best)+" best saved to the next population and the rest reseted\n")
         
     print("best fitness found: "+str(best_f))
         
