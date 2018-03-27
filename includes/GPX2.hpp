@@ -52,7 +52,7 @@ class GPX2 {
         }
     };
 
-    // Enum that classifies the possibilites of the DFS return
+    // Enum that classifies the possibilites of the DFS(Depth First Searh) return
     enum class SearchResult { CONNECTED_TO_PARTITION,
         CONNECTED_TO_SELF,
         IS_CONNECTED,
@@ -70,7 +70,7 @@ class GPX2 {
 public:
     /*        
         GPX's Main method
-        Receives two structures Tour, named as parents and returns a new Tour named child.
+        Receives two Tour structures, named as parents and returns a new Tour named child.
         All steps of GPX are done when ths method is called.
     */
     Tour static crossover(Tour, Tour);
@@ -82,7 +82,7 @@ private:
     /*  
         STEP 1 - Tour mapping
 
-        The Tour structure, initially , it is a city list in which its order represents the city visitation order.
+        The Tour structure, initially , it is a int list of ids in which its order represents the city visitation order.
         To be possible of using GPX, it is necessary that the Tour be represented in the form of a graph, 
         in which the vertices are the cities, while the edges are the connections between the cities.
 
@@ -99,7 +99,7 @@ private:
         These vertices can be duplicated, therefore,  a ghost node is created in the same spot of the "real" vertex, 
         by doing this is possible to increase the partition number.
         
-        In theory the ghosts nodes should be added before the union of the parent graphs, however, to reduce the use of resources
+        In theory the ghosts nodes should be added after the union of the parent graphs, however, to reduce the use of resources
         they are added before the union, doing so, when the graphs are united, the GhostNodes are already inserted in union graph.
     */
     //This metod verifies which nodes will become Ghosts and creates them
@@ -137,11 +137,11 @@ private:
 
         The partitions are circuits with connections between the the vertices. The higher the partition number the better is the performance of the Crossover.
     */
-    //This method will look for in which partition the vertex is stored, this method returns a list of all nodes the composes the partition.
+    //This method will look for in which partition the vertex is stored using Breadth-First Search, and returns a list of all nodes the composes the partition.
     vector<string> findPartition(const string);
     //Does the previous verification for all the partitions
     void findAllPartitions();
-    // After being found, the partitions may contain AcessNodes (nodes that link  partitions), if the AcessNode links the partion to itself, this node is removed from the AcessNode, because in this case it isn't needeed for the GPX.
+    // After being found, the partitions may contain AcessNodes (nodes that link  partitions), if the AcessNode links the partion to itself, this node is removed from the AcessNode list, because in this case it isn't needeed for the GPX.
     void cleanInsideAccess();
 
     // -----------------------------------------------------------------------------------------------------
@@ -149,7 +149,7 @@ private:
         STEP 6 - Verify if the partitions are recombinants (feasible)
 
         To be possible of executing the GPX it's also needed that the partitions be recombinant, that is, that they have the same AcessNodes that their parents.
-        This means that is possible to go throught the same subtour in both parents.
+        #revisar depois / This means that is possible to go throught the same subtour in both parents.
         If a partition does not follow this rule, so it is a non-recombinant partition, which we call unfeasible. In order to improve performance, the GPX2 try to fuse unfeasible partitions, so they might become feasible, hence, increasing the partition number.
     */
     // Checks if the partition is feasible
@@ -205,7 +205,7 @@ private:
     void static deletePartitionMap(PartitionMap&);
     // DFS outside the partition to look for connections between partitions
     pair<SearchResult, vector<string>> DFS_outside(string, PartitionMap, bool = false);
-    // DFS inside of the partition to verify if the AcessNodes are connected
+    // DFS inside of the partition to verify if the AcessNodes are connected and return the nodes that it went through
     pair<SearchResult, vector<string>> DFS_inside(string, string, CityMap, Partition*);
     // Erase a subvector from a vector
     void eraseSubVector(vector<string>&, vector<string>&);
@@ -231,11 +231,11 @@ private:
     void countConnectedPartitions();
     // Fuse the partitions
     void fusePartitions();
-    // Returns a list of all the fusions in which the partition appears
+    // Returns a list of all the possible fusions in which the partition appears
     vector<UnfeasibleConnection> fusionsWithPartition(const int, vector<UnfeasibleConnection>&);
     // Generates a list of all fusions that will be realized, executing the necessary validations already 
     void generateFusionPairs();
-    // Check the unfeasible partition that are connected
+    // Check that unfeasible partitions that are connected
     bool unfeasiblePartitionsConnected();
     // Creates a list with all IDs from the partitions that can be fused 
     UnfeasibleConnection whichPartitionToFuseWith(Partition*);

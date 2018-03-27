@@ -22,7 +22,7 @@ namespace GAUtils{
 
     //Generates a new generation obeying the criteria defined in the global Config::TYPE
     Population generateNewPopulation(Population&);
-    //Creates a new generation by performing the crossover of all with everyone and applying 2-opt in the output
+    //Creates a new generation by performing the crossover of everyone with everyone and applying 2-opt in the output
     Population crossAllxAllwith2opt(Population&);
     //Creates a new generation by performing the crossover with the best n and saving them for the next generation, the rest of the population is generated with 2-opt
     Population crossNBestxAllwithReset(Population&);

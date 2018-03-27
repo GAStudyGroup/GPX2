@@ -1,116 +1,124 @@
-# GPX (Generalized Partition Crossover) for solving the TSP (Travelling Salesperson Problem)
-In this repository there are two branches, the *master* branch contains the implementation of a genetic algorithm using GPX, while the *basedev* branch contains the implementation of the GPX and its basic structures (City e Tour) to be used by others.
+# GPX2  (Generalized Partition Crossover 2) for solving the TSP (Travelling Salesperson Problem)
 
-# Execution steps of GPX
+Repository for the development and testing of the Generalized Partition Crossover 2 (GPX2) algorithm.
+GPX2 is a recombination operator to be used in the solution of the traveling salesman problem (TSP), this operator is respectful, all equal edges in both parents are present in the child, and transmit edges, all edges of the child belong to some of parents, no new edges are created.
+In this project, two local search algorithms were used to generate the initial population of the genetic algorithm, 2-opt and Lin-Kernighan(LK).
+The GPX theory is available on the [wiki page](https://github.com/GAStudyGroup/GPX2/wiki/GPX2-steps).
 
-## STEP 1 - Tour Mapping
+There are three options to generate a new population:
+  
+  * Option 0:  Cross everyone with everyone and apply 2-opt in the results;
+  * Option 1:  Cross the n best with everyone and save the result to the next generation, the rest of the population is generated using 2-opt and random beginning;
+  * Option 2:   Cross everyone with everyone and save the n best to the next generation and reset the rest of the population using 2-opt and random beginning.
 
-The Tour structure, initially , it is a city list in which its order represents the city visitation order. 
+In this project we used the concorde implementation of LK, the binary is available in the support folder.
 
-To be possible of using GPX, it is necessary that the Tour be represented in the form of a graph, in which the vertices are the cities, while the edges are the connections between the cities.
+## Usage
 
-## STEP 2 - Applicating GhostNodes
+1. Compile the code
 
-The GPX uses the GhostNode concept, when two parent graphs are united may exist nodes of degree 4 , or in another words, nodes connected to 4 other vertices.
+Use make in th project folder.
 
-These vertices can be duplicated, therefore, a ghost node is created in the same spot of the "real" vertex, by doing this is possible to increase the partition number.
+```Bash
+make
+```
 
-## STEP 3 - Union of the Parent Graphs
+2. Move the LK binary from support to bin
 
-To be possible to create partitions it's needed that a Graph containing the union of the parents be generated, when the graphs are united, the resulting graph is an overlapping of the two parents. This graph will be called GU.
+If you want to use LKH to generate the first population you have to move it to the bin folder.
 
-## STEP 4 - Remove the overlapping edges
+```Bash
+mv support/linkern bin/linkern
+```
 
-After creating the GU it's necessary to remove the overlapping edges, that is, the edges which are in both parents. By doing theses "cuts" the partitions are created.
+3. Execute the binary
 
-The cuts will be described as cost 0 edges and also they will be marked as AcessNodes.
+The binary accepts eight arguments, but only two are required to run the program.
 
-## STEP 5 - Finding the Partitions
+  * '-n' Tour name;
+  * '-s' Population size;
+  * '-lib' Path to the folder with the tsp files;
+  * '-id' run ID (used to generate log);
+  * '-lk' Percentage of the population generated using LK (0 to use only 2-opt);
+  * '-np' New generation method (0, 1 or 2);
+  * '-nb' N best to be preserved for the next generation (used in new generation method 1 and 2);
+  * '-bf' Best finess know for the problem (used to terminate the program when the best is reached).
 
-When executing a GPX, after the creation of the GU' is needed to find "SubTours" that represent partitions, these partitions are used to create the children afterwards.
+The only two arguments required to run the GA are the tour name and the population size:
 
-The partitions are circuits with connections between the the vertices. The higher the partition number the better is the performance of the Crossover.
+```Bash
+./bin/GA -n berlin52 -n 50
+```
+Example using all:
 
-## STEP 6 - Verify if the partitions are recombinants (feasible)
+```Bash
+./bin/GA -n berlin52 -n 50 -bf 7544 -nb 5 -np 2 -id 2 -lib lib/ -lk 0.2
+```
 
-To be possible of executing the GPX it's also needed that the partitions be recombinant, that is, that they have the same AcessNodes that their parents.
+## Using with run script
 
-This means that is possible to go throught the same subtour in both parents.
+You can use the run script inside the scripts folder to run the program more easily. You can set the variables inside the configs file. The arrays are used to test the values automatically.
 
-If a partition does not follow this rule, so it is a non-recombinant partition, which we call unfeasible. In order to improve performance, the GPX2 try to fuse unfeasible partitions, so they might become feasible, hence, increasing the partition number.
+```Python
+POP_SIZE =          [50,75,100]
+LK_PERCENTAGE =     [0,0.1]
+NEW_POP_TYPE =      [1]
+N_BEST =            [3]
+```  
 
-## STEP 7 - Choose the "SubTours" that will compound the child
+It's also possible to specify a list of tours to test and how many times to test each configuration.
 
-In this step it will be veryfied between the parents which of the two have the better SubTour to be inherited by the child. Each partition is made up by the union of a SubTour from each parent, the best SubTour is choose and saved. 
+```Python
+TOURS = ["a280", "att48", "berlin52", "burma14", "ch150", "eil101", "gr137", "pbd984", "pcb442", "u1432"]
+NUMBER_OF_RUNS = 1
+```
 
-## STEP 9 - Converting the graph to a Cities List (Tour) 
+These last options have to be changed only if you change the binary output file in the Makefile or change the folder of the tsp lib.
 
-When the GPX is finished, the GPX will transform the child graph into a tour again.
+```Python
+LIBS_PATH = "./lib/"
+BIN_PATH = "bin/"
+```
 
-# ----------------------------------------------------------------
+## Logs
 
-# Crossover GPX implementado para o problema do TSP 
+The program saves data from the run on log files, located inside the folder Logs, they are separated by the method used to generated the new population.
 
-Implementação do Generalized Partition Crossover para o problema do Traveling Salesman Problem.
+It prints general information about the run, the time spent in each section and the information of each generation. In the end it prints the last population of the GA.
 
-Existem dois Branchs neste repositório, o Branch *master* contém a implementação de um algoritmo genético utilizando o GPX e o Branch *basedev* contém a implementação do GPX e as estruturas básicas que precisam ser utilizadas, City e Tour, para fins de uso por terceiros.
+```
+Run id: 0
+Genetic Algoritm for problem berlin52 with population size 10
+Using new generation method: 3 best vs All GPX2 crossover with reset population.
 
-# Etapas da execução do GPX
+Population created in:
+	1008.8 milliseconds
+	1.0088 seconds
 
-## STEP 1 - Mapeamento do Tour
+First fitness 8079
+gen 1 best fitness 7861
+gen 2 best fitness 7740
+gen 3 best fitness 7542
+gen 4 best fitness 7542
 
-A estrutura Tour, inicialmente, é uma lista de cidades no qual a ordem que elas estão dispostas representa a ordem de visitação.
+GA execution time:
+	2966.14 milliseconds
+	2.96614 seconds
 
-Para a realização do GPX é necessário que o Tour esteja disposto na forma de um grafo, com vértices sendo as cidades e arestas as ligações entre elas.
- 
-## STEP 2 - Adição dos GhostNodes
+Total execution time:
+	3975.07 milliseconds
+	3.97507 seconds
 
-O GPX implementa a ideia de GhostNode, quando os dois grafos pais são unidos podem existir nós que possuam grau 4 (ligações com outros 4 vértices). 
+THE END
+first best fitness: 8079
+gen 5 best fitness 7542
+=========================
 
-Esses vertices podem ser duplicados, gerando um vértice fantasma no mesmo ponto do vértice real, com isso é possível aumentar o total de partições encontradas.
-
-Teóricamente os GhostNodes são adicionados ao grafo após a união dos grafos dos pais, porém para cortar custos computacionais eles são executados antes da união, sendo assim quando os grafos são unidos os GhostNodes já são inseridos no grafo da união.
-
-## STEP 3 - União dos Grafos dos pais
-
-Para a criação das partições é necessário que um Grafo com a união dos pais seja gerado (GU), como se os dois pais fossem sobrepostos.
-
-## STEP 4 - Cortar as arestas sobrepostas
-
-Após a criação do GU é necessário retirar as arestas sobrepostas, ou seja, as arestas que estão nos dois pais. Com esse corte as partições "começam a aparecer".
-        
-Os cortes são simbolizados com arestas de custo 0 de ligação e são marcados como AccessNodes.
-
-## STEP 5 - Encontrar as partições
-        
-Para a execução do GPX, após a criação do GU' é preciso encontrar "SubTours" que simbolizem partições, essas partições serão utilizadas na formação do filho posteriormente.
-        
-As partições são circuitos com ligações entre os vértices desses cricuitos. Quanto maior o total de partições melhor será o desempenho do Crossover.
-
-## STEP 6 - Checar se as partições são recombinantes (feasible)
-
-Para poder realizar o Crossover é necessário que as partições que serão utilizadas para a criação do filho sejam recombinantes, ou seja, possuam AccessNodes de entrada e saída da partição representados em seus pais. 
-        
-No caso, seria possível percorrer uma entrada e uma saída tanto em um pai quanto no outro.
-
-Se uma partição não seguir essa regra, ela se torna não-recombinantes (unfeasible). O GPX implementa uma "solução" para isso, a fim de melhorar o desempenho ele tenta fundir as partições unfeasible para torná-las feasible, caso possível.
-        
-Se ocorrer de uma fusão gerar uma partição feasible, ela será colocada na lista de partições feasible.
-
-## STEP 7 - Escolher os "SubTours" que irão compor o filho
-
-Nesta etapa será verificado em cada pai qual possui o melhor SubTour para ser herdado pelo filho. Cada partição é composta pela união de um SubTour de cada pai, eles serão escolhidos e salvos de acordo com o melhor.
-
-O método irá executar a verificação em cada partição, salvando em uma lista o pai com o melhor SubTour.
-
-## STEP 8 - Criar Grafo do filho
-
-Após escolhidos os melhores SubTours, o mapa do filho será criado.
-
-Depois de criado é necessário remover os GhostNodes, eles serão unidos aos vértices de origem.
-
-Para melhoria, após a montagem do filho sobre os pais, é verificado qual Tour, Red ou Blue, ficou com uma fitness mais elevada, esse Tour será escolhido para ser o filho.
-
-## STEP 9 - Linearização de Grafo para lista de City (Tour)
-
-Após terminado, o GPX irá retornar o Grafo filho ao estado original dos pais, forma de um Tour.
+Last population
+===================================================
+1 22 31 18 3 17 21 42 7 2 30 23 20 50 29 16 46 44 34 35 36 39 40 37 38 48 24 5 15 6 4 25 12 28 27 26 47 13 14 52 11 51 33 43 10 9 8 41 19 45 32 49 
+Fitness: 7542
+.
+.
+.
+```
