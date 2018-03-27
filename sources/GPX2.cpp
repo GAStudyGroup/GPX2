@@ -111,7 +111,7 @@ GPX2::CityMap GPX2::tourToMap(Tour& t)
 
 // -----------------------------------------------------------------------------
 
-// STEP 2 - Criar e inserir ghosts
+// STEP 2 - Create and insert ghosts
 void GPX2::createGhosts()
 {
     set<string> Ghosts;
@@ -185,7 +185,7 @@ void GPX2::joinGraphs()
         // creates the entry in the union map
         unitedGraph.insert(
             make_pair((c->getId()), new CityNode((c->getId()))));
-        // puts the edges in the union map
+        // puts the edges in the union/*  */ map
         for (CityNode::node n : red[(c->getId())]->getEdges()) {
             unitedGraph[(c->getId())]->addEdge(make_pair(n.first, n.second));
         }
@@ -225,64 +225,62 @@ void GPX2::cutCommonEdges()
 
 // -----------------------------------------------------------------------------
 
-// STEP 5 - Partições
+// STEP 5 - Partitions
 
 vector<string> GPX2::findPartition(const string nodeOne)
-{ // a partir do valor passado irá executar uma busca em  Gu' para encontrar as partições nodeOne funciona como uma raiz, que será o ponto inicial da busca, achando  a partição onde ele está contido retorna um vetor com os IDs das cidades que compoem a partição
+{ //Given a value, this method will use nodeOne as a root which will be the first point of the search in Gu', when it finds the partition in which the node is contained the method will return a vector with the ids of the citites that compose the partition
 
-    CityNode* root; // nó para verificação
-    vector<string> idAlreadyVisited; // lista dos nós já visitados
-    deque<string> nextToVisit; // lista dos próximos a visitar
+    CityNode* root; // node to be verified
+    vector<string> idAlreadyVisited; // visited nodes list
+    deque<string> nextToVisit; // list of the next nodes to visit
     vector<string> partition;
 
     bool notAlreadyVisited{ false };
     bool notToVisit{ false };
     bool notCut{ false };
 
-    nextToVisit.push_back(nodeOne); // primeiro a ser visitado
+    nextToVisit.push_back(nodeOne); // first node to be visited
 
-    while (!nextToVisit.empty()) { // enquanto a não for vazio
-        root = unitedGraph[nextToVisit.front()]; // raiz para execução
-        nextToVisit.pop_front(); // após "pegar" para execução, limpar o nó da lista
-        partition.push_back(root->getId()); // coloca o nó na partição
-        idAlreadyVisited.push_back(root->getId()); // Nó na lista de "já visitados"
+    while (!nextToVisit.empty()) { // while there are nodes to visit
+        root = unitedGraph[nextToVisit.front()]; // node in which the BFS will start
+        nextToVisit.pop_front(); // Removes the node from the list
+        partition.push_back(root->getId()); // inserts the node in the partition
+        idAlreadyVisited.push_back(root->getId()); // Nodes in the "Already visited" list
 
         for (CityNode::node n :
-            root->getEdges()) { // irá percorrer as arestas ligadas
-            notAlreadyVisited = find(idAlreadyVisited.begin(), idAlreadyVisited.end(), n.first) == idAlreadyVisited.end(); // verificar se a aresta não foi visitada
-            notToVisit = find(nextToVisit.begin(), nextToVisit.end(), n.first) == nextToVisit.end(); // verificar se não está na lista para ser visitada
-            notCut = n.second != 0; // verificar se ela não foi cortada
-            if (notAlreadyVisited && notToVisit && notCut) { // caso todas as condições estejam TRUE
+            root->getEdges()) { //goes through the connected edges
+            notAlreadyVisited = find(idAlreadyVisited.begin(), idAlreadyVisited.end(), n.first) == idAlreadyVisited.end(); // checks if the edge was visited
+            notToVisit = find(nextToVisit.begin(), nextToVisit.end(), n.first) == nextToVisit.end(); //checks if it isn't in the list to be visited
+            notCut = n.second != 0; // checks if the edge was "cut"
+            if (notAlreadyVisited && notToVisit && notCut) { // case if all conditions are satisfied
                 nextToVisit.push_back(
-                    n.first); // coloca na lista dos proximos a serem visitados
+                    n.first); // puts in the list of the next to be visited
             }
         }
     }
-    return (partition); // retornar vetor com IDs da partição
+    return (partition); // returns a vector with the partition
 }
 
 void GPX2::findAllPartitions()
-{ // irá percorrer todo o grafo
-    // encotrando as partições
-    // presentes nele
+{    //goes through the graph finding all partition that there are in it
     int id{ 1 };
     vector<vector<string>> partitions;
     vector<string> cities;
 
-    //pegar a lista de todas as cidades
+    //gets the list of all cities
     for (auto node : unitedGraph) {
         cities.push_back(node.first);
     }
 
-    while (!cities.empty()) { // enquanto a lista de cidades ainda existir
-        partitions.push_back(findPartition(cities.front())); // insere o retorno da função na lista de partições
+    while (!cities.empty()) { //while there still are cities in the list
+        partitions.push_back(findPartition(cities.front()));// inserts the partition in the partition list
 
         for (string i : partitions.back()) {
             cities.erase(remove(cities.begin(), cities.end(), i), cities.end());
         }
     }
 
-    for (vector<string> vi : partitions) { // retirar partições com tamanho 1
+    for (vector<string> vi : partitions) { // removes partition with just one element
         if (vi.size() != 1) {
             vector<string> accessNodes;
             for (string idN : vi) {
@@ -297,15 +295,15 @@ void GPX2::findAllPartitions()
 }
 
 void GPX2::cleanInsideAccess()
-{ // Irá retirar as flags Access dos vértices que se ligam internos a partição
+{//Removes de Acess flags from the vertices that connects the partition to itself
 
-    // Percorre a partição
+    //Goes through the partition
     for (auto& p : feasiblePartitions) {
         vector<string> tmp;
 
         vector<string> accessNodes = p.second->getAccessNodes();
         for (auto it = accessNodes.begin(); it != accessNodes.end(); it++) {
-            // Verificar se o vértice está ligado a outras partições
+            //Checks if the vertex is connected to other edges
             pair<SearchResult, vector<string>> result = DFS_outside((*it), feasiblePartitions);
 
             if (result.first == SearchResult::CONNECTED_TO_PARTITION) {
@@ -318,7 +316,7 @@ void GPX2::cleanInsideAccess()
                 if (!result.second.empty()) {
                     result.second.erase(result.second.end());
                 }
-                // Insere o caminho da ligação na partição
+                // Inserts the connection path in the partition
                 p.second->getNodes().insert(p.second->getNodes().end(), result.second.begin(), result.second.end());
             }
         }
@@ -328,12 +326,12 @@ void GPX2::cleanInsideAccess()
 
 // -----------------------------------------------------------------------------
 
-// STEP 6 - Checar recombinantes
+// STEP 6 - Check Recombinant Partition
 
 void GPX2::checkAllPartitions()
 {
     for (auto it = feasiblePartitions.begin(); it != feasiblePartitions.end();) {
-        //se não for uma partição recombinante ele deleta da lista de partições
+        //If it's not a recombinant partition, remove from the partition list
         if (!checkPartition((*it).second)) {
             unfeasiblePartitions.insert(make_pair((*it).first, (*it).second));
             it = feasiblePartitions.erase(it);
@@ -349,12 +347,12 @@ bool GPX2::checkPartition(Partition* partition)
     vector<string> redNodes, blueNodes;
     redNodes = blueNodes = partition->getNodes();
     if (!(size % 2 == 0)) {
-        //não é uma partição recombinante pois não possui uma entrada para cada saida.
+        //It's not feasible because the number of entries and exits it's different
         return (false);
     } else {
         vector<string> nodesInPartition = partition->getNodes();
 
-        //não possuem entrada e saida iguais nos dois pais
+        //Don't have the same entries an exits in both parents
         if (partition->getEntryAndExits().empty()) {
             return (false);
         } else {
@@ -374,30 +372,29 @@ bool GPX2::checkPartition(Partition* partition)
 }
 
 void GPX2::fusion()
-{ // função que irá executar a Fusion do GPX2, irá verificar as partições unfeasible e tentar "transformá-las" em feasible
+{// Method to execute the GPX2's Fusion, it will check amongst the unfeasibe partitions and try to transform them to feasible ones
     bool atLeastOneConnected{ false };
-    // Continua a execução enquanto existir mais de uma partição para tentar realizar a fusão e elas possuirem conexões com outras
+    //Keps executing while there are still more than one partition to try to fuse them
     while ((unfeasiblePartitions.size() > 1)) {
         //verifica quais partições estão conectadas
         atLeastOneConnected = unfeasiblePartitionsConnected();
         if (!atLeastOneConnected) {
             break;
         }
-        // Conta o total de vezes que cada partição se conecta com outra unfeasible, ou seja, os nós que possuem um "caminho" de uma partição à outra
+        // Counts how many times that one partition connects with other unfeasible partition, that is, the nodes that have a path that goes from one partition to another
         countConnectedPartitions();
 
-        // Gera os pares de fusões a serem executadas, já realizando as validações
+        // Generates the fusion pairs that will be tried, this method already validates them
         generateFusionPairs();
 
         fusePartitions();
 
-        //clear aux
         for (auto part : unfeasiblePartitions) {
             part.second->getConnectedTo().clear();
             part.second->getConnections().clear();
         }
 
-        // Irá verificar se a fusão gerou uma partição feasible, caso aconteça ela será colocada nas partições feasible (feasiblePartitions)
+        //Checks if the generated partition is feasible, in that case it will be put in the feasible partition list
         checkUnfeasiblePartitions();
     }
 }
@@ -411,11 +408,11 @@ void GPX2::setAllEntryAndExits()
 
 // -----------------------------------------------------------------------------
 
-// STEP 7 - Escolher partições para o filho
+// STEP 7 - Chosing the partition for the child
 
 void GPX2::choose()
 {
-    //encontrar as entradas e saídas
+    //Find all exits and entries
     for (auto p : feasiblePartitions) {
         double totalRed{ 0 }, totalBlue{ 0 };
         for (auto pair : p.second->getEntryAndExits()) {
@@ -432,14 +429,15 @@ void GPX2::choose()
 
 // -----------------------------------------------------------------------------
 
-// STEP 8 - Gerar o mapa do filho
+// STEP 8 - Generates the map for the child
 
 void GPX2::buildOffspring()
 {
     int index{ 0 };
 
     for (auto& allP : feasiblePartitions) {
-        if (partitionsChoosen[index] == Parent::BLUE) { // se o Blue for melhor que o Red naquela partição
+        // if the blue is better than the red in that partition
+        if (partitionsChoosen[index] == Parent::BLUE) { 
             for (string s : allP.second->getNodes()) {
                 delete red[s];
                 red.erase(s);
@@ -469,16 +467,16 @@ void GPX2::removeGhosts(CityMap& graph)
     for (auto node : graph) {
         size_t index = node.first.find(ghostToken);
         if (index != string::npos) {
-            //pegar o id do nó sem o token de ghost
+            // gets the id of the node while it still doesn't have the gost token
             string id = node.first;
             id.erase(index, ghostToken.size());
 
-            //pegar os dois nós que estão ligados ao nó normal e ao ghost iterando pelos edges do nó normal
+            //Gets two nodes that are connected to the original node, and also to the gost, iterating through the edges of the original node
             vector<CityNode::node> edges = graph[id]->getEdges();
             unsigned edgeToDelete{ 0 };
             CityNode::node prev, next;
             for (unsigned i = 0; i < edges.size(); i++) {
-                //se encontrar a edge ligada ao nó ghost
+                //If it found the edge that is connected to the ghost...
                 if (!edges[i].first.compare(node.first)) {
                     edgeToDelete = i;
                 } else {
@@ -490,20 +488,20 @@ void GPX2::removeGhosts(CityMap& graph)
             edges = graph[node.first]->getEdges();
 
             for (unsigned i = 0; i < edges.size(); i++) {
-                //encontrar o nó que não é o normal na lista de edges
+                //Find the nodes that aren't the original in the edge list 
                 if (!(!edges[i].first.compare(id))) {
                     next = edges[i];
                     break;
                 }
             }
 
-            //ligar o nó normal no next
+            //Connect the original node to the next
             graph[id]->addEdge(next);
 
-            //arrumar as edges do next
+            //arrange the next node edges
             edges = graph[next.first]->getEdges();
             for (unsigned i = 0; i < edges.size(); i++) {
-                //encontrou a edge que referencia ao ghost
+                //Found the edge that references the ghost
                 if (!edges[i].first.compare(node.first)) {
                     edgeToDelete = i;
                     break;
@@ -512,7 +510,7 @@ void GPX2::removeGhosts(CityMap& graph)
             graph[next.first]->deleteEdge(edgeToDelete);
             graph[next.first]->addEdge(make_pair(id, next.second));
 
-            //deletar o nó ghost
+            //removes the ghost node
             delete graph[node.first];
             graph.erase(node.first);
         }
