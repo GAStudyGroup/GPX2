@@ -22,7 +22,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     obj.cleanInsideAccess();
 
     // If there are less than 1 partition the GPX can't recombine them
-    if (obj.feasiblePartitions.size() < 1) {
+    if (obj.feasiblePartitions.size() < 2) {
         return ((redT.getFitness() < blueT.getFitness()) ? redT : blueT);
     }
 
@@ -36,7 +36,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
         obj.fusion();
     }
 
-    if (obj.feasiblePartitions.size() < 1) {
+    if (obj.feasiblePartitions.size() < 2) {
         return ((redT.getFitness() < blueT.getFitness()) ? redT : blueT);
     }
 
