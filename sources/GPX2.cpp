@@ -293,28 +293,32 @@ void GPX2::cleanInsideAccess()
 
     //Goes through the partition
     for (auto& p : feasiblePartitions) {
-        vector<string> tmp;
+        //accessNodesAV - already visited
+        vector<string> testedAccessNodes,accessNodesAV;
 
         vector<string> accessNodes = p.second->getAccessNodes();
-        for (auto it = accessNodes.begin(); it != accessNodes.end(); it++) {
-            //Checks if the vertex is connected to other edges
-            pair<SearchResult, vector<string>> result = DFS_outside((*it), feasiblePartitions);
 
-            if (result.first == SearchResult::CONNECTED_TO_PARTITION) {
-                tmp.push_back((*it));
-            } else {
-                accessNodes.erase(remove(accessNodes.begin(), accessNodes.end(), result.second.back()), accessNodes.end());
-                if (!result.second.empty()) {
+        for (string node : accessNodes) {
+            //If the node doenst have been visited already
+            if(find(accessNodesAV.begin(),accessNodesAV.end(),node)==accessNodesAV.end()){
+                //check if node is connected to another partition
+                pair<SearchResult, vector<string>> result = DFS_outside(node, feasiblePartitions);
+
+                if (result.first == SearchResult::CONNECTED_TO_PARTITION) {
+                    testedAccessNodes.push_back(node);
+                    accessNodesAV.push_back(node);
+                } else {
+                    accessNodesAV.push_back(result.second.front());
+                    accessNodesAV.push_back(result.second.back());
+
                     result.second.erase(result.second.begin());
-                }
-                if (!result.second.empty()) {
                     result.second.erase(result.second.end());
+
+                    p.second->getNodes().insert(p.second->getNodes().end(),result.second.begin(), result.second.end());
                 }
-                // Inserts the connection path in the partition
-                p.second->getNodes().insert(p.second->getNodes().end(), result.second.begin(), result.second.end());
             }
         }
-        p.second->setAccessNodes(tmp);
+        p.second->setAccessNodes(testedAccessNodes);
     }
 }
 
@@ -577,8 +581,8 @@ bool GPX2::comparePairString(const pair<string, string>& p1, const pair<string, 
 }
 
 void GPX2::deletePartitionMap(PartitionMap& m)
-{ // deletar o mapa completamente,
-    // desalocando os ponteiros tb
+{
+    // deallocate the pointers and set them to null, then clear the map
 
     for (auto& it : m) {
         delete it.second;
@@ -612,7 +616,7 @@ pair<GPX2::SearchResult, vector<string>> GPX2::DFS_outside(string id, PartitionM
         for (CityNode::node cn : edges) {
             notAlreadyVisited = (find(alreadyVisited.begin(), alreadyVisited.end(), cn.first) == alreadyVisited.end());
             notToVisit = (find(nextToVisit.begin(), nextToVisit.end(), cn.first) == nextToVisit.end());
-            cutEdge = cn.second == 0;
+            cutEdge = (cn.second == 0);
 
             if (notAlreadyVisited && notToVisit && cutEdge) {
                 nextToVisit.push_back(cn.first);
