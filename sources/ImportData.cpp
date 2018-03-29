@@ -173,19 +173,19 @@ Population ImportData::importFirstPopulation(string name, unsigned popSize)
             exit(EXIT_FAILURE);
         }
 
-        Tour newT;
-        newT.getRoute().reserve(popSize);
+        vector<int> newT;
+        newT.reserve(popSize);
         auto ss = std::ostringstream{};
         ss <<file.rdbuf();
         auto cities = explode(ss.str(),'\n');
         //while (file >> word) {
         for(auto wordaux : cities){
-            newT.getRoute().push_back(stoi(wordaux));
+            newT.push_back(stoi(wordaux));
         }
         //}
         file.close();
 
-        pop.addNewTour(newT);
+        pop.getPopulation().push_back(newT);
     }
     return (pop);
 }

@@ -16,15 +16,15 @@ class Partition {
     friend ostream& operator<<(ostream&, const Partition&);
 
 public:
-    // ID da partição conectada e o total de conexões entre elas
+    //Id of the connected partition and the number of times the partitions are connected - fusion
     using PartitionConnected = pair<int, int>;
 
     /*
-        Estrutura para guardar as informações de conexão entre a partição do objeto e uma outra
+        Struct to keep the informations about the connection of the partitions
 
-        connectedPartition: ID da partição conectada
-        node: nó da partição do objeto que se conecta
-        connectedNode: nó da outra partição que está conectada
+        connectedPartition: connected partition ID 
+        node: node that connected the partition to the other one
+        connectedNode: node of the connected partition
     */
     using ConnectionNode = struct ConnectionNode {
         int connectedPartition;
@@ -62,7 +62,7 @@ private:
     vector<string> accessNodes;
     vector<pair<string, string>> entryAndExits;
 
-    //variáveis apenas utilizadas na fusion
+    //Var used inside fusion
     vector<ConnectionNode> connectedTo;
     vector<PartitionConnected> connections;
 };

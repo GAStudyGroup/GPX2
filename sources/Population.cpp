@@ -3,15 +3,13 @@
 
 Population::Population() {}
 
-vector<Tour>& Population::getPopulation() { return (population); }
-
-void Population::addNewTour(Tour t) { population.push_back(t); }
+vector<vector<int>>& Population::getPopulation() { return (population); }
 
 int Population::bestFitness()
 {
     int min = numeric_limits<int>::max(), fitness{ 0 };
-    for (Tour t : population) {
-        fitness = t.getFitness();
+    for (vector<int> t : population) {
+        fitness = getFitness(t); 
         if (min > fitness) {
             min = fitness;
         }
@@ -22,9 +20,10 @@ int Population::bestFitness()
 ostream& operator<<(ostream& output, Population& pop)
 { // Overload de operador para impressão da população
     int i{ 0 };
-    for (Tour t : pop.getPopulation()) {
+    for (vector<int> t : pop.getPopulation()) {
         output << "Tour " << i << "\n";
-        output << t << "\n";
+        printTour(t,output);
+        output<<"\n";
         ++i;
     }
     return (output);
@@ -33,9 +32,10 @@ ostream& operator<<(ostream& output, Population& pop)
 void Population::writeBestTour(ofstream& file)
 {
     int fitness = bestFitness();
-    for (Tour t : population) {
-        if (t.getFitness() == fitness) {
-            file << t << "\n";
+    for (vector<int> t : population) {
+        if (getFitness(t) == fitness) {
+            printTour(t,file);
+            file<<"\n";
         }
     }
 }

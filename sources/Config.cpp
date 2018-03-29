@@ -10,4 +10,4 @@ double Config::LK_PERCENTAGE{0};
 unsigned Config::POP_SIZE{0};
 Coordinates Config::map;
 unsigned Config::BEST_FITNESS{0};
-unsigned Config::GENERATION_LIMIT{100};
+unsigned Config::GENERATION_LIMIT{50};

@@ -13,8 +13,7 @@ using std::vector;
 
 class CityNode {
 public:
-    //deixando o typedef assim então
-    //int seria o ID, usando o id no map, podemos ir direto para o objeto
+    //string is the ID of the connected edge and the double is the distance to that node
     using node = pair<string, double>;
 
     CityNode(string);

@@ -4,6 +4,11 @@
 #include <utility> 
 #include <cmath>
 #include <string>
+#include <iostream>
+#include <vector>
+
+int getFitness(const std::vector<int>&);
+std::ostream& printTour(const std::vector<int>&, std::ostream&);
 
 int distance(int,int);
 int distance(std::string,std::string);

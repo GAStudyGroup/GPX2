@@ -7,9 +7,14 @@ Coordinates::Coordinates(vector<City> data)
 {
 }
 
-vector<City> Coordinates::getCityList()
+vector<int> Coordinates::getCityList()
 {
-    return (cityList);
+    vector<int> tmp;
+    /* for(City c : cityList){
+        tmp.push_back(c.getId());
+    } */
+    transform(cityList.begin(),cityList.end(),back_inserter(tmp),[](const City &c){return c.getId();});
+    return (tmp);
 }
 
 void Coordinates::setCityList(vector<City> cityList)

@@ -12,7 +12,6 @@
 #include <iostream>
 
 #include "City.hpp"
-#include "Tour.hpp"
 #include "CityNode.hpp"
 #include "Partition.hpp"
 #include "Utils.hpp"
@@ -73,7 +72,7 @@ public:
         Receives two Tour structures, named as parents and returns a new Tour named child.
         All steps of GPX are done when ths method is called.
     */
-    Tour static crossover(Tour, Tour);
+    vector<int> static crossover(vector<int>, vector<int>);
 
 private:
     GPX2();
@@ -88,7 +87,7 @@ private:
 
         The method receives a tour as parameter and generates a graph from it.
     */
-    CityMap tourToMap(Tour&);
+    CityMap tourToMap(vector<int>&);
 
     // -----------------------------------------------------------------------------------------------------
     /*  
@@ -190,7 +189,7 @@ private:
 
         When the GPX is finished, the GPX will transform the child graph into a tour again.
     */
-    Tour mapToTour(CityMap&);
+    vector<int> mapToTour(CityMap&);
 
     /*  
     -------------------------------------------------------------------------------------------------------------

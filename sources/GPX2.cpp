@@ -1,7 +1,7 @@
 #include "GPX2.hpp"
 #include "Config.hpp"
 
-Tour GPX2::crossover(Tour redT, Tour blueT)
+vector<int> GPX2::crossover(vector<int> redT, vector<int> blueT)
 {
     GPX2 obj;
     // Step 1
@@ -21,9 +21,9 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     obj.findAllPartitions();
     obj.cleanInsideAccess();
 
-    // If there are less than 1 partition the GPX can't recombine them
+    // If there are less than 2 partition the GPX can't recombine them
     if (obj.feasiblePartitions.size() < 2) {
-        return ((redT.getFitness() < blueT.getFitness()) ? redT : blueT);
+        return ((getFitness(redT) < getFitness(blueT)) ? redT : blueT);
     }
 
     // Step 6
@@ -37,7 +37,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
     }
 
     if (obj.feasiblePartitions.size() < 2) {
-        return ((redT.getFitness() < blueT.getFitness()) ? redT : blueT);
+        return ((getFitness(redT) < getFitness(blueT)) ? redT : blueT);
     }
 
     // Step 7
@@ -45,7 +45,7 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
 
     // Step 8
     obj.buildOffspring();
-    Tour t;
+    vector<int> t;
     if (obj.offspringChoosen == Parent::RED) {
         obj.removeGhosts(obj.red);
         // Step 9
@@ -62,21 +62,22 @@ Tour GPX2::crossover(Tour redT, Tour blueT)
 // -----------------------------------------------------------------------------
 
 // STEP 1 - Tour Mapping
-GPX2::CityMap GPX2::tourToMap(Tour& t)
+GPX2::CityMap GPX2::tourToMap(vector<int> &t)
 {
-    if (t.getRoute().empty()) {
+    if (t.empty()) {
         exit(EXIT_FAILURE);
     }
     //Maps the tour to a graph with connections between the nodes
     std::map<string, CityNode*> aux; 
     double dist = 0;
-    vector<int> cities{ t.getRoute() };
-    unsigned size = t.getRoute().size();
+    vector<int> cities{ t };
+    unsigned size = t.size();
 
     for (unsigned i = 0; i < size; i++) {
         CityNode* cn = new CityNode(to_string(cities[i]));
         if(i==0){
             //if the current node is the first one, connect it with the last one and the next
+            //CityNode::node is a pair of string and double, the ID and distance
             dist = distance(cities[size-1],cities[i]);
             cn->getEdges().push_back(CityNode::node(to_string(cities[size-1]), dist));
             dist = distance(cities[i],cities[i+1]);
@@ -513,21 +514,21 @@ void GPX2::removeGhosts(CityMap& graph)
 
 // -----------------------------------------------------------------------------
 
-// STEP 9 - Linearizar o mapa do filho
-Tour GPX2::mapToTour(CityMap& mapOffspring)
-{ // Map para tour
-    Tour offspring;
+// STEP 9 - Linearize the offspring's map
+vector<int> GPX2::mapToTour(CityMap& mapOffspring)
+{
+    vector<int> offspring;
     deque<string> nextToVisit;
     vector<string> isAlreadyVisited;
 
     bool notAlreadyVisited{ false };
     bool notToVisit{ false };
 
-    CityNode* city = mapOffspring.begin()->second; // Reduzir chamadas (CityNode dentro do map)
+    CityNode* city = mapOffspring.begin()->second; 
 
     isAlreadyVisited.push_back(mapOffspring.begin()->first);
 
-    offspring.getRoute().push_back(stoi(city->getId())); // já foi visitado então entra no filho
+    offspring.push_back(stoi(city->getId())); // begin the linearization by the first node of the map and inserts it in the offspring
 
     nextToVisit.push_back(city->getEdges()[0].first);
 
@@ -536,8 +537,8 @@ Tour GPX2::mapToTour(CityMap& mapOffspring)
         isAlreadyVisited.push_back(nextToVisit.front());
         city = mapOffspring[nextToVisit.front()];
         nextToVisit.pop_front();
-        // Cria um objeto e carrega no Tour filho
-        offspring.getRoute().push_back(stoi(city->getId()));
+        // criates a city object and inserts it in the tour
+        offspring.push_back(stoi(city->getId()));
 
         for (CityNode::node n : city->getEdges()) {
 

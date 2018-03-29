@@ -5,6 +5,25 @@
 
 extern Config::type TYPE;
 
+int getFitness(const std::vector<int> &t)
+{ // Calculate fitness of tour
+    int sum{0};
+    unsigned size{(unsigned)t.size()};
+    for(unsigned i=0; i<size; i++){
+        sum += distance(t[i], t[(i+1)%size]);
+    }
+    return(sum);
+}
+
+std::ostream& printTour(const std::vector<int> &t, std::ostream &output){
+    output<<"===================================================\n";
+    for (int cityId : t) {
+        output << cityId << " ";
+    }
+    output << "\nFitness: " << getFitness(t) << "\n";
+    return (output);
+}
+
 int distance(std::string p1, std::string p2){
     int tmp1{stoi(p1)},tmp2{stoi(p2)};
     return(distance(tmp1,tmp2));

@@ -1,14 +1,20 @@
 #include "GAUtils.hpp"
 
+/* 
+
+    separar a lambda de dar sort na population pela fitness, está sendo usada em 3 lugares diferentes;
+
+ */
+
 void GAUtils::init(Population &pop){
     //Import the map
     ImportData dataFile(Config::LIB_PATH+Config::NAME);
     Config::map.setCityList(dataFile.getCitiesCoord());
 
     //Import the first population from LK
-    unsigned lkPop = Config::POP_SIZE * Config::LK_PERCENTAGE;
+    unsigned lkPop = Config::POP_SIZE * Config::LK_PERCENTAGE; 
     unsigned fillPop = Config::POP_SIZE - lkPop;
-    if (Config::LK_PERCENTAGE > 0) {
+    if (Config::LK_PERCENTAGE > 0) { 
         pop = dataFile.importFirstPopulation(Config::NAME, lkPop);
     }
 
@@ -24,8 +30,8 @@ bool GAUtils::stop(Population &pop) {
 
     unsigned totalEqual{1};
     //how many routes have fitness equal to the best route, to determine stagnation
-    for (Tour t : pop.getPopulation()) {
-        if ((unsigned)t.getFitness() == bestFitness) {
+    for (vector<int> t : pop.getPopulation()) {
+        if ((unsigned)getFitness(t) == bestFitness) {
             totalEqual++;
         }
     }
@@ -56,9 +62,9 @@ bool GAUtils::stop(Population &pop) {
 void GAUtils::fillPopulation(Population &pop, unsigned popToFill) {
     for (unsigned i = 0; i < popToFill; i++) {
         // Tour t(nearestNeighbor(map));
-        Tour t(Config::map.getCityList());
-        random_shuffle(t.getRoute().begin(), t.getRoute().end());
-        t = Opt::optimize(t);
+        vector<int> t(Config::map.getCityList());
+        random_shuffle(t.begin(), t.end());
+        t = Opt::optimize(t); 
         pop.getPopulation().push_back(t);
     } 
 }
@@ -76,14 +82,14 @@ Population GAUtils::generateNewPopulation(Population &pop) {
 
 Population GAUtils::crossAllxAllwith2opt(Population &pop) {
     Population newPop;
-    Tour currentTour;
+    vector<int> currentTour;
 
     for (unsigned i = 0; i < Config::POP_SIZE; i++) {
         currentTour = pop.getPopulation()[i];
         for (unsigned j = 0; j < Config::POP_SIZE; j++) {
             if (i != j) {
-                Tour t = GPX2::crossover(pop.getPopulation()[j], currentTour);
-                if (t.getFitness() < currentTour.getFitness()) {
+                vector<int> t = GPX2::crossover(pop.getPopulation()[j], currentTour);
+                if (getFitness(t) < getFitness(currentTour)) {
                     currentTour = t;
                 }
             }
@@ -100,12 +106,12 @@ Population GAUtils::crossNBestxAllwithReset(Population &pop) {
     Population newPop;
 
     sort(pop.getPopulation().begin(), pop.getPopulation().end(),
-         [](Tour &a, Tour &b) { return a.getFitness() < b.getFitness(); });
+         [](vector<int> &a, vector<int> &b) { return getFitness(a) < getFitness(b); });
 
     for (unsigned i = 0; i < Config::N_BEST; i++) {
-        Tour savedTour = pop.getPopulation()[i];
-        for (Tour t : pop.getPopulation()) {
-            Tour tmp = GPX2::crossover(savedTour, t);
+        vector<int> savedTour = pop.getPopulation()[i];
+        for (vector<int> t : pop.getPopulation()) {
+            vector<int> tmp = GPX2::crossover(savedTour, t);
             savedTour = tmp;
         }
         newPop.getPopulation().push_back(savedTour);
@@ -117,14 +123,14 @@ Population GAUtils::crossNBestxAllwithReset(Population &pop) {
 
 Population GAUtils::crossAllxAllwithNBestAndReset(Population &pop){
     Population tmpPop, newPop;
-    Tour currentTour;
+    vector<int> currentTour;
 
     for (unsigned i = 0; i < Config::POP_SIZE; i++) {
         currentTour = pop.getPopulation()[i];
         for (unsigned j = 0; j < Config::POP_SIZE; j++) {
             if (i != j) {
-                Tour t = GPX2::crossover(pop.getPopulation()[j], currentTour);
-                if (t.getFitness() < currentTour.getFitness()) {
+                vector<int> t = GPX2::crossover(pop.getPopulation()[j], currentTour);
+                if (getFitness(t) < getFitness(currentTour)) {
                     currentTour = t;
                 }
             }
@@ -135,7 +141,7 @@ Population GAUtils::crossAllxAllwithNBestAndReset(Population &pop){
     }
 
     sort(tmpPop.getPopulation().begin(), tmpPop.getPopulation().end(),
-         [](Tour &a, Tour &b) { return a.getFitness() < b.getFitness(); });
+         [](vector<int> &a, vector<int> &b) { return getFitness(a) < getFitness(b); });
 
     for(unsigned i=0;i<Config::N_BEST;i++){
         newPop.getPopulation().push_back(tmpPop.getPopulation()[i]);
@@ -187,9 +193,10 @@ void GAUtils::printFooter(std::ostream &out,Population &pop,unsigned gen,unsigne
 
     out << "\nLast population\n";
     sort(pop.getPopulation().begin(), pop.getPopulation().end(),
-         [](Tour &a, Tour &b) { return a.getFitness() < b.getFitness(); });
-    for(Tour t : pop.getPopulation()){
-        out<<t<<"\n";
+         [](vector<int> &a, vector<int> &b) { return getFitness(a) < getFitness(b); });
+    for(vector<int> t : pop.getPopulation()){
+        printTour(t,out);
+        out<<"\n";
     }
     out<<endl;
 }
