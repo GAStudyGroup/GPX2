@@ -12,6 +12,9 @@ using std::string;
 using std::vector;
 
 class CityNode {
+
+    friend ostream& operator<<(ostream&, CityNode&);
+
 public:
     //string is the ID of the connected edge and the double is the distance to that node
     using node = pair<string, double>;

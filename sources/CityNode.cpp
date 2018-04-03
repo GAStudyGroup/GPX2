@@ -32,3 +32,14 @@ bool CityNode::operator==(const CityNode& c) const
 {
     return ((c.getId().compare(this->id) == 0) ? true : false);
 }
+
+ostream& operator<<(ostream &output, CityNode &cn){
+    output<<"=====\nID: "<<cn.getId()<<"\n";
+    output<<"edges: \n";
+    for(CityNode::node n : cn.getEdges()){
+        output<<"\tid "<<n.first<<" | dist: "<<n.second<<"\n";
+    }
+    output<<"is access: "<<cn.getAccess();
+    output.flush();
+    return(output);
+}

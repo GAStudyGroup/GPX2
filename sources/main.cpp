@@ -145,7 +145,8 @@ void GA() {
         pop = GAUtils::generateNewPopulation(pop);
         *logFile << "gen " << i << " best fitness " << pop.bestFitness() << endl;
         i++;
-    } while (GAUtils::stop(pop));
+    // } while (GAUtils::stop(pop));
+    } while (false);
 
     auto finishGA = std::chrono::high_resolution_clock::now();
     GAUtils::printTime(*logFile,"GA execution time:",std::chrono::duration<double,std::milli> (finishGA - startGA).count(),std::chrono::duration<double> (finishGA - startGA).count()); 
