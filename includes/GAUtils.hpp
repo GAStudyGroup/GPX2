@@ -15,7 +15,7 @@ namespace GAUtils{
     void init(Population &);
 
     //Evaluates the population to decide whether stopping conditions have been met
-    bool stop(Population&);
+    bool stop(Population&,std::ostream &);
 
     //If a portion of the population has been imported from the KL, the function populates the population up to the value set in the global Config::POP_SIZE using 2-opt. Otherwise, it generates the entire population using 2-op
     void fillPopulation(Population &, unsigned);

@@ -36,8 +36,26 @@ void GA();
 
 int main(int argc, char *argv[]) {
     srand(time(NULL)); 
+    string NAME = "name";
+    string SIZE = "size";
+    string LIB = "lib";
+    string ID = "id";
+    string LK = "lk";
+    string NEW_POP = "newpop";
+    string N_BEST = "nbest";
+    string BEST_FITNESS = "bestfitness";
 
     Arg arg(argc,argv);
+
+    /* arg.newArgument(NAME,true,"n");
+    arg.newArgument(SIZE,true,"s");
+    arg.newArgument(LIB,false,"l");
+    arg.newArgument(ID,false);
+    arg.newArgument(LK,false);
+    arg.newArgument(NEW_POP,false,"np");
+    arg.newArgument(N_BEST,false,"nb");
+    arg.newArgument(BEST_FITNESS,false,"bf"); */
+    
 
     if(arg.getOption("n").empty()){
         cout<<"name of the tour is required"<<endl;
@@ -135,7 +153,9 @@ void GA() {
 
     auto finishInitPop = std::chrono::high_resolution_clock::now();
 
-    GAUtils::printTime(*logFile,"Population created in:",std::chrono::duration<double,std::milli> (finishInitPop - start).count(),std::chrono::duration<double> (finishInitPop - start).count()); 
+    GAUtils::printTime(*logFile,"Population created in:",
+                    std::chrono::duration<double,std::milli> (finishInitPop - start).count(),
+                    std::chrono::duration<double> (finishInitPop - start).count()); 
 
     auto startGA = std::chrono::high_resolution_clock::now();
 
@@ -145,14 +165,17 @@ void GA() {
         pop = GAUtils::generateNewPopulation(pop);
         *logFile << "gen " << i << " best fitness " << pop.bestFitness() << endl;
         i++;
-    // } while (GAUtils::stop(pop));
-    } while (false);
+    } while (GAUtils::stop(pop,*logFile));
 
     auto finishGA = std::chrono::high_resolution_clock::now();
-    GAUtils::printTime(*logFile,"GA execution time:",std::chrono::duration<double,std::milli> (finishGA - startGA).count(),std::chrono::duration<double> (finishGA - startGA).count()); 
+    GAUtils::printTime(*logFile,"GA execution time:",
+                    std::chrono::duration<double,std::milli> (finishGA - startGA).count(),
+                    std::chrono::duration<double> (finishGA - startGA).count()); 
 
     auto finish = std::chrono::high_resolution_clock::now();
-    GAUtils::printTime(*logFile,"Total execution time:",std::chrono::duration<double,std::milli> (finish - start).count(),std::chrono::duration<double> (finish - start).count()); 
+    GAUtils::printTime(*logFile,"Total execution time:",
+                    std::chrono::duration<double,std::milli> (finish - start).count(),
+                    std::chrono::duration<double> (finish - start).count()); 
 
     GAUtils::printFooter(*logFile,pop,i,firstBestFitness);
 

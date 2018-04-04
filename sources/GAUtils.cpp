@@ -22,13 +22,13 @@ void GAUtils::init(Population &pop){
     GAUtils::fillPopulation(pop, fillPop);
 }
 
-bool GAUtils::stop(Population &pop) {
+bool GAUtils::stop(Population &pop, std::ostream &out) {
     unsigned static generationsWithoutChange{0};
     unsigned static bestFitness{(unsigned)pop.bestFitness()};
     
     unsigned currentFitness{(unsigned)pop.bestFitness()};
 
-    unsigned totalEqual{1};
+    unsigned totalEqual{0};
     //how many routes have fitness equal to the best route, to determine stagnation
     for (vector<int> t : pop.getPopulation()) {
         if ((unsigned)getFitness(t) == bestFitness) {
@@ -38,7 +38,9 @@ bool GAUtils::stop(Population &pop) {
 
     //If the current fitness is equal to or less than the best known, it decreases the number of generations to stop AG
     if(bestFitness <= Config::BEST_FITNESS){
-        Config::GENERATION_LIMIT = Config::AFTER_BEST;
+        // Config::GENERATION_LIMIT = Config::AFTER_BEST;
+        out << "\nFound best fitness!" <<endl;
+        return (false);
     }
 
     //zero the generationsWithoutChange counter if a better fitness is found
@@ -47,12 +49,14 @@ bool GAUtils::stop(Population &pop) {
         generationsWithoutChange = 0;
     } else if (totalEqual == Config::POP_SIZE) {
         //if all elements are equal ends GA
+        out << "\nPopulation converged!" <<endl;
         return (false);
     } else {
         generationsWithoutChange++;
     }
 
     if (generationsWithoutChange >= Config::GENERATION_LIMIT) {
+        out << "\nGeneration limit reached!" <<endl;
         return (false);
     } else {
         return (true);
@@ -182,13 +186,15 @@ void GAUtils::printHeader(std::ostream &out){
             break;
         }
     }
+    out<<"\nBest known solution: "<<to_string(Config::BEST_FITNESS)<<".";
     out<<endl;
 }
 
 void GAUtils::printFooter(std::ostream &out,Population &pop,unsigned gen,unsigned best){
     out << "\nTHE END\n";
-    out << "first best fitness: " << best << "\n";
-    out << "gen " << gen << " best fitness " << pop.bestFitness() << "\n";
+    out << "First best fitness: " << best << "\n";
+    out << "Gen " << gen << " best fitness " << pop.bestFitness() << "\n";
+    out << "Best know solution: "<< to_string(Config::BEST_FITNESS) << "\n";
     out << "=========================" << "\n";
 
     out << "\nLast population\n";
@@ -203,8 +209,9 @@ void GAUtils::printFooter(std::ostream &out,Population &pop,unsigned gen,unsigne
 
 void GAUtils::printTime(std::ostream &out, std::string txt, double milli, double sec){
     out << "\n"+txt+"\n";
-    out << "\t" << milli << " milliseconds\n";
-    out << "\t" << sec << " seconds" << endl;
+    out << "\t" << milli << " milliseconds.\n";
+    out << "\t" << sec << " seconds.\n";
+    out << "\t" << (sec/60.0) << " minutes." << endl;
 }
 
 /* vector<City> nearestNeighbor() {

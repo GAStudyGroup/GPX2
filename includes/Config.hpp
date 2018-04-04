@@ -7,7 +7,7 @@
 namespace Config{
     enum type{EUC_2D,GEO,ATT};
 
-    const unsigned AFTER_BEST{1};
+    const unsigned AFTER_BEST{0};
 
     extern unsigned GENERATION_LIMIT;
     extern unsigned N_BEST;

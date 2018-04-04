@@ -317,6 +317,13 @@ void GPX2::cleanInsideAccess()
 
                     result.second.erase(result.second.begin());
                     result.second.erase(result.second.end());
+                    
+                    //put the distance value in the edges of the nodes that are inserted in the partition 
+                    for(string node : result.second){
+                        for(auto &edge : unitedGraph[node]->getEdges()){
+                            edge.second = distance(node, edge.first);
+                        }
+                    }
 
                     p.second->getNodes().insert(p.second->getNodes().end(),result.second.begin(), result.second.end());
                 }
