@@ -21,7 +21,7 @@ for n_best in c.N_BEST:
 
                         print("\n\nStarting GA\n")
 
-                        call(["./"+c.BIN_PATH+"GA", "-n "+tour_name, "-lib "+c.LIBS_PATH, "-s "+str(pop_size), "-id "+str(i), "-lk "+str(kl_percentage), "-np "+str(new_pop_type), "-nb "+str(n_best), "-bf "+str(best_fitness)])
+                        call(["./"+c.BIN_PATH+"GA", "-n "+tour_name, "-l "+c.LIBS_PATH, "-s "+str(pop_size), "-id "+str(i), "-lk "+str(kl_percentage), "-np "+str(new_pop_type), "-nb "+str(n_best), "-bf "+str(best_fitness)])
 
                         print("\n\nclean up\n")
 

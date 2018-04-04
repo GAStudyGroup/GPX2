@@ -2,38 +2,68 @@
 
 #include <sstream>
 
-Arg::Arg(int argc, char **argv) {
-    string tmp{""};
-    vector<string> tmp2;
-    for (int i = 1; i < argc; i++) {
-        tmp += argv[i];
-        tmp += " ";
-    }
-    tmp2 = split(tmp, '-');
+Arg::Arg(int argc, char **argv):argc(argc),argv(argv){}
 
-    for (string s : tmp2) {
-        vector<string> args = split(s);
-        if (args.size() == 1) {
-            args.push_back("");
+void Arg::newArgument(string arg, bool required, string alias ){
+    arguments.push_back(Argument(arg, alias, required));
+}
+
+void Arg::validateArguments(){
+    processInput();
+    for(Argument a : arguments){
+        if(a.getRequired() && a.getOption().empty()){
+            throw std::runtime_error("Required argument: "+a.getArg());
         }
-        arguments.push_back(argument(args[0], args[1]));
     }
 }
 
-bool Arg::isSet(string arg) {
-    for (argument a : arguments) {
-        if (a.arg == arg) {
-            return true;
+void Arg::processInput(){
+    string argString{""};
+    vector<string> argVector;
+    for(int i=1;i<argc;i++){
+        argString += argv[i];
+        argString += " ";
+    }
+    argVector = split(argString,'-');
+    for(string arg : argVector){
+        vector<string> argSplited = split(arg);
+        Argument *a = getArgument(argSplited[0]);
+        if(a==NULL){
+            throw std::runtime_error("Unexpected argument: "+argSplited[0]);
         }
+        string option;
+        for(unsigned i=1;i<argSplited.size();i++){
+            option += argSplited[i];
+            if((++i)<argSplited.size()){
+                option += " ";
+            }
+        }
+        a->setOption(option);
+        a->setArg(true);
+    }
+}
+
+Arg::Argument* Arg::getArgument(string arg){
+    for(Argument &a : arguments){
+        if(a.getArg() == arg || a.getAlias() == arg){
+            return(&a);
+        } 
+    }
+    return(NULL);
+}
+
+bool Arg::isSet(string arg){
+    Argument *a = getArgument(arg);
+    if(a!=NULL){
+        return(a->isSet());
     }
     return false;
 }
 
-string Arg::getOption(string arg) { 
-    for (argument a : arguments) {
-        if (a.arg == arg) {
-            return a.option;
-        }
+string Arg::getOption(string arg){
+    Argument *a = getArgument(arg);
+    if(a!=NULL){
+        return(a->getOption());
     }
     return {};
 }

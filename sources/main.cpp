@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <chrono>
+#include <stdexcept>
 
 #include "Config.hpp"
 #include "Population.hpp"
@@ -47,93 +48,38 @@ int main(int argc, char *argv[]) {
 
     Arg arg(argc,argv);
 
-    /* arg.newArgument(NAME,true,"n");
+    arg.newArgument(NAME,true,"n");
     arg.newArgument(SIZE,true,"s");
     arg.newArgument(LIB,false,"l");
     arg.newArgument(ID,false);
     arg.newArgument(LK,false);
     arg.newArgument(NEW_POP,false,"np");
     arg.newArgument(N_BEST,false,"nb");
-    arg.newArgument(BEST_FITNESS,false,"bf"); */
+    arg.newArgument(BEST_FITNESS,false,"bf");
     
-
-    if(arg.getOption("n").empty()){
-        cout<<"name of the tour is required"<<endl;
+    try{
+        arg.validateArguments();
+    }catch(std::runtime_error e){
+        std::cout<<e.what()<<endl;
         return(0);
     }
-    if(arg.getOption("s").empty()){
-        cout<<"size of the population is required"<<endl;
-        return(0);
-    }else{
-        try {
-            Config::NAME = arg.getOption("n");
-            Config::POP_SIZE = stoi(arg.getOption("s"));
 
-            string tmp{""},cmd{"lib"};
-            if(arg.isSet(cmd)){
-                tmp = arg.getOption(cmd);
-                if(tmp == ""){
-                    cout<<"command "<<cmd<<" needs an argument"<<endl;
-                    return(0);
-                }else{
-                    Config::LIB_PATH = tmp;
-                }
-            }
-            cmd = "id";
-            if(arg.isSet(cmd)){
-                tmp = arg.getOption(cmd);
-                if(tmp == ""){
-                    cout<<"command "<<cmd<<" needs an argument"<<endl;
-                    return(0);
-                }else{
-                    Config::ID = stoi(tmp);
-                }
-            }
-            cmd = "lk";
-            if(arg.isSet(cmd)){
-                tmp = arg.getOption(cmd);
-                if(tmp == ""){
-                    cout<<"command "<<cmd<<" needs an argument"<<endl;
-                    return(0);
-                }else{
-                    Config::LK_PERCENTAGE = stof(tmp);
-                }
-            }
-            cmd = "np";
-            if(arg.isSet(cmd)){
-                tmp = arg.getOption(cmd);
-                if(tmp == ""){
-                    cout<<"command "<<cmd<<" needs an argument"<<endl;
-                    return(0);
-                }else{
-                    Config::NEW_POP_TYPE = stoi(tmp);
-                }
-            }
-            cmd = "nb";
-            if(arg.isSet(cmd)){
-                tmp = arg.getOption(cmd);
-                if(tmp == ""){
-                    cout<<"command "<<cmd<<" needs an argument"<<endl;
-                    return(0);
-                }else{
-                    Config::N_BEST = stoi(tmp);
-                }
-            }
-            cmd = "bf";
-            if(arg.isSet(cmd)){
-                tmp = arg.getOption(cmd);
-                if(tmp == ""){
-                    cout<<"command "<<cmd<<" needs an argument"<<endl;
-                    return(0);
-                }else{
-                    Config::BEST_FITNESS = stoi(tmp);
-                }
-            }
-        } catch (invalid_argument &i_a) {
-            cout << "Invalid argument!" << i_a.what() << endl;
-            return (0);
-        }
-    }
+    
+    Config::NAME = arg.getOption(NAME);
+    Config::POP_SIZE = stoi(arg.getOption(SIZE));
+
+    string tmp = arg.getOption(LIB);
+    Config::LIB_PATH = tmp.empty()?Config::LIB_PATH:tmp;
+    tmp = arg.getOption(ID);
+    Config::ID = tmp.empty()?Config::ID:stoi(tmp);
+    tmp = arg.getOption(LK);
+    Config::LK_PERCENTAGE = tmp.empty()?Config::LK_PERCENTAGE:stod(tmp);
+    tmp = arg.getOption(NEW_POP);
+    Config::NEW_POP_TYPE = tmp.empty()?Config::NEW_POP_TYPE:stoi(tmp);
+    tmp = arg.getOption(N_BEST);
+    Config::N_BEST = tmp.empty()?Config::N_BEST:stoi(tmp);
+    tmp = arg.getOption(BEST_FITNESS);
+    Config::BEST_FITNESS = tmp.empty()?Config::BEST_FITNESS:stoi(tmp);
 
     GA();
 
@@ -161,6 +107,7 @@ void GA() {
 
     int i{1}, firstBestFitness{pop.bestFitness()};
     *logFile << "\nFirst fitness " << firstBestFitness << endl;
+
     do {
         pop = GAUtils::generateNewPopulation(pop);
         *logFile << "gen " << i << " best fitness " << pop.bestFitness() << endl;
