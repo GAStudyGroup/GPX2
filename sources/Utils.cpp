@@ -68,27 +68,12 @@ int GEO(int p1,int p2){
         double min_x1{deg_x1-c1.getX()},min_y1{deg_y1-c1.getY()}; 
         int deg_x2{(int)round(c2.getX())},deg_y2{(int)round(c2.getY())};
         double min_x2{deg_x2-c2.getX()},min_y2{deg_y2-c2.getY()};
-        // std::cout<<"deg_x1 "<<deg_x1<<endl;
-        // std::cout<<"deg_y1 "<<deg_y1<<endl;
-        // std::cout<<"min_x1 "<<min_x1<<endl;
-        // std::cout<<"min_y1 "<<min_y1<<endl;
-
-        // std::cout<<"deg_x2 "<<deg_x2<<endl;
-        // std::cout<<"deg_y2 "<<deg_y2<<endl;
-        // std::cout<<"min_x2 "<<min_x2<<endl;
-        // std::cout<<"min_y2 "<<min_y2<<endl;
 
         lat_1 = conv(deg_x1,min_x1);
         lng_1 = conv(deg_y1,min_y1);
 
         lat_2 = conv(deg_x2,min_x2);
         lng_2 = conv(deg_y2,min_y2);
-
-        // std::cout<<"lat_1 "<<lat_1<<endl;
-        // std::cout<<"lng_1 "<<lng_1<<endl;
-        // std::cout<<"lat_2 "<<lat_2<<endl;
-        // std::cout<<"lng_2 "<<lng_2<<endl;
-
     }
 
     double q1 = cos(lng_1 - lng_2), q2 = cos(lat_1 - lat_2), q3 = cos(lat_1 + lat_2);

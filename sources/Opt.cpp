@@ -11,9 +11,7 @@ using std::reverse;
 
 Opt::Opt(){}
 
-Opt::~Opt(){
-    /* deleteCityMap(map); */
-}
+Opt::~Opt(){}
 
 vector<int> Opt::optimize(vector<int> &tour){
     Opt obj;
@@ -52,15 +50,6 @@ bool Opt::adjacent(edge &e1, edge &e2){
 }
 
 bool Opt::isBetter(edge &e1, edge &e2, vector<int> &t){
-    /* double e1_first_x{Config::map.getCityById(t.getRoute()[e1.first]).getX()},
-            e1_first_y{Config::map.getCityById(t.getRoute()[e1.first]).getY()},
-            e1_second_x{Config::map.getCityById(t.getRoute()[e1.second]).getX()},
-            e1_second_y{Config::map.getCityById(t.getRoute()[e1.second]).getY()},
-            e2_first_x{Config::map.getCityById(t.getRoute()[e2.first]).getX()},
-            e2_first_y{Config::map.getCityById(t.getRoute()[e2.first]).getY()},
-            e2_second_x{Config::map.getCityById(t.getRoute()[e2.second]).getX()},
-            e2_second_y{Config::map.getCityById(t.getRoute()[e2.second]).getY()}; */
-
     int oldDistance = distance(t[e1.first],t[e1.second])
         +
         distance(t[e2.first],t[e2.second]);
@@ -68,6 +57,7 @@ bool Opt::isBetter(edge &e1, edge &e2, vector<int> &t){
     int newDistance = distance(t[e1.first],t[e2.first])
         +
         distance(t[e1.second],t[e2.second]);
+
     if(oldDistance>newDistance){
         return(true);
     }else{

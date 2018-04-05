@@ -4,7 +4,7 @@
 
     separar a lambda de dar sort na population pela fitness, está sendo usada em 3 lugares diferentes;
 
- */
+*/
 
 void GAUtils::init(Population &pop){
     //Import the map
@@ -109,8 +109,7 @@ Population GAUtils::crossAllxAllwith2opt(Population &pop) {
 Population GAUtils::crossNBestxAllwithReset(Population &pop) {
     Population newPop;
 
-    sort(pop.getPopulation().begin(), pop.getPopulation().end(),
-         [](vector<int> &a, vector<int> &b) { return getFitness(a) < getFitness(b); });
+    sort(pop.getPopulation().begin(), pop.getPopulation().end(),sortPopulation);
 
     for (unsigned i = 0; i < Config::N_BEST; i++) {
         vector<int> savedTour = pop.getPopulation()[i];
@@ -144,8 +143,7 @@ Population GAUtils::crossAllxAllwithNBestAndReset(Population &pop){
         tmpPop.getPopulation().push_back(currentTour);
     }
 
-    sort(tmpPop.getPopulation().begin(), tmpPop.getPopulation().end(),
-         [](vector<int> &a, vector<int> &b) { return getFitness(a) < getFitness(b); });
+    sort(tmpPop.getPopulation().begin(), tmpPop.getPopulation().end(),sortPopulation);
 
     for(unsigned i=0;i<Config::N_BEST;i++){
         newPop.getPopulation().push_back(tmpPop.getPopulation()[i]);
@@ -198,8 +196,7 @@ void GAUtils::printFooter(std::ostream &out,Population &pop,unsigned gen,unsigne
     out << "=========================" << "\n";
 
     out << "\nLast population\n";
-    sort(pop.getPopulation().begin(), pop.getPopulation().end(),
-         [](vector<int> &a, vector<int> &b) { return getFitness(a) < getFitness(b); });
+    sort(pop.getPopulation().begin(), pop.getPopulation().end(),sortPopulation);
     for(vector<int> t : pop.getPopulation()){
         printTour(t,out);
         out<<"\n";
