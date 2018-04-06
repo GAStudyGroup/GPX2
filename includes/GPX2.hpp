@@ -203,7 +203,7 @@ private:
     // Methods to clean the pointers and vectors used
     void static deletePartitionMap(PartitionMap&);
     // DFS outside the partition to look for connections between partitions
-    pair<SearchResult, vector<string>> DFS_outside(string, PartitionMap, bool = false);
+    pair<SearchResult, vector<string>> DFS_outside(string, PartitionMap);
     // DFS inside of the partition to verify if the AcessNodes are connected and return the nodes that it went through
     pair<SearchResult, vector<string>> DFS_inside(string, string, CityMap, Partition*);
     // Erase a subvector from a vector
