@@ -89,6 +89,7 @@ int main(int argc, char *argv[]) {
 
 void GA() {
     Population pop;
+    bool foundBestWithoutGA = true;
 
     ofstream *logFile{GAUtils::initLogFile()};  
 
@@ -106,14 +107,24 @@ void GA() {
 
     auto startGA = std::chrono::high_resolution_clock::now();
 
-    int i{1}, firstBestFitness{pop.bestFitness()};
+    int i{0}, firstBestFitness{pop.bestFitness()};
     *logFile << "\nFirst fitness " << firstBestFitness << endl;
 
-    do {
+    /* do {
+        i++;
         pop = GAUtils::generateNewPopulation(pop);
         *logFile << "gen " << i << " best fitness " << pop.bestFitness() << endl;
+    } while (GAUtils::stop(pop,*logFile)); */
+    while(GAUtils::stop(pop,*logFile)){
+        foundBestWithoutGA = false;
         i++;
-    } while (GAUtils::stop(pop,*logFile));
+        pop = GAUtils::generateNewPopulation(pop);
+        *logFile << "gen " << i << " best fitness " << pop.bestFitness() << endl;
+    }
+
+    if(foundBestWithoutGA){
+        *logFile << "Found best without GA" << endl;
+    }
 
     auto finishGA = std::chrono::high_resolution_clock::now();
     GAUtils::printTime(*logFile,"GA execution time:",

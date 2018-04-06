@@ -74,13 +74,13 @@ vector<int> GPX2::crossover(vector<int> redT, vector<int> blueT)
         }  
     } */
     //validate gpx
-    /* if(getFitness(redT) < getFitness(t) || getFitness(blueT) < getFitness(t)){
+    if(getFitness(redT) < getFitness(t) || getFitness(blueT) < getFitness(t)){
         std::cout<<"BUG"<<endl;
         std::cout<<"red "<<getFitness(redT)<<endl;
         std::cout<<"blue "<<getFitness(blueT)<<endl;
         std::cout<<"off "<<getFitness(t)<<endl;
         exit(EXIT_FAILURE);
-    } */
+    }
 
     return t;
 }
