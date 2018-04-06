@@ -158,7 +158,7 @@ private:
     // For the unfeasible partition, a fusion try is executed (the fusion methods are showed below)
     void fusion();
     // Gets the list of entry and exit from all partitions
-    void setAllEntryAndExits();
+    void setAllEntryAndExits(PartitionMap&);
 
     // -----------------------------------------------------------------------------------------------------
     /*  
@@ -243,6 +243,7 @@ private:
     /* 
         Variables
     */
+    PartitionMap candidatePartitions;
     PartitionMap feasiblePartitions;
     PartitionMap unfeasiblePartitions;
     CityMap unitedGraph;

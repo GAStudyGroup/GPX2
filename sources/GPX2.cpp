@@ -17,25 +17,17 @@ vector<int> GPX2::crossover(vector<int> redT, vector<int> blueT)
     // Step 4
     obj.cutCommonEdges();
 
-    for(auto &p : obj.feasiblePartitions){
-        for(string s : p.second->getAccessNodes()){
-            std::cout<<s<<endl;
-            
-        }
-    }
-    
-
     // Step 5
     obj.findAllPartitions();
     obj.cleanInsideAccess();
 
     //the tours are equal if 0, or one of them is better if 
-    if (obj.feasiblePartitions.size() < 2) {
+    if (obj.candidatePartitions.size() < 2) {
         return ((getFitness(redT) < getFitness(blueT)) ? redT : blueT);
     }
 
     // Step 6
-    obj.setAllEntryAndExits();
+    obj.setAllEntryAndExits(obj.candidatePartitions);
     obj.checkAllPartitions();
 
     // Fusion
@@ -304,7 +296,7 @@ void GPX2::findAllPartitions()
                     accessNodes.push_back(idN);
                 }
             }
-            feasiblePartitions.insert(make_pair(id, new Partition(id, vi, accessNodes)));
+            candidatePartitions.insert(make_pair(id, new Partition(id, vi, accessNodes)));
             id++;
         }
     }
@@ -314,7 +306,7 @@ void GPX2::cleanInsideAccess()
 {//Removes de Acess flags from the vertices that connects the partition to itself
 
     //Goes through the partition
-    for (auto& p : feasiblePartitions) {
+    for (auto& p : candidatePartitions) {
         //accessNodesAV - already visited
         vector<string> testedAccessNodes,accessNodesAV;
 
@@ -324,7 +316,7 @@ void GPX2::cleanInsideAccess()
             //If the node doenst have been visited already
             if(find(accessNodesAV.begin(),accessNodesAV.end(),node)==accessNodesAV.end()){
                 //check if node is connected to another partition
-                pair<SearchResult, vector<string>> result = DFS_outside(node, feasiblePartitions);
+                pair<SearchResult, vector<string>> result = DFS_outside(node, candidatePartitions);
 
                 if (result.first == SearchResult::CONNECTED_TO_PARTITION) {
                     testedAccessNodes.push_back(node);
@@ -359,15 +351,14 @@ void GPX2::cleanInsideAccess()
 
 void GPX2::checkAllPartitions()
 {
-    for (auto it = feasiblePartitions.begin(); it != feasiblePartitions.end();) {
-        //If it's not a recombinant partition, remove from the partition list
-        if (!checkPartition((*it).second)) {
-            unfeasiblePartitions.insert(make_pair((*it).first, (*it).second));
-            it = feasiblePartitions.erase(it);
-        } else {
-            it++;
+    for(auto cpart : candidatePartitions){
+        if(checkPartition(cpart.second)){
+            feasiblePartitions.insert(make_pair(cpart.first,cpart.second));
+        }else{
+            unfeasiblePartitions.insert(make_pair(cpart.first,cpart.second));
         }
     }
+    candidatePartitions.clear();
 }
 
 bool GPX2::checkPartition(Partition* partition)
@@ -428,9 +419,9 @@ void GPX2::fusion()
     }
 }
 
-void GPX2::setAllEntryAndExits()
+void GPX2::setAllEntryAndExits(PartitionMap &partitions)
 {
-    for (auto p : feasiblePartitions) {
+    for (auto p : partitions) {
         p.second->setEntryAndExits(getEntryAndExitList(p.second));
     }
 }
@@ -1227,6 +1218,7 @@ GPX2::~GPX2()
     deleteCityMap(red);
     deleteCityMap(blue);
     deleteCityMap(unitedGraph);
+    deletePartitionMap(candidatePartitions);
     deletePartitionMap(feasiblePartitions);
     deletePartitionMap(unfeasiblePartitions);
     partitionsChoosen.clear();

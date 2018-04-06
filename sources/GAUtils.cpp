@@ -43,7 +43,6 @@ bool GAUtils::stop(Population &pop, std::ostream &out) {
     } else if (totalEqual == Config::POP_SIZE) {
         //if all elements are equal ends GA
         out << "\nPopulation converged!" <<endl;
-        cout<<"Ou na converge?"<<endl;
         return (false);
     } else {
         generationsWithoutChange++;
@@ -53,21 +52,15 @@ bool GAUtils::stop(Population &pop, std::ostream &out) {
     if(bestFitness <= Config::BEST_FITNESS){
         // Config::GENERATION_LIMIT = Config::AFTER_BEST;
         out << "\nFound best fitness!" <<endl;
-        cout<<"saiu na found best?"<<endl;
         return (false);
     }
 
     if (generationsWithoutChange >= Config::GENERATION_LIMIT) {
         out << "\nGeneration limit reached!" <<endl;
-
-        cout<<"Ou na gen limit false?"<<endl;
         return (false);
     } else {
-        cout<<"Ou na gen limit true?"<<endl;
         return (true);
     }
-
-    cout<<"está chegando no final da function e não bugando?"<<endl;
 }
 
 void GAUtils::fillPopulation(Population &pop, unsigned popToFill) {
