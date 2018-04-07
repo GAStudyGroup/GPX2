@@ -1,5 +1,5 @@
-#ifndef CITYNODE_HPP
-#define CITYNODE_HPP
+#ifndef NODE_HPP
+#define NODE_HPP
 
 #include <string>
 #include <utility>
@@ -11,15 +11,15 @@ using std::pair;
 using std::string;
 using std::vector;
 
-class CityNode {
+class Node {
 
-    friend ostream& operator<<(ostream&, CityNode&);
+    friend ostream& operator<<(ostream&, Node&);
 
 public:
     //string is the ID of the connected edge and the double is the distance to that node
     using node = pair<string, double>;
 
-    CityNode(string);
+    Node(string);
 
     string getId() const;
     vector<node>& getEdges();
@@ -31,7 +31,7 @@ public:
 
     void addEdge(node);
     void deleteEdge(unsigned);
-    bool operator==(const CityNode&) const;
+    bool operator==(const Node&) const;
 
 private:
     string id;

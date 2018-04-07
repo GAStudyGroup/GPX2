@@ -1,11 +1,12 @@
 #ifndef OPT_HPP
 #define OPT_HPP
 
-#include "CityNode.hpp"
 #include "Utils.hpp"
 
+#include <vector>
 #include <utility>
 
+using std::vector;
 using std::pair;
 
 class Opt{
