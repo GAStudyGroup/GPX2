@@ -2,23 +2,16 @@
 #define IMPORTDATA_H
 
 #include <fstream>
-#include <iostream>
-#include <regex>
-#include <sstream>
-#include <stdlib.h>
+using std::ifstream;
+
 #include <string>
+using std::string;
+
 #include <vector>
+using std::vector;
 
 #include "City.hpp"
 #include "Population.hpp"
-
-using std::cout;
-using std::ifstream;
-using std::ostringstream;
-using std::regex;
-using std::string;
-using std::to_string;
-using std::vector;
 
 class ImportData {
 public:
@@ -50,7 +43,7 @@ private:
     void regexManager(string);
     bool findIgnoredWords(string);
     void reader(string, string);
-    std::vector<std::string> explode(std::string const & s, char delim);
+    vector<string> explode(string const & s, char delim);
 };
 
 #endif

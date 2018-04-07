@@ -1,16 +1,12 @@
 #ifndef GPX2FUSION_HPP
 #define GPX2FUSION_HPP
 
-#include <string>
+
 #include <vector>
-#include <utility>
+using std::vector;
 
 #include "GPX2Structs.hpp"
-#include "GPX2Support.hpp"
-
-using std::string;
-using std::vector;
-using std::make_pair;
+#include "Partition.hpp"
 
 /*  
     Utility Methods- FUSION

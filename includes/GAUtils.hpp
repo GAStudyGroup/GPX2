@@ -1,13 +1,13 @@
 #ifndef GAUTILS_HPP
 #define GAUTILS_HPP
 
-#include <iostream>
+#include <fstream>
+using std::ofstream;
+
+#include <ostream>
+using std::ostream;
 
 #include "Population.hpp"
-#include "Config.hpp"
-#include "GPX2.hpp"
-#include "Opt.hpp"
-#include "ImportData.hpp"
 
 namespace GAUtils{
     auto sortPopulation = [](vector<int> &a, vector<int> &b) { return getFitness(a) < getFitness(b); 
@@ -17,7 +17,7 @@ namespace GAUtils{
     void init(Population &);
 
     //Evaluates the population to decide whether stopping conditions have been met
-    bool stop(Population&,std::ostream &);
+    bool stop(Population&,ostream &);
 
     //If a portion of the population has been imported from the KL, the function populates the population up to the value set in the global Config::POP_SIZE using 2-opt. Otherwise, it generates the entire population using 2-op
     void fillPopulation(Population &, unsigned);
@@ -32,10 +32,10 @@ namespace GAUtils{
     Population crossAllxAllwithNBestAndReset(Population&);
 
     //Log functions
-    std::ofstream* initLogFile();
-    void printHeader(std::ostream&);
-    void printFooter(std::ostream&,Population&,unsigned,unsigned);
-    void printTime(std::ostream&,string,double,double);
+    ofstream* initLogFile();
+    void printHeader(ostream&);
+    void printFooter(ostream&,Population&,unsigned,unsigned);
+    void printTime(ostream&,string,double,double);
 }
 
 #endif

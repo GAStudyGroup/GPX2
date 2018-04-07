@@ -2,18 +2,18 @@
 #define GPX2SUPPORT_HPP
 
 #include <string>
-#include <deque>
-#include <algorithm>
+using std::string;
+
+#include <utility>
+using std::pair;
+
+#include <vector>
+using std::vector;
 
 #include "GPX2Structs.hpp"
 #include "Node.hpp"
-#include "Utils.hpp"
+#include "Partition.hpp"
 
-using std::string;
-using std::deque;
-using std::find;
-using std::size_t;
-using std::to_string;
 
 /*  
 -------------------------------------------------------------------------------------------------------------

@@ -1,30 +1,22 @@
 #ifndef POPULATION_H
 #define POPULATION_H
 
-#include <fstream>
-#include <limits>
 #include <vector>
+using std::vector;
+
+#include <ostream>
+using std::ostream;
 
 #include "Utils.hpp"
 
-using std::numeric_limits;
-using std::ofstream;
-using std::ostream;
-using std::vector;
-
 class Population {
-
     friend ostream& operator<<(ostream&, Population&);
-
 public:
     Population();
 
     vector<vector<int>>& getPopulation();
 
     int bestFitness();
-
-    void writeBestTour(ofstream&);
-
 private:
     vector<vector<int>> population;
 };

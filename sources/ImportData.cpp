@@ -1,12 +1,25 @@
 #include "ImportData.hpp"
 #include "Config.hpp"
 
-extern Config::type TYPE;
+#include <regex>
+using std::regex;
+
+#include <iostream>
+using std::cout;
+using std::endl;
+
+
+#include <sstream>
+using std::ostringstream;
+
+//from string
+using std::to_string;
+using std::stod;
+using std::stoi;
 
 ImportData::ImportData(string nome)
 {
     string input;
-    // cout << "Importando Arquivo \n";
     myfile.open(nome + ".tsp");
     if (!myfile.is_open()) {
         cout << "Falha na leitura do arquivo" << endl;
@@ -74,7 +87,7 @@ void ImportData::reader(string flag, string input)
         //cout << input << " is a comment! \n";
     } else if (flag == "dimension") {
         //cout << input << " is a dimension! \n";
-        citiescoord.reserve(std::stoi(input));
+        citiescoord.reserve(stoi(input));
         flagaux = "wait for number";
     } else if (flag == "edge_type") {
         edge_type = input;
@@ -84,13 +97,13 @@ void ImportData::reader(string flag, string input)
         node_comment = input;
         //cout << input << " is an node_comment! \n";
     } else if (flag == "number" && flagaux == "wait for number") {
-        int id = std::stod(input);
+        int id = stod(input);
         //cout << "I: " << input;
         myfile >> input;
-        double x = std::stod(input);
+        double x = stod(input);
         //cout << "\t X: " << input;
         myfile >> input;
-        double y = std::stod(input);
+        double y = stod(input);
         //cout << "\t Y: " << input << "\n";
         citiescoord.push_back(City(id, x, y));
     }
@@ -147,13 +160,13 @@ string ImportData::getcomment()
 
 void ImportData::setEdge_Type(string type){
     if(!type.compare("EUC_2D")){
-        TYPE = Config::EUC_2D;
+        Config::TYPE = Config::type::EUC_2D;
     }else if(!type.compare("GEO")){
-        TYPE = Config::GEO;
+        Config::TYPE = Config::type::GEO;
     }else if(!type.compare("ATT")){
-        TYPE = Config::ATT;
+        Config::TYPE = Config::type::ATT;
     }else{
-        cout<<"Tipo de distancia desconhecido"<<endl;
+        cout<<"Unknown edge type."<<endl;
         exit(0);
     }
 
@@ -175,7 +188,7 @@ Population ImportData::importFirstPopulation(string name, unsigned popSize)
 
         vector<int> newT;
         newT.reserve(popSize);
-        auto ss = std::ostringstream{};
+        auto ss = ostringstream{};
         ss <<file.rdbuf();
         auto cities = explode(ss.str(),'\n');
         //while (file >> word) {

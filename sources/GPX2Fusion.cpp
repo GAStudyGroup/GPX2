@@ -1,4 +1,14 @@
 #include "GPX2Fusion.hpp"
+#include "GPX2Support.hpp"
+
+#include <algorithm>
+using std::find;
+
+#include <string>
+using std::string;
+
+#include <utility>
+using std::make_pair;
 
 void GPX2Fusion::checkUnfeasiblePartitions(GPX2Structs::PartitionMap &fpartition, GPX2Structs::PartitionMap &ufpartition, GPX2Structs::NodeMap &red, GPX2Structs::NodeMap &blue)
 { // Função que irá verificar se foi gerada alguma partição feasible durante a fusão

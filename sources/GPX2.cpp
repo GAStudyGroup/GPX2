@@ -1,5 +1,16 @@
 #include "GPX2.hpp"
-#include "Config.hpp"
+#include "Utils.hpp"
+#include "GPX2Support.hpp"
+#include "GPX2Fusion.hpp"
+
+#include <set>
+using std::set;
+
+#include <algorithm>
+using std::remove;
+
+#include <utility>
+using std::make_pair;
 
 vector<int> GPX2::crossover(vector<int> redT, vector<int> blueT)
 {
@@ -28,7 +39,7 @@ vector<int> GPX2::crossover(vector<int> redT, vector<int> blueT)
     obj.checkAllPartitions();
 
     // Fusion
-    //It's needed to have more than one unfeasible partition to fuse them
+    // It's needed to have more than one unfeasible partition to fuse them
     if (obj.unfeasiblePartitions.size() > 1) {
         obj.fusion();
     }
@@ -45,28 +56,7 @@ vector<int> GPX2::crossover(vector<int> redT, vector<int> blueT)
 
 
     // Step 9
-    vector<int> t;
-    t = obj.convertChoosenChild();
-
-    //testing one partition gpx
-    /* if(obj.feasiblePartitions.size() == 1){
-        if(getFitness(redT) > getFitness(t) && getFitness(blueT) > getFitness(t)){
-            std::cout<<"fez gpx com uma partição e melhorou"<<endl;
-            std::cout<<"red "<<getFitness(redT)<<endl;
-            std::cout<<"blue "<<getFitness(blueT)<<endl;
-            std::cout<<"off "<<getFitness(t)<<endl;
-        }  
-    } */
-    //validate gpx
-    if(getFitness(redT) < getFitness(t) || getFitness(blueT) < getFitness(t)){
-        std::cout<<"BUG"<<endl;
-        std::cout<<"red "<<getFitness(redT)<<endl;
-        std::cout<<"blue "<<getFitness(blueT)<<endl;
-        std::cout<<"off "<<getFitness(t)<<endl;
-        exit(EXIT_FAILURE);
-    }
-
-    return t;
+    return obj.convertChoosenChild();
 }
 
 // -----------------------------------------------------------------------------

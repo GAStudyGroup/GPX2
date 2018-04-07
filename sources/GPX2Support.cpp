@@ -1,4 +1,17 @@
 #include "GPX2Support.hpp"
+#include "Utils.hpp"
+
+#include <deque>
+using std::deque;
+
+#include <algorithm>
+using std::find;
+
+//From string
+using std::to_string;
+
+//from utility
+using std::make_pair;
 
 bool GPX2Support::checkPartition(Partition* partition, GPX2Structs::NodeMap &red, GPX2Structs::NodeMap &blue)
 {
@@ -364,27 +377,26 @@ int GPX2Support::partialDistance(string entry, string exit, GPX2Structs::NodeMap
 
 void GPX2Support::printMap(GPX2Structs::NodeMap& graph, std::ostream& stream)
 {
-    stream << "size: " << graph.size() << endl;
+    stream << "size: " << graph.size() << "\n";
     for (map<string, Node*>::iterator it = graph.begin(); it != graph.end(); it++) {
-        stream << " " << it->first << " | " << graph[it->first]->getId() << endl;
+        stream << " " << it->first << " | " << graph[it->first]->getId() <<  "\n";
         if (it->second->getAccess()) {
-            stream << "Access: " << true << endl;
+            stream << "Access: " << true <<  "\n";
         } else {
-            stream << "Access: " << false << endl;
+            stream << "Access: " << false <<  "\n";
         }
-        stream << "==================================" << endl;
+        stream << "==================================\n";
 
-        stream << "connections: " << it->second->getEdges().size() << endl;
+        stream << "connections: " << it->second->getEdges().size() <<  "\n";
         for (unsigned i = 0; i < it->second->getEdges().size(); i++) {
             stream << "Edge " << i << ": " << graph[it->second->getEdges()[i].first]->getId();
             stream << "\t#\t";
-            stream << "Distance: " << it->second->getEdges()[i].second << endl;
+            stream << "Distance: " << it->second->getEdges()[i].second << "\n";
         }
-        stream << "----------------------------------" << endl;
-        stream << endl;
+        stream << "----------------------------------\n";
     }
 
-    stream << "______________________________________________________________THE DIVISION______________________________________________________________" << endl;
+    stream << "______________________________________________________________THE DIVISION______________________________________________________________\n";
 
     deque<string> nextToVisit;
     vector<string> isAlreadyVisited;
@@ -394,12 +406,12 @@ void GPX2Support::printMap(GPX2Structs::NodeMap& graph, std::ostream& stream)
     Node* city = graph.begin()->second; // Reduzir chamadas (Node dentro do map)
 
     isAlreadyVisited.push_back(graph.begin()->first);
-    stream << graph.begin()->first << endl;
+    stream << graph.begin()->first << "\n";
     nextToVisit.push_back(city->getEdges()[0].first);
 
     while (!nextToVisit.empty()) {
 
-        stream << nextToVisit.front() << endl;
+        stream << nextToVisit.front() << "\n";
         isAlreadyVisited.push_back(nextToVisit.front());
         city = graph[nextToVisit.front()];
         nextToVisit.pop_front();
@@ -414,14 +426,15 @@ void GPX2Support::printMap(GPX2Structs::NodeMap& graph, std::ostream& stream)
             }
         }
     }
-    stream << "size " << isAlreadyVisited.size() << endl;
-    stream << "map size " << graph.size() << endl;
+    stream << "size " << isAlreadyVisited.size() << "\n";
+    stream << "map size " << graph.size() << "\n";
+    stream.flush();
 }
 
 void GPX2Support::removeGhosts(GPX2Structs::NodeMap& graph)
 {
     for (auto it = graph.begin();it!=graph.end();) {
-        size_t index = (*it).first.find(GPX2Structs::ghostToken);
+        auto index = (*it).first.find(GPX2Structs::ghostToken);
         if (index != string::npos) {
             // gets the id of the node without the ghost token
             string id = (*it).first;

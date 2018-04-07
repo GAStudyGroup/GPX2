@@ -1,14 +1,16 @@
 #ifndef NODE_HPP
 #define NODE_HPP
 
+#include <ostream>
+using std::ostream;
+
 #include <string>
-#include <utility>
-#include <vector>
-
-#include "City.hpp"
-
-using std::pair;
 using std::string;
+
+#include <utility>
+using std::pair;
+
+#include <vector>
 using std::vector;
 
 class Node {

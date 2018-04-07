@@ -2,15 +2,18 @@
 #define GPX2STRUCTS_HPP
 
 #include <map>
+using std::map;
+
 #include <string>
+using std::string;
 
 #include "Node.hpp"
 #include "Partition.hpp"
 
-using std::map;
-using std::string;
-
 namespace GPX2Structs{
+    //ghost token used in GPX2
+    const string ghostToken = "-";
+
     // Mainly used data structures
     using PartitionMap = map<int, Partition*>;
     using NodeMap = map<string, Node*>;
@@ -33,7 +36,6 @@ namespace GPX2Structs{
         {
         }
     };
-
     // Enum that classifies the possibilites of the DFS(Depth First Searh) return
     enum class SearchResult { CONNECTED_TO_PARTITION,
         CONNECTED_TO_SELF,
@@ -41,12 +43,7 @@ namespace GPX2Structs{
         IS_NOT_CONNECTED };
 
     // Enum to store the parents symbols
-    enum class Parent { RED,
-        BLUE };
-
-    // -------------------------------------------------
-
-    const string ghostToken = "-";
+    enum class Parent { RED, BLUE };
 };
 
 #endif

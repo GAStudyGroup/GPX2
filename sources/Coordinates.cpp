@@ -1,5 +1,12 @@
 #include "Coordinates.hpp"
 
+#include <algorithm>
+using std::find_if;
+using std::transform;
+
+#include <iterator>
+using std::back_inserter;
+
 Coordinates::Coordinates() {}
 
 Coordinates::Coordinates(vector<City> data)
@@ -10,9 +17,6 @@ Coordinates::Coordinates(vector<City> data)
 vector<int> Coordinates::getCityList()
 {
     vector<int> tmp;
-    /* for(City c : cityList){
-        tmp.push_back(c.getId());
-    } */
     transform(cityList.begin(),cityList.end(),back_inserter(tmp),[](const City &c){return c.getId();});
     return (tmp);
 }
@@ -28,8 +32,6 @@ City Coordinates::getCityById(const int id)
     if (it != cityList.end()) {
         return (*it);
     } else {
-        //tirar warning
-        //retorna cidade com id 0
         return (City());
     }
 }

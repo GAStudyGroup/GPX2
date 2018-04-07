@@ -1,25 +1,31 @@
-#include <algorithm>
-#include <cmath>
 #include <cstdlib>
+using std::srand;
+
 #include <ctime>
+//time
+
 #include <fstream>
+using std::ofstream;
+
 #include <iostream>
+using std::cout;
+using std::endl;
+
 #include <chrono>
+//chrono
+
 #include <stdexcept>
+using std::invalid_argument;
+
+#include <string>
+using std::stof;
+using std::stoi;
 
 #include "Config.hpp"
 #include "Population.hpp"
-#include "Utils.hpp"
 #include "GAUtils.hpp"
 #include "Arg.hpp"
 
-using std::cout;
-using std::endl;
-using std::invalid_argument;
-using std::srand;
-using std::stof;
-using std::stoi;
-using std::ofstream;
 
 // inicia o algoritmo genético
 void GA();

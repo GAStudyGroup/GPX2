@@ -1,17 +1,20 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
-#include <utility> 
-#include <cmath>
 #include <string>
-#include <iostream>
-#include <vector>
+using std::string;
 
-int getFitness(const std::vector<int>&);
-std::ostream& printTour(const std::vector<int>&, std::ostream&);
+#include <ostream>
+using std::ostream;
+
+#include <vector>
+using std::vector;
+
+int getFitness(const vector<int>&);
+ostream& printTour(const vector<int>&, ostream&);
 
 int distance(int,int);
-int distance(std::string,std::string);
+int distance(string,string);
 
 int EUC_2D(int,int);
 int GEO(int,int);

@@ -1,11 +1,10 @@
 #include "Utils.hpp"
-#include "Config.hpp"
+#include "Config.hpp" 
 #include "City.hpp"
-#include <iostream>
 
-extern Config::type TYPE;
+#include <cmath>
 
-int getFitness(const std::vector<int> &t)
+int getFitness(const vector<int> &t)
 { // Calculate fitness of tour
     int sum{0};
     unsigned size{(unsigned)t.size()};
@@ -15,22 +14,23 @@ int getFitness(const std::vector<int> &t)
     return(sum);
 }
 
-std::ostream& printTour(const std::vector<int> &t, std::ostream &output){
+ostream& printTour(const vector<int> &t, ostream &output){
     output<<"===================================================\n";
     for (int cityId : t) {
         output << cityId << " ";
     }
     output << "\nFitness: " << getFitness(t) << "\n";
+    output.flush();
     return (output);
 }
 
-int distance(std::string p1, std::string p2){
+int distance(string p1, string p2){
     int tmp1{stoi(p1)},tmp2{stoi(p2)};
     return(distance(tmp1,tmp2));
 }
 
 int distance(int p1,int p2){
-    switch(TYPE){
+    switch(Config::TYPE){
         case Config::type::EUC_2D:{
             return(EUC_2D(p1,p2));
         }
@@ -77,10 +77,6 @@ int GEO(int p1,int p2){
     }
 
     double q1 = cos(lng_1 - lng_2), q2 = cos(lat_1 - lat_2), q3 = cos(lat_1 + lat_2);
-
-    // std::cout<<"q1 "<<q1<<endl;
-    // std::cout<<"q2 "<<q2<<endl;
-    // std::cout<<"q3 "<<q3<<endl;
 
     return(round((RRR*acos(0.5*((1.0+q1)*q2 - (1.0-q1)*q3)))+1.0));
 }

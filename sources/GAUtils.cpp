@@ -1,5 +1,21 @@
 #include "GAUtils.hpp"
 
+#include <iostream>
+using std::cout;
+using std::endl;
+
+#include <string>
+using std::to_string;
+
+#include <algorithm>
+using std::sort;
+using std::random_shuffle;
+
+#include "Config.hpp"
+#include "Opt.hpp"
+#include "GPX2.hpp"
+#include "ImportData.hpp"
+
 /* 
 
     separar a lambda de dar sort na population pela fitness, está sendo usada em 3 lugares diferentes;
@@ -22,7 +38,7 @@ void GAUtils::init(Population &pop){
     GAUtils::fillPopulation(pop, fillPop);
 }
 
-bool GAUtils::stop(Population &pop, std::ostream &out) {
+bool GAUtils::stop(Population &pop, ostream &out) {
     unsigned static generationsWithoutChange{0};
     unsigned static bestFitness{(unsigned)pop.bestFitness()};
     
@@ -42,7 +58,8 @@ bool GAUtils::stop(Population &pop, std::ostream &out) {
         generationsWithoutChange = 0;
     } else if (totalEqual == Config::POP_SIZE) {
         //if all elements are equal ends GA
-        out << "\nPopulation converged!" <<endl;
+        out << "\nPopulation converged!";
+        out.flush();
         return (false);
     } else {
         generationsWithoutChange++;
@@ -51,12 +68,14 @@ bool GAUtils::stop(Population &pop, std::ostream &out) {
     //If the current fitness is equal to or less than the best known, it decreases the number of generations to stop AG
     if(bestFitness <= Config::BEST_FITNESS){
         // Config::GENERATION_LIMIT = Config::AFTER_BEST;
-        out << "\nFound best fitness!" <<endl;
+        out << "\nFound best fitness!";
+        out.flush();
         return (false);
     }
 
     if (generationsWithoutChange >= Config::GENERATION_LIMIT) {
-        out << "\nGeneration limit reached!" <<endl;
+        out << "\nGeneration limit reached!";
+        out.flush();
         return (false);
     } else {
         return (true);
@@ -153,12 +172,12 @@ Population GAUtils::crossAllxAllwithNBestAndReset(Population &pop){
     return newPop;
 }
 
-std::ofstream* GAUtils::initLogFile(){
+ofstream* GAUtils::initLogFile(){
     string logName{"Logs/"+to_string(Config::NEW_POP_TYPE)+"/log_"+to_string(Config::ID)+"_"+Config::NAME+"_"+to_string(Config::POP_SIZE)+(Config::LK_PERCENTAGE>0?("_LK"):(""))+".log"};
 
     ofstream *logFile = new ofstream(logName);
     if(!logFile->is_open()){
-        std::cout<<"falha na abertura do arquivo de log"<<std::endl;
+        cout<<"falha na abertura do arquivo de log"<<endl;
         exit(0);
     }
 
@@ -166,7 +185,7 @@ std::ofstream* GAUtils::initLogFile(){
 }
 
 
-void GAUtils::printHeader(std::ostream &out){
+void GAUtils::printHeader(ostream &out){
     out << "Run id: "+to_string(Config::ID)+"\nGenetic Algoritm for problem "+Config::NAME+" with population size "+to_string(Config::POP_SIZE);
     out << (Config::LK_PERCENTAGE>0?(", using "+to_string(Config::LK_PERCENTAGE*100)+"% of LK generated tours"):(""));
     out <<"\nUsing new generation method: ";
@@ -185,10 +204,10 @@ void GAUtils::printHeader(std::ostream &out){
         }
     }
     out<<"\nBest known solution: "<<to_string(Config::BEST_FITNESS)<<".";
-    out<<endl;
+    out.flush();
 }
 
-void GAUtils::printFooter(std::ostream &out,Population &pop,unsigned gen,unsigned best){
+void GAUtils::printFooter(ostream &out,Population &pop,unsigned gen,unsigned best){
     out << "\nTHE END\n";
     out << "First best fitness: " << best << "\n";
     out << "Gen " << gen << " best fitness " << pop.bestFitness() << "\n";
@@ -201,14 +220,15 @@ void GAUtils::printFooter(std::ostream &out,Population &pop,unsigned gen,unsigne
         printTour(t,out);
         out<<"\n";
     }
-    out<<endl;
+    out.flush();
 }
 
-void GAUtils::printTime(std::ostream &out, std::string txt, double milli, double sec){
+void GAUtils::printTime(ostream &out, string txt, double milli, double sec){
     out << "\n"+txt+"\n";
     out << "\t" << milli << " milliseconds.\n";
     out << "\t" << sec << " seconds.\n";
-    out << "\t" << (sec/60.0) << " minutes." << endl;
+    out << "\t" << (sec/60.0) << " minutes.";
+    out.flush();
 }
 
 /* vector<City> nearestNeighbor() {

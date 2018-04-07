@@ -1,24 +1,14 @@
 #ifndef GPX2_HPP
 #define GPX2_HPP
 
-#include <fstream>
-#include <iterator>
-#include <map>
-#include <set>
+
 #include <string>
-#include <iostream>
-
-#include "Node.hpp"
-#include "Partition.hpp"
-#include "GPX2Structs.hpp"
-#include "GPX2Support.hpp"
-#include "GPX2Fusion.hpp"
-
-using std::make_pair;
-using std::map;
-using std::remove;
-using std::set;
 using std::string;
+
+#include <vector>
+using std::vector;
+
+#include "GPX2Structs.hpp"
 
 class GPX2 {
 

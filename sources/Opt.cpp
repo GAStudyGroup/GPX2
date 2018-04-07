@@ -1,11 +1,6 @@
 #include "Opt.hpp"
 
-#include <iostream>
 #include <algorithm>
-#include <utility> 
-
-#include "Config.hpp"
-
 using std::find;
 using std::reverse;
 

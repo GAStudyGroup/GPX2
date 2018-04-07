@@ -4,9 +4,9 @@
 #include "Utils.hpp"
 
 #include <vector>
-#include <utility>
-
 using std::vector;
+
+#include <utility>
 using std::pair;
 
 class Opt{

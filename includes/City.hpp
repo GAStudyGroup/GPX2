@@ -2,8 +2,6 @@
 #define CITY_HPP
 
 #include <ostream>
-
-using std::endl;
 using std::ostream;
 
 class City {

@@ -1,6 +1,9 @@
 #include "Population.hpp"
 #include <iostream>
 
+#include <limits>
+using std::numeric_limits;
+
 Population::Population() {}
 
 vector<vector<int>>& Population::getPopulation() { return (population); }
@@ -27,15 +30,4 @@ ostream& operator<<(ostream& output, Population& pop)
         ++i;
     }
     return (output);
-}
-
-void Population::writeBestTour(ofstream& file)
-{
-    int fitness = bestFitness();
-    for (vector<int> t : population) {
-        if (getFitness(t) == fitness) {
-            printTour(t,file);
-            file<<"\n";
-        }
-    }
 }

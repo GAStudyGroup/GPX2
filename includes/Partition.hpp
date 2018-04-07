@@ -2,14 +2,17 @@
 #define PARTITION_H
 
 #include <ostream>
-#include <string>
-#include <utility>
-#include <vector>
-
 using std::ostream;
-using std::pair;
+
+#include <string>
 using std::string;
+
+#include <utility>
+using std::pair;
+
+#include <vector>
 using std::vector;
+
 
 class Partition {
 

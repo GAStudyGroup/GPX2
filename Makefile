@@ -7,7 +7,7 @@
 
 CC := g++ -std=gnu++17
 
-CFLAGS := -fsanitize=leak -fsanitize=address -Wall -O3
+CFLAGS := -fsanitize=leak -fsanitize=address -Wall -O3 #-DDEBUG -g
 INC_FOLDER := -I includes
 SRC_FOLDER := sources
 HISTORY := history
