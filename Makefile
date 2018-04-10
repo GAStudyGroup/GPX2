@@ -1,36 +1,76 @@
-#
-#	"sources" folder contains the .cpp files
-#	"includes" folder contains the .hpp files
-#	
-#	Makefile configs
-#
+app = GPX2
 
-CC := g++ -std=gnu++17
+srcExt = cpp
+srcDir = src
+objDir = obj
+binDir = bin
+inc = $(shell find -type f -iname "*.hpp" -printf "%h\n" | sort -u)
 
-CFLAGS := -fsanitize=leak -fsanitize=address -Wall -O3 #-DDEBUG -g
-INC_FOLDER := -I includes
-SRC_FOLDER := sources
-HISTORY := history
+debug = 1
 
-EXE_OUT := bin/GA
-DIST_OUT := bin/dist
+CFlags = -Wall -std=gnu++17
+LDFlags =
+libs =
+libDir =
 
-SOURCES := $(shell find $(SRC_FOLDER) -type f -name *.cpp)
+#************************ DO NOT EDIT BELOW THIS LINE! ****************
+ifeq ($(debug),1)
+	debug=-g
+else
+	debug=
+endif
 
-all: $(EXE_OUT)
-	@mkdir -p Logs
-	@mkdir -p bin
+inc := $(addprefix -I,$(inc))
+libs := $(addprefix -l,$(libs))
+libDir := $(addprefix -L,$(libDir))
+CFlags += -c $(debug) $(inc) $(libDir) $(libs)
+sources := $(shell find $(srcDir) -name '*.$(srcExt)')
+srcDirs := $(shell find . -name '*.$(srcExt)' -exec dirname {} \; | uniq)
+objects := $(patsubst %.$(srcExt),$(objDir)/%.o,$(sources))
 
-$(EXE_OUT): $(SOURCES:.cpp=.o)
-	$(CC) -o $@ $^ $(CFLAGS) 
+ifeq ($(srcExt),cpp)
+	CC = $(CXX)
+else
+	CFlags += -std=gnu99
+endif
 
-%.o: %.cpp
-	$(CC) -c $< $(INC_FOLDER) -o $@ $(CFLAGS)
+.phony: all clean distclean
+	
+all: $(binDir)/$(app)
+
+$(binDir)/$(app): buildrepo $(objects)
+	@mkdir -p `dirname $@`
+	@echo "Linking $@..."
+	$(CC) $(objects) $(LDFlags) -o $@
+
+$(objDir)/%.o: %.$(srcExt)
+	@echo "Generating dependencies for $<..."
+	@$(call make-depend,$<,$@,$(subst .o,.d,$@))
+	@echo "Compiling $<..."
+	$(CC) $(CFlags) $< -o $@
 
 clean:
-	-rm -f $(SRC_FOLDER)/*.o *.d
+	$(RM) -r $(objDir)
 
--include $(SOURCES:.cpp=.d)
+distclean: clean
+	$(RM) -r $(binDir)/$(app)
 
-%.d: %.cpp
-	@g++ $< -MM -MT '$*.o $*.d ' -MD $(INC_FOLDER)
+buildrepo:
+	@$(call make-repo)
+
+define make-repo
+	for dir in $(srcDirs); \
+	do \
+	mkdir -p $(objDir)/$$dir; \
+	done
+endef
+
+# usage: $(call make-depend,source-file,object-file,depend-file)
+define make-depend
+	$(CC) -MM       \
+				-MF $3    \
+				-MP       \
+				-MT $2    \
+				$(CFlags) \
+				$1
+endef

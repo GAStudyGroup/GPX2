@@ -15,7 +15,7 @@ using std::endl;
 //chrono
 
 #include <stdexcept>
-using std::invalid_argument;
+using std::invalid_argument; 
 
 #include <string>
 using std::stof;
