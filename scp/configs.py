@@ -31,5 +31,5 @@ NUMBER_OF_RUNS = 1
 TOURS = ['berlin52']
 
 #Path to TSP folder and executables, change only if you change the project folder structure
-LIBS_PATH = "./lib/"
+LIBS_PATH = "tsp/"
 BIN_PATH = "bin/"

@@ -10,5 +10,5 @@ bin/*
 
 .vscode/
 
-scripts/__pycache__/*
+scp/__pycache__/*
 obj/*

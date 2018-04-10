@@ -68,7 +68,7 @@ bool GAUtils::stop(Population &pop, ostream &out) {
     //If the current fitness is equal to or less than the best known, it decreases the number of generations to stop AG
     if(bestFitness <= Config::BEST_FITNESS){
         // Config::GENERATION_LIMIT = Config::AFTER_BEST;
-        out << "\nFound best fitness!";
+        out << "\nFound best fitness!\n";
         out.flush();
         return (false);
     }
@@ -173,7 +173,7 @@ Population GAUtils::crossAllxAllwithNBestAndReset(Population &pop){
 }
 
 ofstream* GAUtils::initLogFile(){
-    string logName{"Logs/"+to_string(Config::NEW_POP_TYPE)+"/log_"+to_string(Config::ID)+"_"+Config::NAME+"_"+to_string(Config::POP_SIZE)+(Config::LK_PERCENTAGE>0?("_LK"):(""))+".log"};
+    string logName{"log/"+to_string(Config::NEW_POP_TYPE)+"/log_"+to_string(Config::ID)+"_"+Config::NAME+"_"+to_string(Config::POP_SIZE)+(Config::LK_PERCENTAGE>0?("_LK"):(""))+".log"};
 
     ofstream *logFile = new ofstream(logName);
     if(!logFile->is_open()){
@@ -203,7 +203,7 @@ void GAUtils::printHeader(ostream &out){
             break;
         }
     }
-    out<<"\nBest known solution: "<<to_string(Config::BEST_FITNESS)<<".";
+    out<<"\nBest known solution: "<<to_string(Config::BEST_FITNESS)<<".\n";
     out.flush();
 }
 
@@ -227,7 +227,7 @@ void GAUtils::printTime(ostream &out, string txt, double milli, double sec){
     out << "\n"+txt+"\n";
     out << "\t" << milli << " milliseconds.\n";
     out << "\t" << sec << " seconds.\n";
-    out << "\t" << (sec/60.0) << " minutes.";
+    out << "\t" << (sec/60.0) << " minutes.\n";
     out.flush();
 }
 

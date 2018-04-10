@@ -34,7 +34,7 @@ else
 	CFlags += -std=gnu99
 endif
 
-.phony: all clean distclean
+.phony: all clean cleanbin
 	
 all: $(binDir)/$(app)
 
@@ -52,7 +52,7 @@ $(objDir)/%.o: %.$(srcExt)
 clean:
 	$(RM) -r $(objDir)
 
-distclean: clean
+cleanbin: clean
 	$(RM) -r $(binDir)/$(app)
 
 buildrepo:
