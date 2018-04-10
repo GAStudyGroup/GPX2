@@ -1,5 +1,5 @@
 #include "Utils.hpp"
-#include "Config.hpp" 
+#include "Globals.hpp" 
 #include "City.hpp"
 
 #include <cmath>
@@ -47,14 +47,14 @@ int distance(int p1,int p2){
 }
 
 int EUC_2D(int p1,int p2){
-    City c1{Config::map.getCityById(p1)},c2{Config::map.getCityById(p2)};
+    City c1{Globals::map.getCityById(p1)},c2{Globals::map.getCityById(p2)};
     return (round(
     sqrt(pow((c1.getX() - c2.getX()), 2)+pow((c1.getY() - c2.getY()), 2))));
 }
 
 int GEO(int p1,int p2){
     // double PI{3.141592};
-    City c1{Config::map.getCityById(p1)},c2{Config::map.getCityById(p2)};
+    City c1{Globals::map.getCityById(p1)},c2{Globals::map.getCityById(p2)};
     double PI{M_PI};
     double RRR{6378.388};
     double lat_1,lng_1,lat_2,lng_2;
@@ -82,7 +82,7 @@ int GEO(int p1,int p2){
 }
 
 int ATT(int p1,int p2){
-    City c1{Config::map.getCityById(p1)},c2{Config::map.getCityById(p2)};
+    City c1{Globals::map.getCityById(p1)},c2{Globals::map.getCityById(p2)};
     double dX{c1.getX() - c2.getX()},dY{c1.getY()-c2.getY()},rij,tij;
     rij = sqrt((dX*dX + dY*dY)/10.0);
     tij = round(rij);

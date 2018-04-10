@@ -1,5 +1,5 @@
 #include "ImportData.hpp"
-#include "Config.hpp"
+#include "Globals.hpp"
 
 #include <regex>
 using std::regex;

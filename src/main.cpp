@@ -1,5 +1,5 @@
-#include <cstdlib>
-using std::srand;
+#include <random>
+using std::random_device;
 
 #include <ctime>
 //time
@@ -21,7 +21,7 @@ using std::invalid_argument;
 using std::stof;
 using std::stoi;
 
-#include "Config.hpp"
+#include "Globals.hpp"
 #include "Population.hpp"
 #include "GAUtils.hpp"
 #include "Arg.hpp"
@@ -42,7 +42,8 @@ void GA();
 // ex: GA -name berlin52 -size 100
 
 int main(int argc, char *argv[]) {
-    srand(time(NULL));
+    random_device rng;
+    Globals::urng.seed(rng());
 
     string NAME = "name";
     string SIZE = "size";

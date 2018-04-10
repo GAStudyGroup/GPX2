@@ -36,7 +36,7 @@ objDir = obj
 binDir = bin
 inc = $(shell find -type f -iname "*.hpp" -printf "%h\n" | sort -u)
 
-debug = 1
+debug = 0
 
 CFlags = -Wall -std=gnu++17
 LDFlags =
@@ -68,15 +68,14 @@ endif
 	
 all: $(binDir)/$(app)
 
+$(binDir)/$(app): COM_STRING = "Linking"
 $(binDir)/$(app): buildrepo $(objects)
 	@mkdir -p `dirname $@`
-	@echo "Linking $@..."
 	@$(call run_and_test, $(CC) $(objects) $(LDFlags) -o $@)
 
+$(objDir)/%.o: COM_STRING = "Compiling"
 $(objDir)/%.o: %.$(srcExt)
-	@echo "Generating dependencies for $<..."
 	@$(call make-depend,$<,$@,$(subst .o,.d,$@))
-	@echo "Compiling $<..."
 	@$(call run_and_test, $(CC) $(CFlags) $< -o $@)
 
 clean:

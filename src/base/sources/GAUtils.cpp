@@ -9,23 +9,17 @@ using std::to_string;
 
 #include <algorithm>
 using std::sort;
-using std::random_shuffle;
+using std::shuffle;
 
-#include "Config.hpp"
+#include "Globals.hpp"
 #include "Opt.hpp"
 #include "GPX2.hpp"
 #include "ImportData.hpp"
 
-/* 
-
-    separar a lambda de dar sort na population pela fitness, está sendo usada em 3 lugares diferentes;
-
-*/
-
 void GAUtils::init(Population &pop){
     //Import the map
     ImportData dataFile(Config::LIB_PATH+Config::NAME);
-    Config::map.setCityList(dataFile.getCitiesCoord());
+    Globals::map.setCityList(dataFile.getCitiesCoord());
 
     //Import the first population from LK
     unsigned lkPop = Config::POP_SIZE * Config::LK_PERCENTAGE; 
@@ -85,8 +79,8 @@ bool GAUtils::stop(Population &pop, ostream &out) {
 void GAUtils::fillPopulation(Population &pop, unsigned popToFill) {
     for (unsigned i = 0; i < popToFill; i++) {
         // Tour t(nearestNeighbor(map));
-        vector<int> t(Config::map.getCityList());
-        random_shuffle(t.begin(), t.end());
+        vector<int> t(Globals::map.getCityList());
+        shuffle(t.begin(), t.end(),Globals::urng);
         t = Opt::optimize(t); 
         pop.getPopulation().push_back(t);
     } 

@@ -4,6 +4,9 @@
 #include <string>
 using std::string;
 
+#include <random>
+using std::mt19937;
+
 //used for map
 #include "Coordinates.hpp"
 
@@ -13,8 +16,6 @@ namespace Config{
     extern unsigned AFTER_BEST;
 
     extern unsigned GENERATION_LIMIT;
-
-    extern Coordinates map;
 
     //Arguments
     extern unsigned ID;
@@ -26,6 +27,11 @@ namespace Config{
     extern unsigned BEST_FITNESS;
     extern type TYPE;
     extern unsigned N_BEST;
+}
+
+namespace Globals{
+    extern mt19937 urng;
+    extern Coordinates map;
 }
 
 
