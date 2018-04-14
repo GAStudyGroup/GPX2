@@ -10,8 +10,9 @@ unsigned        Config::NEW_POP_TYPE{1};
 double          Config::LK_PERCENTAGE{0};
 unsigned        Config::POP_SIZE{0};
 unsigned        Config::BEST_FITNESS{0};
-unsigned        Config::GENERATION_LIMIT{500};
+unsigned        Config::GENERATION_LIMIT{200};
 double          Config::RESET_PERCENTAGE{0.5};
+unsigned        Config::NEW_TOUR_MODE{0};
 
 mt19937         Globals::urng;
 Coordinates     Globals::map;

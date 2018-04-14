@@ -1,12 +1,5 @@
 #include "GAUtils.hpp"
 
-#include <iostream>
-using std::cout;
-using std::endl;
-
-#include <string>
-using std::to_string;
-
 #include <algorithm>
 using std::sort;
 using std::shuffle;
@@ -37,7 +30,7 @@ void GAUtils::init(Population &pop){
     }
 
     //fill the rest of the population with 2-opt
-    GAUtils::fillPopulation(pop, fillPop);
+    GAUtils::fillPopulationWithReset(pop, fillPop);
 }
 
 bool GAUtils::stop(Population &pop, ostream &out) {
@@ -84,16 +77,30 @@ bool GAUtils::stop(Population &pop, ostream &out) {
     }
 }
 
-void GAUtils::fillPopulation(Population &pop, unsigned popToFill) {
+void GAUtils::fillPopulationWithReset(Population &pop, unsigned popToFill) {
     for (unsigned i = 0; i < popToFill; i++) {
-        // vector<int> t(Globals::map.getCityList());
-        // shuffle(t.begin(), t.end(),Globals::urng);
-        vector<int> t{nearestNeighbor()};
-        t = Opt::optimize(t); 
+        vector<int> t;
+        //random
+        if(Config::NEW_TOUR_MODE==0 || Config::NEW_TOUR_MODE==1){
+            t = Globals::map.getCityList();
+            shuffle(t.begin(), t.end(),Globals::urng);
+        }else{
+            t = nearestNeighbor();
+        }
+        //apply 2-opt
+        if(Config::NEW_TOUR_MODE==1 || Config::NEW_TOUR_MODE==2){
+            t = Opt::optimize(t); 
+        }
+        
         pop.getPopulation().push_back(t);
     } 
 }
 
+void GAUtils::fillPopulationWithRoulete(Population &pop,Population &newPop, unsigned popToFill) {
+    for(unsigned i=0;i<popToFill;i++){
+        newPop.getPopulation().push_back(roulete(pop));
+    }
+}
 
 Population GAUtils::generateNewPopulation(Population &pop) {
     if(Config::NEW_POP_TYPE==0){
@@ -105,7 +112,8 @@ Population GAUtils::generateNewPopulation(Population &pop) {
     }else if(Config::NEW_POP_TYPE==3){
         return crossWithMOC(pop);
     }else{
-        exit(1);
+        //default
+        return crossNBestxAllwithReset(pop);
     }
 }
 
@@ -133,7 +141,6 @@ Population GAUtils::crossAllxAllwith2opt(Population &pop) {
 
 Population GAUtils::crossNBestxAllwithReset(Population &pop) {
     Population newPop;
-    unsigned newPopSize;
 
     sort(pop.getPopulation().begin(), pop.getPopulation().end(),sortPopulation);
 
@@ -146,13 +153,9 @@ Population GAUtils::crossNBestxAllwithReset(Population &pop) {
         newPop.getPopulation().push_back(savedTour);
     }
 
-    fillPopulation(newPop, Config::POP_SIZE*Config::RESET_PERCENTAGE);
+    fillPopulationWithReset(newPop, Config::POP_SIZE*Config::RESET_PERCENTAGE);
 
-    newPopSize = newPop.getPopulation().size();
-
-    for(unsigned i=0;i<Config::POP_SIZE-newPopSize;i++){
-        newPop.getPopulation().push_back(roulete(pop));
-    }
+    fillPopulationWithRoulete(pop,newPop,Config::POP_SIZE-newPop.getPopulation().size());
     
     return (newPop);
 }
@@ -160,7 +163,6 @@ Population GAUtils::crossNBestxAllwithReset(Population &pop) {
 Population GAUtils::crossAllxAllwithNBestAndReset(Population &pop){
     Population tmpPop, newPop;
     vector<int> currentTour;
-    unsigned newPopSize;
 
     for (unsigned i = 0; i < Config::POP_SIZE; i++) {
         currentTour = pop.getPopulation()[i];
@@ -180,13 +182,9 @@ Population GAUtils::crossAllxAllwithNBestAndReset(Population &pop){
         newPop.getPopulation().push_back(tmpPop.getPopulation()[i]);
     }
 
-    fillPopulation(newPop, Config::POP_SIZE*Config::RESET_PERCENTAGE);
+    fillPopulationWithReset(newPop, Config::POP_SIZE*Config::RESET_PERCENTAGE);
 
-    newPopSize = newPop.getPopulation().size();
-
-    for(unsigned i=0;i<Config::POP_SIZE-newPopSize;i++){
-        newPop.getPopulation().push_back(roulete(pop));
-    }
+    fillPopulationWithRoulete(pop,newPop,Config::POP_SIZE-newPop.getPopulation().size());
 
     return newPop;
 }
@@ -197,7 +195,8 @@ Population GAUtils::crossWithMOC(Population &pop){
     newPop.getPopulation().insert(newPop.getPopulation().end(),bestTours.begin(),bestTours.end());
 
     // for(unsigned i=0;i<(0.5*Config::POP_SIZE);i++)
-    for(unsigned i=0;i<(Config::POP_SIZE - newPop.getPopulation().size());i++){
+    for(unsigned i=0;i<(Config::POP_SIZE - newPop.getPopulation().size());i++)
+    {
         newPop.getPopulation().push_back(HCO::cross(roulete(pop),roulete(pop)));
     }
 
@@ -230,68 +229,7 @@ vector<int> GAUtils::roulete(Population &pop){
     return(pop.getPopulation().back());
 }
 
-ofstream* GAUtils::initLogFile(){
-    string logName{"log/"+to_string(Config::NEW_POP_TYPE)+"/log_"+to_string(Config::ID)+"_"+Config::NAME+"_"+to_string(Config::POP_SIZE)+(Config::LK_PERCENTAGE>0?("_LK"):(""))+"_RANDOM.log"};
 
-    ofstream *logFile = new ofstream(logName);
-    if(!logFile->is_open()){
-        cout<<"falha na abertura do arquivo de log"<<endl;
-        exit(0);
-    }
-
-    return logFile;
-}
-
-
-void GAUtils::printHeader(ostream &out){
-    out << "Run id: "+to_string(Config::ID)+"\nGenetic Algoritm for problem "+Config::NAME+" with population size "+to_string(Config::POP_SIZE);
-    out << (Config::LK_PERCENTAGE>0?(", using "+to_string(Config::LK_PERCENTAGE*100)+"% of LK generated tours"):(""));
-    out <<"\nUsing new generation method: ";
-    switch(Config::NEW_POP_TYPE){
-        case 0:{
-            out << "All vs All GPX2 crossover.";
-            break;
-        }
-        case 1:{
-            out << to_string(Config::N_BEST)+" best vs All GPX2 crossover with reset population.";
-            break;
-        }
-        case 2:{
-            out << "All vs ALL with "+to_string(Config::N_BEST)+" best saved to the next population and reset in the rest.";
-            break;
-        }
-        case 3:{
-            out<<"Using elitsm and Modified Order Crossover";
-            break;
-        }
-    }
-    out<<"\nBest known solution: "<<to_string(Config::BEST_FITNESS)<<".\n";
-    out.flush();
-}
-
-void GAUtils::printFooter(ostream &out,Population &pop,unsigned gen,unsigned best){
-    out << "\nTHE END\n";
-    out << "First best fitness: " << best << "\n";
-    out << "Gen " << gen << " best fitness " << pop.bestFitness() << "\n";
-    out << "Best know solution: "<< to_string(Config::BEST_FITNESS) << "\n";
-    out << "=========================" << "\n";
-
-    out << "\nLast population\n";
-    sort(pop.getPopulation().begin(), pop.getPopulation().end(),sortPopulation);
-    for(vector<int> t : pop.getPopulation()){
-        printTour(t,out);
-        out<<"\n";
-    }
-    out.flush();
-}
-
-void GAUtils::printTime(ostream &out, string txt, double milli, double sec){
-    out << "\n"+txt+"\n";
-    out << "\t" << milli << " milliseconds.\n";
-    out << "\t" << sec << " seconds.\n";
-    out << "\t" << (sec/60.0) << " minutes.\n";
-    out.flush();
-}
 
 vector<int> GAUtils::nearestNeighbor() {
     vector<int> cityList{Globals::map.getCityList()},tmp;
@@ -311,7 +249,7 @@ vector<int> GAUtils::nearestNeighbor() {
             return distance(a,choosenCity) < distance(b,choosenCity);
         });
 
-        int next = distDelta(Globals::urng);
+        unsigned next = distDelta(Globals::urng);
 
         if(next >= cityList.size()){
             next = cityList.size()-1;

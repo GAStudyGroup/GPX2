@@ -2,8 +2,9 @@
 POP_SIZE =          [50]
 LK_PERCENTAGE =     [0]
 NEW_POP_TYPE =      [1]
-N_BEST =            [3]
-RESET_PERCENTAGE =  0.5
+N_BEST =            [5]
+RESET_PERCENTAGE =  [0.5]
+NEW_TOUR_MODE =     [2]
 
 #run 0
 # POP_SIZE =          [50, 75, 100]
@@ -24,7 +25,7 @@ RESET_PERCENTAGE =  0.5
 # N_BEST =            3
 
 #Number of times the algorithm should run in each set of configs
-NUMBER_OF_RUNS = 10
+NUMBER_OF_RUNS = 1
 
 #list of datasets for the algorithm
 #TOURS = ["a280","att48","berlin52","burma14","ch150","eil101","gr137","pbd984","pcb442","u1432"]

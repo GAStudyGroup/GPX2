@@ -21,10 +21,14 @@ using std::stoi;
 #include "Globals.hpp"
 #include "Population.hpp"
 #include "GAUtils.hpp"
+#include "Log.hpp"
 #include "Arg.hpp"
 
-// inicia o algoritmo genético
+//begin the genetic algorithm
 void GA();
+
+//set arguments
+void initArgs(int, char *[]);
 
 //1 -name argumento tour_name REQUIRED
 //2 -lib caminho para o .tsp
@@ -41,6 +45,62 @@ int main(int argc, char *argv[]) {
     random_device rng;
     Globals::urng.seed(rng());
 
+    initArgs(argc,argv);
+
+    GA();
+
+    return 0;
+}
+
+void GA() {
+    Population pop;
+    bool foundBestWithoutGA = true;
+
+    ofstream *logFile{Log::initLogFile()};  
+
+    Log::printHeader(*logFile);
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+    GAUtils::init(pop);
+
+    auto finishInitPop = std::chrono::high_resolution_clock::now();
+
+    Log::printTime(*logFile,"Population created in:",
+                    std::chrono::duration<double,std::milli> (finishInitPop - start).count()); 
+
+    auto startGA = std::chrono::high_resolution_clock::now();
+
+    int i{0}, firstBestFitness{pop.bestFitness()};
+    *logFile << "\nFirst fitness " << firstBestFitness << endl;
+    while(GAUtils::stop(pop,*logFile)){
+        foundBestWithoutGA = false;
+        i++;
+        pop = GAUtils::generateNewPopulation(pop);
+        *logFile << "gen " << i << " best fitness " << pop.bestFitness() << endl;
+        
+    }
+
+    if(foundBestWithoutGA){
+        *logFile << "Found best without GA" << endl;
+    }
+
+    auto finishGA = std::chrono::high_resolution_clock::now();
+    Log::printTime(*logFile,"GA execution time:",
+                    std::chrono::duration<double,std::milli> (finishGA - startGA).count()); 
+
+    auto finish = std::chrono::high_resolution_clock::now();
+    Log::printTime(*logFile,"Total execution time:",
+                    std::chrono::duration<double,std::milli> (finish - start).count()); 
+
+    Log::printFooter(*logFile,pop,i,firstBestFitness);
+
+    (*logFile).close();
+    delete logFile;
+
+}
+
+void initArgs(int argc, char *argv[]){
     string NAME = "name|n";
     string SIZE = "size|s";
     string LIB = "lib|l";
@@ -50,6 +110,7 @@ int main(int argc, char *argv[]) {
     string N_BEST = "nbest|nb";
     string BEST_FITNESS = "bestfitness|bf";
     string RESET = "reset|r";
+    string GEN_NEW_TOUR = "newtour|nt";
 
     Arg arg(argc,argv);
     arg.setProgramName("GPX2");
@@ -64,12 +125,13 @@ int main(int argc, char *argv[]) {
     arg.newArgument(N_BEST,false,"number of tours to be saved to the next generation.");
     arg.newArgument(BEST_FITNESS,false,"best fitness found to this tour.");
     arg.newArgument(RESET,false,"percentage of the population to reset each generation");
+    arg.newArgument(GEN_NEW_TOUR,false,"mode to generate new tour, used to generate first population and reset");
 
     try{
         arg.validateArguments();
     }catch(std::runtime_error e){
         std::cout<<e.what()<<endl;
-        return(0);
+        exit(0);
     }
 
     
@@ -89,67 +151,6 @@ int main(int argc, char *argv[]) {
     Config::BEST_FITNESS = tmp.empty()?Config::BEST_FITNESS:stoi(tmp);
     tmp = arg.getOption(RESET);
     Config::RESET_PERCENTAGE = tmp.empty()?Config::RESET_PERCENTAGE:stod(tmp);
-
-    GA();
-
-    return 0;
-}
-
-void GA() {
-    Population pop;
-    bool foundBestWithoutGA = true;
-
-    ofstream *logFile{GAUtils::initLogFile()};  
-
-    GAUtils::printHeader(*logFile);
-
-    auto start = std::chrono::high_resolution_clock::now();
-
-    GAUtils::init(pop);
-
-    auto finishInitPop = std::chrono::high_resolution_clock::now();
-
-    GAUtils::printTime(*logFile,"Population created in:",
-                    std::chrono::duration<double,std::milli> (finishInitPop - start).count(),
-                    std::chrono::duration<double> (finishInitPop - start).count()); 
-
-    auto startGA = std::chrono::high_resolution_clock::now();
-
-    int i{0}, firstBestFitness{pop.bestFitness()};
-    *logFile << "\nFirst fitness " << firstBestFitness << endl;
-    while(GAUtils::stop(pop,*logFile)){
-        foundBestWithoutGA = false;
-        i++;
-        pop = GAUtils::generateNewPopulation(pop);
-        *logFile << "gen " << i << " best fitness " << pop.bestFitness() << endl;
-        
-    }
-
-    /* cout<<"NN tour\n"<<endl;
-    vector<int> tmp{GAUtils::nearestNeighbor()};
-    for(int i : tmp){
-        cout<<i<<" ";
-    }
-    cout<<endl;
-    cout<<"fitness "<<getFitness(tmp)<<endl; */
-
-    if(foundBestWithoutGA){
-        *logFile << "Found best without GA" << endl;
-    }
-
-    auto finishGA = std::chrono::high_resolution_clock::now();
-    GAUtils::printTime(*logFile,"GA execution time:",
-                    std::chrono::duration<double,std::milli> (finishGA - startGA).count(),
-                    std::chrono::duration<double> (finishGA - startGA).count()); 
-
-    auto finish = std::chrono::high_resolution_clock::now();
-    GAUtils::printTime(*logFile,"Total execution time:",
-                    std::chrono::duration<double,std::milli> (finish - start).count(),
-                    std::chrono::duration<double> (finish - start).count()); 
-
-    GAUtils::printFooter(*logFile,pop,i,firstBestFitness);
-
-    (*logFile).close();
-    delete logFile;
-
+    tmp = arg.getOption(GEN_NEW_TOUR);
+    Config::NEW_TOUR_MODE = tmp.empty()?Config::NEW_TOUR_MODE:stod(tmp);
 }

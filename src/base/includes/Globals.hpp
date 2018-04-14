@@ -28,6 +28,7 @@ namespace Config{
     extern type TYPE;
     extern unsigned N_BEST;
     extern double RESET_PERCENTAGE;
+    extern unsigned NEW_TOUR_MODE;
 }
 
 namespace Globals{

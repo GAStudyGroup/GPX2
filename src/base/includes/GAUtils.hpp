@@ -1,12 +1,6 @@
 #ifndef GAUTILS_HPP
 #define GAUTILS_HPP
 
-#include <fstream>
-using std::ofstream;
-
-#include <ostream>
-using std::ostream;
-
 #include "Population.hpp"
 
 namespace GAUtils{
@@ -20,7 +14,10 @@ namespace GAUtils{
     bool stop(Population&,ostream &);
 
     //If a portion of the population has been imported from the KL, the function populates the population up to the value set in the global Config::POP_SIZE using 2-opt. Otherwise, it generates the entire population using 2-op
-    void fillPopulation(Population &, unsigned);
+    void fillPopulationWithReset(Population &, unsigned);
+
+
+    void fillPopulationWithRoulete(Population &, Population &, unsigned);
 
     //Generates a new generation obeying the criteria defined in the global Config::TYPE
     Population generateNewPopulation(Population&);
@@ -38,12 +35,6 @@ namespace GAUtils{
     vector<int> roulete(Population&);
 
     vector<int> nearestNeighbor();
-
-    //Log functions
-    ofstream* initLogFile();
-    void printHeader(ostream&);
-    void printFooter(ostream&,Population&,unsigned,unsigned);
-    void printTime(ostream&,string,double,double);
 }
 
 #endif
