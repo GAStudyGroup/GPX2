@@ -31,6 +31,14 @@ namespace GAUtils{
     //Creates a new generation by performing the crossover of all with all, and passing the best n to the next generation, the rest of the population is generated using the 2-opt
     Population crossAllxAllwithNBestAndReset(Population&);
 
+    Population crossWithMOC(Population&);
+
+    vector<vector<int>> elitsm(Population);
+
+    vector<int> roulete(Population&);
+
+    vector<int> nearestNeighbor();
+
     //Log functions
     ofstream* initLogFile();
     void printHeader(ostream&);

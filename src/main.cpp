@@ -1,9 +1,6 @@
 #include <random>
 using std::random_device;
 
-#include <ctime>
-//time
-
 #include <fstream>
 using std::ofstream;
 
@@ -26,7 +23,6 @@ using std::stoi;
 #include "GAUtils.hpp"
 #include "Arg.hpp"
 
-
 // inicia o algoritmo genético
 void GA();
 
@@ -45,26 +41,30 @@ int main(int argc, char *argv[]) {
     random_device rng;
     Globals::urng.seed(rng());
 
-    string NAME = "name";
-    string SIZE = "size";
-    string LIB = "lib";
+    string NAME = "name|n";
+    string SIZE = "size|s";
+    string LIB = "lib|l";
     string ID = "id";
     string LK = "lk";
-    string NEW_POP = "newpop";
-    string N_BEST = "nbest";
-    string BEST_FITNESS = "bestfitness";
+    string NEW_POP = "newpop|np";
+    string N_BEST = "nbest|nb";
+    string BEST_FITNESS = "bestfitness|bf";
+    string RESET = "reset|r";
 
     Arg arg(argc,argv);
+    arg.setProgramName("GPX2");
+    arg.setHelp();
 
-    arg.newArgument(NAME,true,"n");
-    arg.newArgument(SIZE,true,"s");
-    arg.newArgument(LIB,false,"l");
-    arg.newArgument(ID,false);
-    arg.newArgument(LK,false);
-    arg.newArgument(NEW_POP,false,"np");
-    arg.newArgument(N_BEST,false,"nb");
-    arg.newArgument(BEST_FITNESS,false,"bf");
-    
+    arg.newArgument(NAME,true,"name of the tour.");
+    arg.newArgument(SIZE,true,"size of the pop.");
+    arg.newArgument(LIB,false,"path to the .tsp file.");
+    arg.newArgument(ID,false,"numeric id of the run.");
+    arg.newArgument(LK,false,"percentage of population to be generated using linkern.");
+    arg.newArgument(NEW_POP,false,"method to be used to generate the next generation.");
+    arg.newArgument(N_BEST,false,"number of tours to be saved to the next generation.");
+    arg.newArgument(BEST_FITNESS,false,"best fitness found to this tour.");
+    arg.newArgument(RESET,false,"percentage of the population to reset each generation");
+
     try{
         arg.validateArguments();
     }catch(std::runtime_error e){
@@ -75,7 +75,6 @@ int main(int argc, char *argv[]) {
     
     Config::NAME = arg.getOption(NAME);
     Config::POP_SIZE = stoi(arg.getOption(SIZE));
-
     string tmp = arg.getOption(LIB);
     Config::LIB_PATH = tmp.empty()?Config::LIB_PATH:tmp;
     tmp = arg.getOption(ID);
@@ -88,6 +87,8 @@ int main(int argc, char *argv[]) {
     Config::N_BEST = tmp.empty()?Config::N_BEST:stoi(tmp);
     tmp = arg.getOption(BEST_FITNESS);
     Config::BEST_FITNESS = tmp.empty()?Config::BEST_FITNESS:stoi(tmp);
+    tmp = arg.getOption(RESET);
+    Config::RESET_PERCENTAGE = tmp.empty()?Config::RESET_PERCENTAGE:stod(tmp);
 
     GA();
 
@@ -116,18 +117,21 @@ void GA() {
 
     int i{0}, firstBestFitness{pop.bestFitness()};
     *logFile << "\nFirst fitness " << firstBestFitness << endl;
-
-    /* do {
-        i++;
-        pop = GAUtils::generateNewPopulation(pop);
-        *logFile << "gen " << i << " best fitness " << pop.bestFitness() << endl;
-    } while (GAUtils::stop(pop,*logFile)); */
     while(GAUtils::stop(pop,*logFile)){
         foundBestWithoutGA = false;
         i++;
         pop = GAUtils::generateNewPopulation(pop);
         *logFile << "gen " << i << " best fitness " << pop.bestFitness() << endl;
+        
     }
+
+    /* cout<<"NN tour\n"<<endl;
+    vector<int> tmp{GAUtils::nearestNeighbor()};
+    for(int i : tmp){
+        cout<<i<<" ";
+    }
+    cout<<endl;
+    cout<<"fitness "<<getFitness(tmp)<<endl; */
 
     if(foundBestWithoutGA){
         *logFile << "Found best without GA" << endl;

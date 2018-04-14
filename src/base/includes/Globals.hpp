@@ -27,6 +27,7 @@ namespace Config{
     extern unsigned BEST_FITNESS;
     extern type TYPE;
     extern unsigned N_BEST;
+    extern double RESET_PERCENTAGE;
 }
 
 namespace Globals{

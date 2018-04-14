@@ -1,5 +1,5 @@
 COM_COLOR   = \033[0;34m
-OBJ_COLOR   = \033[0;36m
+OBJ_COLOR   = \033[0m
 OK_COLOR    = \033[0;32m
 ERROR_COLOR = \033[0;31m
 WARN_COLOR  = \033[0;33m
@@ -38,7 +38,7 @@ inc = $(shell find -type f -iname "*.hpp" -printf "%h\n" | sort -u)
 
 debug = 0
 
-CFlags = -Wall -std=gnu++17
+CFlags = -Wall -std=gnu++17 -O3
 LDFlags =
 libs =
 libDir =

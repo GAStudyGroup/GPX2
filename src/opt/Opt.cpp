@@ -4,6 +4,10 @@
 using std::find;
 using std::reverse;
 
+#include <iostream>
+using std::cout;
+using std::endl;
+
 Opt::Opt(){}
 
 Opt::~Opt(){}

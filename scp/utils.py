@@ -22,8 +22,10 @@ def printInformations(name,size,lk,id,n_best,new_pop,best_f):
         print("All vs All GPX2 crossover\n")
     elif(new_pop==1):
         print(str(n_best)+" best vs All GPX2 crossover with reset population\n")
-    else:
+    elif(new_pop==2):
         print("All vs ALL with "+str(n_best)+" best saved to the next population and the rest reseted\n")
+    elif(new_pop==3):
+        print("Using elitsm and Modified Order Crossover")
         
     print("best fitness found: "+str(best_f))
         

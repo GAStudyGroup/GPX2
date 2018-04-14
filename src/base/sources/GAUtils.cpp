@@ -10,10 +10,18 @@ using std::to_string;
 #include <algorithm>
 using std::sort;
 using std::shuffle;
+using std::for_each;
+using std::remove;
+
+#include <random>
+using std::uniform_real_distribution;
+using std::uniform_int_distribution;
 
 #include "Globals.hpp"
 #include "Opt.hpp"
 #include "GPX2.hpp"
+#include "MOC.hpp"
+#include "HCO.hpp"
 #include "ImportData.hpp"
 
 void GAUtils::init(Population &pop){
@@ -78,9 +86,9 @@ bool GAUtils::stop(Population &pop, ostream &out) {
 
 void GAUtils::fillPopulation(Population &pop, unsigned popToFill) {
     for (unsigned i = 0; i < popToFill; i++) {
-        // Tour t(nearestNeighbor(map));
-        vector<int> t(Globals::map.getCityList());
-        shuffle(t.begin(), t.end(),Globals::urng);
+        // vector<int> t(Globals::map.getCityList());
+        // shuffle(t.begin(), t.end(),Globals::urng);
+        vector<int> t{nearestNeighbor()};
         t = Opt::optimize(t); 
         pop.getPopulation().push_back(t);
     } 
@@ -92,8 +100,12 @@ Population GAUtils::generateNewPopulation(Population &pop) {
         return crossAllxAllwith2opt(pop);
     }else if(Config::NEW_POP_TYPE==1){
         return crossNBestxAllwithReset(pop);
-    }else{
+    }else if(Config::NEW_POP_TYPE==2){
         return crossAllxAllwithNBestAndReset(pop);
+    }else if(Config::NEW_POP_TYPE==3){
+        return crossWithMOC(pop);
+    }else{
+        exit(1);
     }
 }
 
@@ -121,6 +133,7 @@ Population GAUtils::crossAllxAllwith2opt(Population &pop) {
 
 Population GAUtils::crossNBestxAllwithReset(Population &pop) {
     Population newPop;
+    unsigned newPopSize;
 
     sort(pop.getPopulation().begin(), pop.getPopulation().end(),sortPopulation);
 
@@ -133,25 +146,30 @@ Population GAUtils::crossNBestxAllwithReset(Population &pop) {
         newPop.getPopulation().push_back(savedTour);
     }
 
-    fillPopulation(newPop, Config::POP_SIZE - Config::N_BEST);
+    fillPopulation(newPop, Config::POP_SIZE*Config::RESET_PERCENTAGE);
+
+    newPopSize = newPop.getPopulation().size();
+
+    for(unsigned i=0;i<Config::POP_SIZE-newPopSize;i++){
+        newPop.getPopulation().push_back(roulete(pop));
+    }
+    
     return (newPop);
 }
 
 Population GAUtils::crossAllxAllwithNBestAndReset(Population &pop){
     Population tmpPop, newPop;
     vector<int> currentTour;
+    unsigned newPopSize;
 
     for (unsigned i = 0; i < Config::POP_SIZE; i++) {
         currentTour = pop.getPopulation()[i];
         for (unsigned j = 0; j < Config::POP_SIZE; j++) {
             if (i != j) {
                 vector<int> t = GPX2::crossover(pop.getPopulation()[j], currentTour);
-                if (getFitness(t) < getFitness(currentTour)) {
-                    currentTour = t;
-                }
+                currentTour = t;
             }
         }
-        currentTour = Opt::optimize(currentTour);
 
         tmpPop.getPopulation().push_back(currentTour);
     }
@@ -162,12 +180,58 @@ Population GAUtils::crossAllxAllwithNBestAndReset(Population &pop){
         newPop.getPopulation().push_back(tmpPop.getPopulation()[i]);
     }
 
-    fillPopulation(newPop, Config::POP_SIZE - Config::N_BEST);
+    fillPopulation(newPop, Config::POP_SIZE*Config::RESET_PERCENTAGE);
+
+    newPopSize = newPop.getPopulation().size();
+
+    for(unsigned i=0;i<Config::POP_SIZE-newPopSize;i++){
+        newPop.getPopulation().push_back(roulete(pop));
+    }
+
     return newPop;
 }
 
+Population GAUtils::crossWithMOC(Population &pop){
+    Population newPop;
+    vector<vector<int>> bestTours{elitsm(pop)};
+    newPop.getPopulation().insert(newPop.getPopulation().end(),bestTours.begin(),bestTours.end());
+
+    // for(unsigned i=0;i<(0.5*Config::POP_SIZE);i++)
+    for(unsigned i=0;i<(Config::POP_SIZE - newPop.getPopulation().size());i++){
+        newPop.getPopulation().push_back(HCO::cross(roulete(pop),roulete(pop)));
+    }
+
+    /* fillPopulation(newPop,(Config::POP_SIZE-newPop.getPopulation().size())); */
+
+    return(newPop);
+}
+
+vector<vector<int>> GAUtils::elitsm(Population pop){
+    sort(pop.getPopulation().begin(),pop.getPopulation().end(),sortPopulation);
+    return(vector<vector<int>>(pop.getPopulation().begin(),pop.getPopulation().begin()+Config::N_BEST));
+}
+
+vector<int> GAUtils::roulete(Population &pop){
+    double sumFitness{0.0},ctrl{0.0};
+
+    for_each(pop.getPopulation().begin(),pop.getPopulation().end(),[&sumFitness](vector<int> t){sumFitness+=(1.0/(double)getFitness(t));});    
+
+    uniform_real_distribution<double> dist(0,sumFitness);
+    ctrl = dist(Globals::urng);
+
+    int i=0;
+    for(vector<int> t : pop.getPopulation()){
+        ctrl -= (1.0/(double)getFitness(t));
+        if(ctrl<=0){
+            return(t);
+        }
+        i++;
+    }
+    return(pop.getPopulation().back());
+}
+
 ofstream* GAUtils::initLogFile(){
-    string logName{"log/"+to_string(Config::NEW_POP_TYPE)+"/log_"+to_string(Config::ID)+"_"+Config::NAME+"_"+to_string(Config::POP_SIZE)+(Config::LK_PERCENTAGE>0?("_LK"):(""))+".log"};
+    string logName{"log/"+to_string(Config::NEW_POP_TYPE)+"/log_"+to_string(Config::ID)+"_"+Config::NAME+"_"+to_string(Config::POP_SIZE)+(Config::LK_PERCENTAGE>0?("_LK"):(""))+"_RANDOM.log"};
 
     ofstream *logFile = new ofstream(logName);
     if(!logFile->is_open()){
@@ -194,6 +258,10 @@ void GAUtils::printHeader(ostream &out){
         }
         case 2:{
             out << "All vs ALL with "+to_string(Config::N_BEST)+" best saved to the next population and reset in the rest.";
+            break;
+        }
+        case 3:{
+            out<<"Using elitsm and Modified Order Crossover";
             break;
         }
     }
@@ -225,28 +293,36 @@ void GAUtils::printTime(ostream &out, string txt, double milli, double sec){
     out.flush();
 }
 
-/* vector<City> nearestNeighbor() {
-    vector<pair<float, City>> cityList;
-    for (City c : Config::map.getCityList()) {
-        cityList.push_back(make_pair(0, c));
-    }
-    unsigned choosenCity = rand() % cityList.size();
-    vector<City> tour;
-    tour.push_back(cityList[choosenCity].second);
-    cityList.erase(cityList.begin() + choosenCity);
-    while (!cityList.empty()) {
-        for (unsigned i = 0; i < cityList.size(); i++) {
-            pair<double, double> p1(cityList[i].second.getX(),
-                                    cityList[i].second.getY()),
-            p2(tour.back().getX(), tour.back().getY());
+vector<int> GAUtils::nearestNeighbor() {
+    vector<int> cityList{Globals::map.getCityList()},tmp;
+    int delta = cityList.size()*0.05;
+    delta = delta<1?1:delta;
 
-            cityList[i].first = distance(p1, p2);
-        }
-        sort(cityList.begin(), cityList.end(), [](auto &left, auto &right) {
-            return (right.first > left.first);
+    uniform_int_distribution<int> dist(0,cityList.size()-1);
+    uniform_int_distribution<int> distDelta(0,delta);
+
+    int choosenCity = cityList[dist(Globals::urng)];
+    tmp.push_back(choosenCity);
+    cityList.erase(remove(cityList.begin(),cityList.end(),choosenCity),cityList.end());
+
+    do{
+
+        sort(cityList.begin(),cityList.end(),[choosenCity](int a,int b){
+            return distance(a,choosenCity) < distance(b,choosenCity);
         });
-        tour.push_back(cityList[0].second);
-        cityList.erase(cityList.begin());
-    }
-    return (tour);
-} */
+
+        int next = distDelta(Globals::urng);
+
+        if(next >= cityList.size()){
+            next = cityList.size()-1;
+        }
+
+        choosenCity = cityList[next];
+
+        tmp.push_back(choosenCity);
+        cityList.erase(remove(cityList.begin(),cityList.end(),choosenCity),cityList.end());
+
+    }while(!cityList.empty());
+
+    return tmp;
+}
