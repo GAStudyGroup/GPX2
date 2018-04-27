@@ -69,11 +69,7 @@ vector<int> GPX2::crossover(vector<int> redT, vector<int> blueT)
         Log::printTourFile(blueT,"blue");
         Log::printTourFile(offspring,"off");
         std::ofstream mapPrint("mapPrint.txt");
-        if(obj.offspringChoosen == GPX2Structs::Parent::RED) {
-            printMapAndPartitions(mapPrint, obj.red, obj.feasiblePartitions, obj.partitionsChoosen);
-        } else {
-            printMapAndPartitions(mapPrint, obj.blue, obj.feasiblePartitions, obj.partitionsChoosen);
-        }
+        printMapAndPartitions(mapPrint, offspring, obj.feasiblePartitions, obj.partitionsChoosen);
         mapPrint.close();
     }
     return offspring;

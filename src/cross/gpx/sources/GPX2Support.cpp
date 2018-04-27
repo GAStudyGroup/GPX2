@@ -583,30 +583,30 @@ int GPX2Support::whichPartition(const string id, GPX2Structs::PartitionMap parti
     return (-1);
 }
 
-void printMapAndPartitions(std::ostream& out, GPX2Structs::NodeMap map, GPX2Structs::PartitionMap partitions, vector<GPX2Structs::Parent> partitionsChoosen) {
+void printMapAndPartitions(std::ostream& out, vector<int> offspring, GPX2Structs::PartitionMap partitions, vector<GPX2Structs::Parent> partitionsChoosen) {
     int inPartition{-1};
     bool beforePartition{false};
 
-    out << "//#color #000000FF";
+    out << "//#color #000000FF\n";
     
 
-    for(auto node : map) {
-        int partition{GPX2Support::whichPartition(node.first, partitions)};
+    for(int node : offspring) {
+        int partition{GPX2Support::whichPartition(std::to_string(node), partitions)};
 
         // Not in partition
         if(partition == -1) {
             if(beforePartition) {
                 out << "\n";
-                City city{Globals::map.getCityById(std::stoi(node.first))};
+                City city{Globals::map.getCityById(node)};
                 out << city.getId() << " " << city.getX() << " " << city.getY() << "\n";
                 beforePartition = false;
             } else {
-                City city{Globals::map.getCityById(std::stoi(node.first))};
+                City city{Globals::map.getCityById(node)};
                 out << city.getId() << " " << city.getX() << " " << city.getY() << "\n";
             }
         } else {
             if(partition == inPartition) {
-                City city{Globals::map.getCityById(std::stoi(node.first))};
+                City city{Globals::map.getCityById(node)};
                 out << city.getId() << " " << city.getX() << " " << city.getY() << "\n";
             } else {
                 beforePartition = true;
@@ -614,7 +614,7 @@ void printMapAndPartitions(std::ostream& out, GPX2Structs::NodeMap map, GPX2Stru
                 out << "\n";
                 out << (partitionsChoosen[partition]==GPX2Structs::Parent::RED?"#FF0000FF":"#0000FFFF") << "\n"; 
 
-                City city{Globals::map.getCityById(std::stoi(node.first))};
+                City city{Globals::map.getCityById(node)};
                 out << city.getId() << " " << city.getX() << " " << city.getY() << "\n";
             }
         }
