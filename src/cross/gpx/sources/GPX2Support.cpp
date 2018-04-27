@@ -1,5 +1,6 @@
 #include "GPX2Support.hpp"
 #include "Utils.hpp"
+#include "Globals.hpp"
 
 #include <deque>
 using std::deque;
@@ -582,7 +583,44 @@ int GPX2Support::whichPartition(const string id, GPX2Structs::PartitionMap parti
     return (-1);
 }
 
+void printMapAndPartitions(std::ostream& out, GPX2Structs::NodeMap map, GPX2Structs::PartitionMap partitions, vector<GPX2Structs::Parent> partitionsChoosen) {
+    int inPartition{-1};
+    bool beforePartition{false};
 
+    out << "//#color #000000FF";
+    
+
+    for(auto node : map) {
+        int partition{GPX2Support::whichPartition(node.first, partitions)};
+
+        // Not in partition
+        if(partition == -1) {
+            if(beforePartition) {
+                out << "\n";
+                City city{Globals::map.getCityById(std::stoi(node.first))};
+                out << city.getId() << " " << city.getX() << " " << city.getY() << "\n";
+                beforePartition = false;
+            } else {
+                City city{Globals::map.getCityById(std::stoi(node.first))};
+                out << city.getId() << " " << city.getX() << " " << city.getY() << "\n";
+            }
+        } else {
+            if(partition == inPartition) {
+                City city{Globals::map.getCityById(std::stoi(node.first))};
+                out << city.getId() << " " << city.getX() << " " << city.getY() << "\n";
+            } else {
+                beforePartition = true;
+                inPartition = partition;
+                out << "\n";
+                out << (partitionsChoosen[partition]==GPX2Structs::Parent::RED?"#FF0000FF":"#0000FFFF") << "\n"; 
+
+                City city{Globals::map.getCityById(std::stoi(node.first))};
+                out << city.getId() << " " << city.getX() << " " << city.getY() << "\n";
+            }
+        }
+    }
+    out << std::endl;
+}
 
 
 
