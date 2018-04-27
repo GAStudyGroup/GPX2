@@ -21,7 +21,7 @@ namespace Log{
     void printHeader(ostream&);
     void printFooter(ostream&,Population&,unsigned,unsigned);
     void printTime(ostream&,string,double);
-    void printTourFile(vector<int>&,string);
+    void printTourFile(vector<int>&,string,string);
 };
 
 #endif

@@ -76,11 +76,18 @@ void Log::printTime(ostream &out, string txt, double milli){
     out.flush();
 }
 
-void Log::printTourFile(vector<int> &tour,string name){
+void Log::printTourFile(vector<int> &tour,string name,string color){
     string fileName{name+".txt"};
     ofstream file(fileName);
 
     if(file.is_open()){
+        file<<"//#color "<<color<<"\n";
+        file<<"//#name "<<name<<"\n";
+        file<<"//#fitness "<<getFitness(tour)<<"\n";
+        
         printTour(tour,file);
     }
+
+    file.flush();
+    file.close();
 }

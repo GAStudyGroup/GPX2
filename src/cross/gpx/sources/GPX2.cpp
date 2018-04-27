@@ -65,9 +65,9 @@ vector<int> GPX2::crossover(vector<int> redT, vector<int> blueT)
     //return obj.convertChoosenChild();
     vector<int> offspring{obj.convertChoosenChild()};
     if(getFitness(redT) > getFitness(offspring) && getFitness(blueT) > getFitness(offspring) ){
-        Log::printTourFile(redT,"red");
-        Log::printTourFile(blueT,"blue");
-        Log::printTourFile(offspring,"off");
+        Log::printTourFile(redT,"red","#FF0000FF");
+        Log::printTourFile(blueT,"blue","#0000FFFF");
+        Log::printTourFile(offspring,"off","#00FF00FF");
         std::ofstream mapPrint("mapPrint.txt");
         printMapAndPartitions(mapPrint, offspring, obj.feasiblePartitions, obj.partitionsChoosen);
         mapPrint.close();

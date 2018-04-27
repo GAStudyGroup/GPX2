@@ -18,7 +18,7 @@ ostream& printTour(const vector<int> &t, ostream &output){
     for (int cityId : t) {
         output << cityId << " " <<Globals::map.getCityById(cityId).getX()<<" "<<Globals::map.getCityById(cityId).getY()<<"\n";
     }
-    output << "\nFitness: " << getFitness(t) << "\n";
+    // output << "\nFitness: " << getFitness(t) << "\n";
     output.flush();
     return (output);
 }
