@@ -3,6 +3,8 @@
 #include "GPX2Support.hpp"
 #include "GPX2Fusion.hpp"
 
+#include "Log.hpp"
+
 #include <set>
 using std::set;
 
@@ -11,6 +13,10 @@ using std::remove;
 
 #include <utility>
 using std::make_pair;
+
+#include <iostream>
+using std::cout;
+using std::endl;
 
 vector<int> GPX2::crossover(vector<int> redT, vector<int> blueT)
 {
@@ -56,7 +62,14 @@ vector<int> GPX2::crossover(vector<int> redT, vector<int> blueT)
 
 
     // Step 9
-    return obj.convertChoosenChild();
+    //return obj.convertChoosenChild();
+    vector<int> offspring{obj.convertChoosenChild()};
+    if(getFitness(redT) > getFitness(offspring) && getFitness(blueT) > getFitness(offspring) ){
+        Log::printTourFile(redT,"red");
+        Log::printTourFile(blueT,"blue");
+        Log::printTourFile(offspring,"off");
+    }
+    return offspring;
 }
 
 // -----------------------------------------------------------------------------

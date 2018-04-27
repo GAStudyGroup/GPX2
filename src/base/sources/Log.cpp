@@ -75,3 +75,12 @@ void Log::printTime(ostream &out, string txt, double milli){
     out << "\t" << (milli/=60.0) << " minutes.\n";
     out.flush();
 }
+
+void Log::printTourFile(vector<int> &tour,string name){
+    string fileName{name+".txt"};
+    ofstream file(fileName);
+
+    if(file.is_open()){
+        printTour(tour,file);
+    }
+}
