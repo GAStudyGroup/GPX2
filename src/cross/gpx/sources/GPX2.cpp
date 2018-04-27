@@ -71,6 +71,7 @@ vector<int> GPX2::crossover(vector<int> redT, vector<int> blueT)
         std::ofstream mapPrint("mapPrint.txt");
         printMapAndPartitions(mapPrint, offspring, obj.feasiblePartitions, obj.partitionsChoosen);
         mapPrint.close();
+        exit(0);
     }
     return offspring;
 }

@@ -8,6 +8,9 @@ using std::deque;
 #include <algorithm>
 using std::find;
 
+#include <iostream>
+
+
 //From string
 using std::to_string;
 
@@ -587,8 +590,20 @@ void printMapAndPartitions(std::ostream& out, vector<int> offspring, GPX2Structs
     int inPartition{-1};
     bool beforePartition{false};
 
+    std::cout << "\n\nNOVO MAPA\n\n" <<std::endl;
+
+    for(auto p : partitionsChoosen) {
+        std::cout << ((p == GPX2Structs::Parent::RED)?"RED":"BLUE") << std::endl; 
+    }
+
     out << "//#color #000000FF\n";
+    out << "//#fitness " << getFitness(offspring) << "\n";
     
+    std::cout << "\n\nbatatatata\n\n";
+
+    for(auto p : partitions) {
+        std::cout << *p.second << std::endl;
+    }
 
     for(int node : offspring) {
         int partition{GPX2Support::whichPartition(std::to_string(node), partitions)};
@@ -612,6 +627,8 @@ void printMapAndPartitions(std::ostream& out, vector<int> offspring, GPX2Structs
                 beforePartition = true;
                 inPartition = partition;
                 out << "\n";
+                std::cout << "Partition " << partition;
+                std::cout << ((partitionsChoosen[partition] == GPX2Structs::Parent::RED)?" RED":" BLUE") << std::endl; 
                 out << (partitionsChoosen[partition]==GPX2Structs::Parent::RED?"#FF0000FF":"#0000FFFF") << "\n"; 
 
                 City city{Globals::map.getCityById(node)};
