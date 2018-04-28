@@ -76,6 +76,6 @@ namespace GPX2Support{
     int whichPartition(const string, GPX2Structs::PartitionMap);
 };
 
-void printMapAndPartitions(std::ostream& out, vector<int>, GPX2Structs::PartitionMap partitions, vector<GPX2Structs::Parent> partitionsChoosen);
+void printMapAndPartitions(std::ostream&, vector<int>, GPX2Structs::PartitionMap, vector<GPX2Structs::Parent>, GPX2Structs::PartitionMap);
 
 #endif

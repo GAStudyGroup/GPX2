@@ -10,6 +10,8 @@ using std::find;
 
 #include <iostream>
 
+#include <iterator>
+using std::distance;
 
 //From string
 using std::to_string;
@@ -586,11 +588,9 @@ int GPX2Support::whichPartition(const string id, GPX2Structs::PartitionMap parti
     return (-1);
 }
 
-void printMapAndPartitions(std::ostream& out, vector<int> offspring, GPX2Structs::PartitionMap partitions, vector<GPX2Structs::Parent> partitionsChoosen) {
+void printMapAndPartitions(std::ostream& out, vector<int> offspring, GPX2Structs::PartitionMap partitions, vector<GPX2Structs::Parent> partitionsChoosen, GPX2Structs::PartitionMap feasible) {
     int inPartition{-1};
     bool beforePartition{false};
-
-    std::cout << "\n\nNOVO MAPA\n\n" <<std::endl;
 
     for(auto p : partitionsChoosen) {
         std::cout << ((p == GPX2Structs::Parent::RED)?"RED":"BLUE") << std::endl; 
@@ -598,8 +598,6 @@ void printMapAndPartitions(std::ostream& out, vector<int> offspring, GPX2Structs
 
     out << "//#color #000000FF\n";
     out << "//#fitness " << getFitness(offspring) << "\n";
-    
-    std::cout << "\n\nbatatatata\n\n";
 
     for(auto p : partitions) {
         std::cout << *p.second << std::endl;
@@ -627,9 +625,11 @@ void printMapAndPartitions(std::ostream& out, vector<int> offspring, GPX2Structs
                 beforePartition = true;
                 inPartition = partition;
                 out << "\n";
-                std::cout << "Partition " << partition;
+                
+
+
                 std::cout << ((partitionsChoosen[partition] == GPX2Structs::Parent::RED)?" RED":" BLUE") << std::endl; 
-                out << (partitionsChoosen[partition]==GPX2Structs::Parent::RED?"#FF0000FF":"#0000FFFF") << "\n"; 
+                out << (partitionsChoosen[distance(feasible.begin(),feasible.find(partition))]==GPX2Structs::Parent::RED?"#FF0000FF":"#0000FFFF") << "\n"; 
 
                 City city{Globals::map.getCityById(node)};
                 out << city.getId() << " " << city.getX() << " " << city.getY() << "\n";
