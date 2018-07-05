@@ -34,6 +34,7 @@ namespace Config{
 namespace Globals{
     extern mt19937 urng;
     extern Coordinates map;
+    extern unsigned TOUR_SIZE;
 }
 
 

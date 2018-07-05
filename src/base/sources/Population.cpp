@@ -20,6 +20,18 @@ int Population::bestFitness()
     return (min);
 }
 
+vector<int>& Population::getBestTour(){
+    int min = numeric_limits<int>::max(), fitness{ 0 },index{-1};
+    for(unsigned i=0;i<population.size();i++){
+        fitness = getFitness(population[i]);
+        if(min>fitness){
+            min = fitness;
+            index = i;
+        }
+    }
+    return (population[index]);
+}
+
 ostream& operator<<(ostream& output, Population& pop)
 { // Overload de operador para impressão da população
     int i{ 0 };

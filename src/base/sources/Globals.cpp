@@ -14,5 +14,7 @@ unsigned        Config::GENERATION_LIMIT{200};
 double          Config::RESET_PERCENTAGE{0.5};
 unsigned        Config::NEW_TOUR_MODE{2};
 
+
 mt19937         Globals::urng;
 Coordinates     Globals::map;
+unsigned        Globals::TOUR_SIZE;

@@ -131,6 +131,7 @@ string ImportData::getInfos()
 
 vector<City> ImportData::getCitiesCoord()
 {
+    Globals::TOUR_SIZE = citiescoord.size();
     return citiescoord;
 }
 string ImportData::gettspName()
@@ -197,7 +198,6 @@ Population ImportData::importFirstPopulation(string name, unsigned popSize)
         }
         //}
         file.close();
-
         pop.getPopulation().push_back(newT);
     }
     return (pop);

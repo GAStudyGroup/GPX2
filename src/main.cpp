@@ -24,6 +24,9 @@ using std::stoi;
 #include "Log.hpp"
 #include "Arg.hpp"
 
+#include "AntColony.hpp"
+#include "Constants.hpp"
+
 //begin the genetic algorithm
 void GA();
 
@@ -63,6 +66,15 @@ void GA() {
     auto start = std::chrono::high_resolution_clock::now();
 
     GAUtils::init(pop);
+    AntColony antColony;
+    AntMap::updatePheromoneMap(pop.getBestTour());
+
+    // cout<<"tour size "<<Globals::TOUR_SIZE<<endl;
+    // antColony.printPheromoneMap();
+
+    // Population tmpPop = antColony.run();
+    // cout<<"Size of return pop "<<tmpPop.getPopulation().size()<<" Best fitness of run 0 "<<tmpPop.bestFitness()<<endl;
+    // antColony.printPheromoneMap();
 
     auto finishInitPop = std::chrono::high_resolution_clock::now();
 
@@ -76,13 +88,16 @@ void GA() {
     while(GAUtils::stop(pop,*logFile)){
         foundBestWithoutGA = false;
         i++;
-        pop = GAUtils::generateNewPopulation(pop);
+        // pop = GAUtils::generateNewPopulation(pop);
+        // AntMap::printPheromoneMap();
+        pop = antColony.run();
         *logFile << "gen " << i << " best fitness " << pop.bestFitness() << endl;
         
     }
 
     if(foundBestWithoutGA){
         *logFile << "Found best without GA" << endl;
+        cout << "Found best without GA" << endl;
     }
 
     auto finishGA = std::chrono::high_resolution_clock::now();
@@ -97,7 +112,6 @@ void GA() {
 
     (*logFile).close();
     delete logFile;
-
 }
 
 void initArgs(int argc, char *argv[]){

@@ -16,6 +16,8 @@ public:
 
     vector<vector<int>>& getPopulation();
 
+    vector<int>& getBestTour();
+
     int bestFitness();
 private:
     vector<vector<int>> population;
