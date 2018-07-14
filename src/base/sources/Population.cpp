@@ -36,8 +36,9 @@ ostream& operator<<(ostream& output, Population& pop)
 { // Overload de operador para impressão da população
     int i{ 0 };
     for (vector<int> t : pop.getPopulation()) {
-        output << "Tour " << i << "\n";
-        printTour(t,output);
+        // output << "Tour " << i << "\n";
+        // printTour(t,output);
+        output<<"Tour "<<i<<" "<<getFitness(t);
         output<<"\n";
         ++i;
     }

@@ -13,9 +13,15 @@ using std::uniform_int_distribution;
 #include "Globals.hpp"
 #include "Opt.hpp"
 #include "GPX2.hpp"
-#include "MOC.hpp"
-#include "HCO.hpp"
 #include "ImportData.hpp"
+
+#include "AntColony.hpp"
+#include "Constants.hpp"
+
+#include <iostream>
+using std::cout;
+using std::endl;
+using std::cin;
 
 void GAUtils::init(Population &pop){
     //Import the map
@@ -110,7 +116,7 @@ Population GAUtils::generateNewPopulation(Population &pop) {
     }else if(Config::NEW_POP_TYPE==2){
         return crossAllxAllwithNBestAndReset(pop);
     }else if(Config::NEW_POP_TYPE==3){
-        return crossWithMOC(pop);
+        return crossGPX2WithAntColony(pop);
     }else{
         //default
         return crossNBestxAllwithReset(pop);
@@ -189,20 +195,39 @@ Population GAUtils::crossAllxAllwithNBestAndReset(Population &pop){
     return newPop;
 }
 
-Population GAUtils::crossWithMOC(Population &pop){
-    Population newPop;
-    vector<vector<int>> bestTours{elitsm(pop)};
-    newPop.getPopulation().insert(newPop.getPopulation().end(),bestTours.begin(),bestTours.end());
+Population GAUtils::crossGPX2WithAntColony(Population &pop){
+    Population newPop, tmpPop;
+    vector<int> currentTour;
 
-    // for(unsigned i=0;i<(0.5*Config::POP_SIZE);i++)
-    for(unsigned i=0;i<(Config::POP_SIZE - newPop.getPopulation().size());i++)
-    {
-        newPop.getPopulation().push_back(HCO::cross(roulete(pop),roulete(pop)));
+    for (unsigned i = 0; i < Config::POP_SIZE/2; i++) {
+        currentTour = pop.getPopulation()[i];
+        for (unsigned j = 0; j < Config::POP_SIZE; j++) {
+            if (i != j) {
+                vector<int> t = GPX2::crossover(pop.getPopulation()[j], currentTour);
+                currentTour = t;
+            }
+        }
+
+        newPop.getPopulation().push_back(currentTour);
     }
 
-    /* fillPopulation(newPop,(Config::POP_SIZE-newPop.getPopulation().size())); */
+    sort(newPop.getPopulation().begin(), newPop.getPopulation().end(),sortPopulation);
 
-    return(newPop);
+    // cout<<newPop<<endl;
+
+    AntMap::updatePheromoneMap(newPop.getBestTour());
+
+    tmpPop = AntColony().run(Config::POP_SIZE*Config::RESET_PERCENTAGE);
+
+    // cout<<tmpPop<<endl;
+
+    newPop.getPopulation().insert(newPop.getPopulation().end(),tmpPop.getPopulation().begin(),tmpPop.getPopulation().end());
+
+    // cout<<newPop<<endl;
+
+    // cin.get();
+
+    return newPop;
 }
 
 vector<vector<int>> GAUtils::elitsm(Population pop){

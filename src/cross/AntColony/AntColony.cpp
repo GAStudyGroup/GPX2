@@ -21,37 +21,14 @@ using std::sort;
 
 #include "Opt.hpp"
 
-AntColony::AntColony(){
-    //Creating and initializing matrix of pheromones
-    AntMap::pheromoneMap = new double*[Globals::TOUR_SIZE];
-    for(unsigned i=0;i<Globals::TOUR_SIZE;i++){
-        AntMap::pheromoneMap[i] = new double[Globals::TOUR_SIZE];
-    }
+int AntColony::iteration = 0;
 
-    //initialized with 1/(numberOfAnts*(distance of i to j))
-    for(unsigned i=1;i<=Globals::TOUR_SIZE;i++){
-        for(unsigned j=1;j<=Globals::TOUR_SIZE;j++){
-            AntMap::setPheromoneLevel(i,j,i!=j?(1.0/(Globals::TOUR_SIZE*distance(i,j))):(0.0));
-        }
-    }
-
-    AntMap::bestAntYet.setPath(Globals::map.getCityList());
-}
-
-
-AntColony::~AntColony(){
-    for(unsigned i=0;i<Globals::TOUR_SIZE;i++){
-        delete AntMap::pheromoneMap[i];
-    }
-    delete AntMap::pheromoneMap;
-}
-
-
-Population AntColony::run(){
+Population AntColony::run(unsigned popToFill){
     vector<Ant> colony;
     uniform_int_distribution<int> dist(1,Globals::TOUR_SIZE);
+    unsigned numberOfAnts{popToFill>Globals::TOUR_SIZE?popToFill:Globals::TOUR_SIZE};
 
-    for(unsigned i=0;i<Globals::TOUR_SIZE;i++){
+    for(unsigned i=0;i<numberOfAnts;i++){
         //create ant
         Ant newAnt(Globals::map.getCityList()[i%Globals::TOUR_SIZE]);
         // Ant newAnt(dist(Globals::urng));
@@ -76,7 +53,7 @@ Population AntColony::run(){
     // bestFitnessYet = Config::BEST_FITNESS!=0?Config::BEST_FITNESS:(bestFitnessYet>getFitness(colony.front().getPath())?(getFitness(colony.front().getPath())):(bestFitnessYet));
 
     Population newPop;
-    for(unsigned i=0;i<Config::POP_SIZE;i++){
+    for(unsigned i=0;i<popToFill;i++){
         newPop.getPopulation().push_back(colony[i].getPath());
     }
 

@@ -15,7 +15,7 @@ using std::endl;
 using std::pow;
 
 double AntConstants::alfa = 2.0;
-double AntConstants::beta = 6.0;
+double AntConstants::beta = 12.0;
 double AntConstants::Q = 1.0;
 double AntConstants::rho = 0.02;
 double AntConstants::Pbest = 0.005;
@@ -53,7 +53,7 @@ void AntMap::updatePheromoneMap(const vector<int>& path){
                 }else if(newValue < min){
                     newValue = min;
                 }
-                cout<<"maxPheromoneLevel: "<<max<<" minPheromoneLevel: "<<min<<endl;
+                // cout<<"maxPheromoneLevel: "<<max<<" minPheromoneLevel: "<<min<<endl;
                 AntMap::setPheromoneLevel(i,j,newValue);
                 //because assymetric TSP
                 AntMap::setPheromoneLevel(j,i,newValue);
@@ -88,4 +88,29 @@ double AntMap::maxPheromoneLevel(){
 double AntMap::minPheromoneLevel(){
     //here Globals::TOUR_SIZE is used as the number of ants
     return (maxPheromoneLevel()*(1-pow(AntConstants::Pbest,(1/Globals::TOUR_SIZE)))/((Globals::TOUR_SIZE/2)-1));
+}
+
+
+void AntMap::initMap(){
+    //Creating and initializing matrix of pheromones
+    AntMap::pheromoneMap = new double*[Globals::TOUR_SIZE];
+    for(unsigned i=0;i<Globals::TOUR_SIZE;i++){
+        AntMap::pheromoneMap[i] = new double[Globals::TOUR_SIZE];
+    }
+
+    //initialized with 1/(numberOfAnts*(distance of i to j))
+    for(unsigned i=1;i<=Globals::TOUR_SIZE;i++){
+        for(unsigned j=1;j<=Globals::TOUR_SIZE;j++){
+            AntMap::setPheromoneLevel(i,j,i!=j?(1.0/(Globals::TOUR_SIZE*distance(i,j))):(0.0));
+        }
+    }
+
+    AntMap::bestAntYet.setPath(Globals::map.getCityList());
+}
+
+void AntMap::deleteMap(){
+    for(unsigned i=0;i<Globals::TOUR_SIZE;i++){
+        delete AntMap::pheromoneMap[i];
+    }
+    delete AntMap::pheromoneMap;
 }

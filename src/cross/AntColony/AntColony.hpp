@@ -7,13 +7,10 @@
 
 class AntColony{
     private:
-        int iteration=0;
-        void printColony(vector<Ant> colony);
+        static int iteration;
+        void printColony(vector<Ant>);
     public:
-        AntColony();
-        ~AntColony();
-
-        Population run();
+        Population run(unsigned);
 };
 
 #endif

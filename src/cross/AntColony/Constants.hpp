@@ -33,6 +33,10 @@ namespace AntMap{
     double maxPheromoneLevel();
 
     double minPheromoneLevel();
+
+    void initMap();
+
+    void deleteMap();
 }
 
 #endif // Constants_HPP

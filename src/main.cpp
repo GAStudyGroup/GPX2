@@ -24,7 +24,6 @@ using std::stoi;
 #include "Log.hpp"
 #include "Arg.hpp"
 
-#include "AntColony.hpp"
 #include "Constants.hpp"
 
 //begin the genetic algorithm
@@ -66,7 +65,7 @@ void GA() {
     auto start = std::chrono::high_resolution_clock::now();
 
     GAUtils::init(pop);
-    AntColony antColony;
+    AntMap::initMap();
     AntMap::updatePheromoneMap(pop.getBestTour());
 
     // cout<<"tour size "<<Globals::TOUR_SIZE<<endl;
@@ -88,9 +87,8 @@ void GA() {
     while(GAUtils::stop(pop,*logFile)){
         foundBestWithoutGA = false;
         i++;
-        // pop = GAUtils::generateNewPopulation(pop);
-        // AntMap::printPheromoneMap();
-        pop = antColony.run();
+        pop = GAUtils::generateNewPopulation(pop);
+        AntMap::printPheromoneMap();
         *logFile << "gen " << i << " best fitness " << pop.bestFitness() << endl;
         
     }
@@ -112,6 +110,7 @@ void GA() {
 
     (*logFile).close();
     delete logFile;
+    AntMap::deleteMap();
 }
 
 void initArgs(int argc, char *argv[]){
@@ -143,7 +142,7 @@ void initArgs(int argc, char *argv[]){
 
     try{
         arg.validateArguments();
-    }catch(std::runtime_error e){
+    }catch(std::runtime_error &e){
         std::cout<<e.what()<<endl;
         exit(0);
     }
