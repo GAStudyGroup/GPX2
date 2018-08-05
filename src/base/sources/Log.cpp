@@ -13,8 +13,8 @@ using std::to_string;
 using std::sort;
 
 ofstream* Log::initLogFile(){
-    string logName{"log/"+to_string(Config::NEW_POP_TYPE)+"/log_"+to_string(Config::ID)+"_"+Config::NAME+"_"+to_string(Config::POP_SIZE)+(Config::LK_PERCENTAGE>0?("_LK"):(""))+".log"};
-
+    string logName{"log/"+to_string(Config::NEW_POP_TYPE)+"/log_"+to_string(Config::ID)+"_"+Config::NAME+"_"+to_string(Config::POP_SIZE)+(Config::LK_PERCENTAGE>0?("_LK-"+to_string(Config::LK_PERCENTAGE*100)):(""))+"_"+to_string(Config::NEW_TOUR_MODE)+".log"};
+    
     ofstream *logFile = new ofstream(logName);
     if(!logFile->is_open()){
         cout<<"falha na abertura do arquivo de log"<<endl;
@@ -31,9 +31,10 @@ void Log::printHeader(ostream &out){
     out <<"\nUsing new generation method: ";
     switch(Config::NEW_POP_TYPE){
         case 0:{
-            out << "All vs All GPX2 crossover.";
+            out << "All vs All GPX2 crossover with 2opt otimization.";
             break;
         }
+        default:
         case 1:{
             out << to_string(Config::N_BEST)+" best vs All GPX2 crossover with reset population.";
             break;
@@ -43,7 +44,7 @@ void Log::printHeader(ostream &out){
             break;
         }
         case 3:{
-            out<<"Using elitsm and Modified Order Crossover";
+            out<<"GPX2 with Ant Colony to introduce randomness";
             break;
         }
     }

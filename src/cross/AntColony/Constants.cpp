@@ -15,7 +15,7 @@ using std::endl;
 using std::pow;
 
 double AntConstants::alfa = 2.0;
-double AntConstants::beta = 12.0;
+double AntConstants::beta = 20.0;
 double AntConstants::Q = 1.0;
 double AntConstants::rho = 0.02;
 double AntConstants::Pbest = 0.005;
@@ -82,11 +82,13 @@ void AntMap::printPheromoneMap(){
 }
 
 double AntMap::maxPheromoneLevel(){
+    // cout<<"max: "<<AntConstants::Q/(AntConstants::rho*bestFitnessYet)<<"."<<endl;
     return AntConstants::Q/(AntConstants::rho*bestFitnessYet);
 }
 
 double AntMap::minPheromoneLevel(){
     //here Globals::TOUR_SIZE is used as the number of ants
+    // cout<<"min: "<<(maxPheromoneLevel()*(1-pow(AntConstants::Pbest,(1/Globals::TOUR_SIZE)))/((Globals::TOUR_SIZE/2)-1))<<"."<<endl;
     return (maxPheromoneLevel()*(1-pow(AntConstants::Pbest,(1/Globals::TOUR_SIZE)))/((Globals::TOUR_SIZE/2)-1));
 }
 

@@ -111,8 +111,6 @@ void GAUtils::fillPopulationWithRoulete(Population &pop,Population &newPop, unsi
 Population GAUtils::generateNewPopulation(Population &pop) {
     if(Config::NEW_POP_TYPE==0){
         return crossAllxAllwith2opt(pop);
-    }else if(Config::NEW_POP_TYPE==1){
-        return crossNBestxAllwithReset(pop);
     }else if(Config::NEW_POP_TYPE==2){
         return crossAllxAllwithNBestAndReset(pop);
     }else if(Config::NEW_POP_TYPE==3){
@@ -199,7 +197,9 @@ Population GAUtils::crossGPX2WithAntColony(Population &pop){
     Population newPop, tmpPop;
     vector<int> currentTour;
 
-    for (unsigned i = 0; i < Config::POP_SIZE/2; i++) {
+    sort(pop.getPopulation().begin(), pop.getPopulation().end(),sortPopulation);
+
+    for (unsigned i = 0; i < Config::POP_SIZE/10; i++) {
         currentTour = pop.getPopulation()[i];
         for (unsigned j = 0; j < Config::POP_SIZE; j++) {
             if (i != j) {
@@ -212,17 +212,18 @@ Population GAUtils::crossGPX2WithAntColony(Population &pop){
     }
 
     sort(newPop.getPopulation().begin(), newPop.getPopulation().end(),sortPopulation);
-
+    cout<<"Best tour from GPX2: "<<getFitness(newPop.getBestTour())<<endl;
     // cout<<newPop<<endl;
 
-    AntMap::updatePheromoneMap(newPop.getBestTour());
+    // AntMap::updatePheromoneMap(newPop.getBestTour());
 
-    tmpPop = AntColony().run(Config::POP_SIZE*Config::RESET_PERCENTAGE);
+    tmpPop = AntColony().run(Config::POP_SIZE-(newPop.getPopulation().size()));
 
     // cout<<tmpPop<<endl;
 
     newPop.getPopulation().insert(newPop.getPopulation().end(),tmpPop.getPopulation().begin(),tmpPop.getPopulation().end());
 
+    cout<<"Best tour after AntColony: "<<getFitness(newPop.getBestTour())<<endl;
     // cout<<newPop<<endl;
 
     // cin.get();

@@ -88,7 +88,7 @@ void GA() {
         foundBestWithoutGA = false;
         i++;
         pop = GAUtils::generateNewPopulation(pop);
-        AntMap::printPheromoneMap();
+        // AntMap::printPheromoneMap();
         *logFile << "gen " << i << " best fitness " << pop.bestFitness() << endl;
         
     }
