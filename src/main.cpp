@@ -11,6 +11,9 @@ using std::endl;
 #include <chrono>
 //chrono
 
+#include <vector>
+using std::vector;
+
 #include <stdexcept>
 using std::invalid_argument; 
 
@@ -43,9 +46,39 @@ void initArgs(int, char *[]);
 // ex: GA -n berlin52 -l lib/ -s 100 -id 3 -lk 0.1 -np 1 -nb 4 -bf 255 
 // ex: GA -name berlin52 -size 100
 
+#include "OX.hpp"
+
 int main(int argc, char *argv[]) {
     random_device rng;
     Globals::urng.seed(rng());
+
+    // vector<int> t1,t2;
+    // t1.push_back(1);
+    // t1.push_back(2);
+    // t1.push_back(3);
+    // t1.push_back(4);
+    // t1.push_back(5);
+    // t1.push_back(6);
+
+    // t2.push_back(5);
+    // t2.push_back(6);
+    // t2.push_back(4);
+    // t2.push_back(2);
+    // t2.push_back(1);
+    // t2.push_back(3);
+    // Globals::TOUR_SIZE = t1.size();
+
+    // cout<<"chegou aqui?"<<endl;
+
+    // OX::crossover(t1,t2);
+
+    // for(int i : t1){
+    //     cout<<i<<" ";
+    // }cout<<endl;
+
+    // for(int i : t2){
+    //     cout<<i<<" ";
+    // }cout<<endl;
 
     initArgs(argc,argv);
 
