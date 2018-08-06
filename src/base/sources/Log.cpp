@@ -31,7 +31,7 @@ void Log::printHeader(ostream &out){
     out <<"\nUsing new generation method: ";
     switch(Config::NEW_POP_TYPE){
         case 0:{
-            out << "All vs All GPX2 crossover with 2opt otimization.";
+            out << "Cross using GPX2 and Ant Colony with reset";
             break;
         }
         default:
@@ -40,7 +40,7 @@ void Log::printHeader(ostream &out){
             break;
         }
         case 2:{
-            out << "All vs ALL with "+to_string(Config::N_BEST)+" best saved to the next population and reset in the rest.";
+            out << "Using OX crossover";
             break;
         }
         case 3:{

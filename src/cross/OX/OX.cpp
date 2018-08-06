@@ -12,20 +12,24 @@ using std::find;
 using std::cout;
 using std::endl;
 
-void OX::crossover(vector<int> &t1, vector<int> &t2){
+#include "Utils.hpp"
+
+vector<int> OX::crossover(vector<int> t1, vector<int> t2){
     uniform_int_distribution<int> dist(0,Globals::TOUR_SIZE-1);
     vector<int> tmp1,tmp2;
-    unsigned cut1{(unsigned)dist(Globals::urng)}, cut2{(unsigned)dist(Globals::urng)};
+    unsigned cut1, cut2;
     
     do{
+        cut1 = (unsigned)dist(Globals::urng);
+        cut2 = (unsigned)dist(Globals::urng);
         if(cut2<cut1){
             unsigned tmp{cut2};
             cut2 = cut1;
             cut1 = tmp;
         }
+        // cout<<"cut1 "<<cut1<<" cut2 "<<cut2<<endl;
     }while(cut1==cut2);
 
-    // cout<<"cut1 "<<cut1<<" cut2 "<<cut2<<endl;
 
     for (unsigned i{ cut1 }; i <= cut2; i++) {
         tmp2.push_back(t1[i]);
@@ -73,6 +77,5 @@ void OX::crossover(vector<int> &t1, vector<int> &t2){
         }
     }
 
-    t1 = tmp1;
-    t2 = tmp2;
+    return getFitness(tmp1)<getFitness(tmp2)?tmp1:tmp2;
 };

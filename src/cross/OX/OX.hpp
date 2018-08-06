@@ -5,7 +5,7 @@
 using std::vector;
 
 namespace OX{
-    void crossover(vector<int> &,vector<int> &);
+    vector<int> crossover(vector<int>,vector<int>);
 };
 
 #endif // OX_HPP

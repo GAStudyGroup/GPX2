@@ -1,7 +1,7 @@
 #Arguments used by the algorithm
-POP_SIZE =          [30]
+POP_SIZE =          [20]
 LK_PERCENTAGE =     [0]
-NEW_POP_TYPE =      [1]
+NEW_POP_TYPE =      [0,1,2,3]
 N_BEST =            [5]
 RESET_PERCENTAGE =  [0.5]
 NEW_TOUR_MODE =     [2]

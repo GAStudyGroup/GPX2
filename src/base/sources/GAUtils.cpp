@@ -23,6 +23,8 @@ using std::cout;
 using std::endl;
 using std::cin;
 
+#include "OX.hpp"
+
 void GAUtils::init(Population &pop){
     //Import the map
     ImportData dataFile(Config::LIB_PATH+Config::NAME);
@@ -110,9 +112,11 @@ void GAUtils::fillPopulationWithRoulete(Population &pop,Population &newPop, unsi
 
 Population GAUtils::generateNewPopulation(Population &pop) {
     if(Config::NEW_POP_TYPE==0){
-        return crossAllxAllwith2opt(pop);
+        // return crossAllxAllwith2opt(pop);
+        return crossGPX2WithAntColonyAndReset(pop);
     }else if(Config::NEW_POP_TYPE==2){
-        return crossAllxAllwithNBestAndReset(pop);
+        // return crossAllxAllwithNBestAndReset(pop);
+        return crossOX(pop);
     }else if(Config::NEW_POP_TYPE==3){
         return crossGPX2WithAntColony(pop);
     }else{
@@ -121,27 +125,27 @@ Population GAUtils::generateNewPopulation(Population &pop) {
     }
 }
 
-Population GAUtils::crossAllxAllwith2opt(Population &pop) {
-    Population newPop;
-    vector<int> currentTour;
+// Population GAUtils::crossAllxAllwith2opt(Population &pop) {
+//     Population newPop;
+//     vector<int> currentTour;
 
-    for (unsigned i = 0; i < Config::POP_SIZE; i++) {
-        currentTour = pop.getPopulation()[i];
-        for (unsigned j = 0; j < Config::POP_SIZE; j++) {
-            if (i != j) {
-                vector<int> t = GPX2::crossover(pop.getPopulation()[j], currentTour);
-                if (getFitness(t) < getFitness(currentTour)) {
-                    currentTour = t;
-                }
-            }
-        }
-        currentTour = Opt::optimize(currentTour);
+//     for (unsigned i = 0; i < Config::POP_SIZE; i++) {
+//         currentTour = pop.getPopulation()[i];
+//         for (unsigned j = 0; j < Config::POP_SIZE; j++) {
+//             if (i != j) {
+//                 vector<int> t = GPX2::crossover(pop.getPopulation()[j], currentTour);
+//                 if (getFitness(t) < getFitness(currentTour)) {
+//                     currentTour = t;
+//                 }
+//             }
+//         }
+//         currentTour = Opt::optimize(currentTour);
 
-        newPop.getPopulation().push_back(currentTour);
-    }
+//         newPop.getPopulation().push_back(currentTour);
+//     }
 
-    return newPop;
-}
+//     return newPop;
+// }
 
 Population GAUtils::crossNBestxAllwithReset(Population &pop) {
     Population newPop;
@@ -164,34 +168,34 @@ Population GAUtils::crossNBestxAllwithReset(Population &pop) {
     return (newPop);
 }
 
-Population GAUtils::crossAllxAllwithNBestAndReset(Population &pop){
-    Population tmpPop, newPop;
-    vector<int> currentTour;
+// Population GAUtils::crossAllxAllwithNBestAndReset(Population &pop){
+//     Population tmpPop, newPop;
+//     vector<int> currentTour;
 
-    for (unsigned i = 0; i < Config::POP_SIZE; i++) {
-        currentTour = pop.getPopulation()[i];
-        for (unsigned j = 0; j < Config::POP_SIZE; j++) {
-            if (i != j) {
-                vector<int> t = GPX2::crossover(pop.getPopulation()[j], currentTour);
-                currentTour = t;
-            }
-        }
+//     for (unsigned i = 0; i < Config::POP_SIZE; i++) {
+//         currentTour = pop.getPopulation()[i];
+//         for (unsigned j = 0; j < Config::POP_SIZE; j++) {
+//             if (i != j) {
+//                 vector<int> t = GPX2::crossover(pop.getPopulation()[j], currentTour);
+//                 currentTour = t;
+//             }
+//         }
 
-        tmpPop.getPopulation().push_back(currentTour);
-    }
+//         tmpPop.getPopulation().push_back(currentTour);
+//     }
 
-    sort(tmpPop.getPopulation().begin(), tmpPop.getPopulation().end(),sortPopulation);
+//     sort(tmpPop.getPopulation().begin(), tmpPop.getPopulation().end(),sortPopulation);
 
-    for(unsigned i=0;i<Config::N_BEST;i++){
-        newPop.getPopulation().push_back(tmpPop.getPopulation()[i]);
-    }
+//     for(unsigned i=0;i<Config::N_BEST;i++){
+//         newPop.getPopulation().push_back(tmpPop.getPopulation()[i]);
+//     }
 
-    fillPopulationWithReset(newPop, Config::POP_SIZE*Config::RESET_PERCENTAGE);
+//     fillPopulationWithReset(newPop, Config::POP_SIZE*Config::RESET_PERCENTAGE);
 
-    fillPopulationWithRoulete(pop,newPop,Config::POP_SIZE-newPop.getPopulation().size());
+//     fillPopulationWithRoulete(pop,newPop,Config::POP_SIZE-newPop.getPopulation().size());
 
-    return newPop;
-}
+//     return newPop;
+// }
 
 Population GAUtils::crossGPX2WithAntColony(Population &pop){
     Population newPop, tmpPop;
@@ -227,6 +231,59 @@ Population GAUtils::crossGPX2WithAntColony(Population &pop){
     // cout<<newPop<<endl;
 
     // cin.get();
+
+    return newPop;
+}
+
+Population GAUtils::crossGPX2WithAntColonyAndReset(Population &pop){
+    Population newPop, tmpPop;
+    vector<int> currentTour;
+
+    sort(pop.getPopulation().begin(), pop.getPopulation().end(),sortPopulation);
+
+    for (unsigned i = 0; i < Config::POP_SIZE/10; i++) {
+        currentTour = pop.getPopulation()[i];
+        for (unsigned j = 0; j < Config::POP_SIZE; j++) {
+            if (i != j) {
+                vector<int> t = GPX2::crossover(pop.getPopulation()[j], currentTour);
+                currentTour = t;
+            }
+        }
+
+        newPop.getPopulation().push_back(currentTour);
+    }
+
+    fillPopulationWithReset(newPop, Config::POP_SIZE*Config::RESET_PERCENTAGE);
+
+    sort(newPop.getPopulation().begin(), newPop.getPopulation().end(),sortPopulation);
+    cout<<"Best tour from GPX2: "<<getFitness(newPop.getBestTour())<<endl;
+    // cout<<newPop<<endl;
+
+    // AntMap::updatePheromoneMap(newPop.getBestTour());
+
+    tmpPop = AntColony().run(Config::POP_SIZE-(newPop.getPopulation().size()));
+
+    // cout<<tmpPop<<endl;
+
+    newPop.getPopulation().insert(newPop.getPopulation().end(),tmpPop.getPopulation().begin(),tmpPop.getPopulation().end());
+
+    cout<<"Best tour after AntColony: "<<getFitness(newPop.getBestTour())<<endl;
+    // cout<<newPop<<endl;
+
+    // cin.get();
+
+    return newPop;
+}
+
+Population GAUtils::crossOX(Population &pop){
+    Population newPop;
+    for(vector<int> vec : elitsm(pop)){
+        newPop.getPopulation().push_back(vec);
+    }
+    
+    while(newPop.getPopulation().size()<Config::POP_SIZE){
+        newPop.getPopulation().push_back(OX::crossover(roulete(pop),roulete(pop)));
+    }
 
     return newPop;
 }
