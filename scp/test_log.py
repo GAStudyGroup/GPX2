@@ -3,9 +3,15 @@ import glob
 from sys import argv
 
 TOKEN = 'Found best fitness!'
+# TOKEN = 'Found best without GA'
 
 try:
-    list = glob.glob(argv[1]+'*'+argv[2]+'*')
+    if len(argv) == 2:
+        print('log_*_'+argv[0]+'_'+argv[1]+'_2.log')
+        list = glob.glob('log_*_'+argv[0]+'_'+argv[1]+'_2.log')
+    elif len(argv) == 3:
+        list = glob.glob('log_*_'+argv[0]+'_'+argv[1]+'_LK-'+argv[2]+'.000000_2.log')
+
     print('Found '+str(len(list))+' files.')
     cont = 0
     for fileName in list:

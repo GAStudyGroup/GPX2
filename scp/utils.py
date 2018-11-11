@@ -19,13 +19,13 @@ def printInformations(name,size,lk,id,n_best,new_pop,best_f):
     print(str(id)+" Generating population for problem "+name+" with population size "+str(size)+", using "+str(lk)+"% of LK generated tours and using:")
         
     if(new_pop==0):
-        print("Cross using GPX2 and Ant Colony with reset\n")
+        print("Cross using OX.\n")
+    elif(new_pop==1):
+        print("All vs All GPX2 crossover saving "+str(n_best)+" with reset population and roulete.\n")
     elif(new_pop==2):
-        print("Using OX crossover\n")
-    elif(new_pop==3):
-        print("GPX2 with Ant Colony to introduce randomness")
+        print("GPX2 with Ant Colony to introduce randomness.")
     else:
-        print(str(n_best)+" best vs All GPX2 crossover with reset population\n")
+        print("All vs All GPX2 crossover saving "+str(n_best)+" with reset population and roulete.\n")
 
 
     print("best fitness found: "+str(best_f))

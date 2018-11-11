@@ -31,20 +31,16 @@ void Log::printHeader(ostream &out){
     out <<"\nUsing new generation method: ";
     switch(Config::NEW_POP_TYPE){
         case 0:{
-            out << "Cross using GPX2 and Ant Colony with reset";
+            out << "Cross using OX";
             break;
         }
         default:
         case 1:{
-            out << to_string(Config::N_BEST)+" best vs All GPX2 crossover with reset population.";
+            out << " All vs All GPX2 crossover saving "+to_string(Config::N_BEST)+" with reset population and roulete.";
             break;
         }
         case 2:{
-            out << "Using OX crossover";
-            break;
-        }
-        case 3:{
-            out<<"GPX2 with Ant Colony to introduce randomness";
+            out << "GPX2 with Ant Colony to introduce randomness";
             break;
         }
     }
@@ -55,7 +51,8 @@ void Log::printHeader(ostream &out){
 void Log::printFooter(ostream &out,Population &pop,unsigned gen,unsigned best){
     out << "\nTHE END\n";
     out << "First best fitness: " << best << "\n";
-    out << "Gen " << gen << " best fitness " << pop.bestFitness() << "\n";
+    out << "Last gen: " << gen << "\n";
+    out << "Best fitness found: " << pop.bestFitness() << "\n";
     out << "Best know solution: "<< to_string(Config::BEST_FITNESS) << "\n";
     out << "=========================" << "\n";
 
